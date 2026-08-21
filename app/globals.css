@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/*
+ * Senanque brand tokens — the single source of truth for color, type, and
+ * label tracking. Every component should reach for these Tailwind
+ * utilities (bg-oat, text-plum, font-display, tracking-label, …) rather
+ * than hardcoding a hex value or font stack.
+ */
+@theme {
+  --color-oat: #f2ecdd;
+  --color-charcoal: #3a3833;
+  --color-lavender: #c4bcca;
+  --color-plum: #6b5a7e;
+  --color-gold: #b98a2e;
+  --color-sage: #95a08c;
+  --color-stone: #a39f91;
+
+  --font-display: var(--font-literata);
+  --font-sans: var(--font-inter);
+
+  --tracking-label: 0.22em;
+}
+
+body {
+  background-color: var(--color-oat);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+}
