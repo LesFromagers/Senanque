@@ -1,10 +1,15 @@
 /**
- * "The Bay" — Senanque's one deliberate signature visual element: a row of
- * round-topped Romanesque arches, drawn in thin outline rules, with exactly
- * one bay filled solid lavender. No crest, no cloister photography — this
- * is the only decorative motif anywhere in the app, and it appears once per
- * page: the hero graphic on the homepage, or a smaller section marker on a
- * project page.
+ * "The Bay" — Senanque's one deliberate signature visual element for the
+ * shared hub chrome: a row of round-topped Romanesque arches, drawn in thin
+ * outline rules, with exactly one bay filled solid lavender. No crest, no
+ * cloister photography — this is the only decorative motif in the hub itself
+ * (homepage hero, section markers), and it appears once per page there.
+ *
+ * A spoke may earn exactly one project-level hero motif of its own, drawn in
+ * this same one-fill-thin-stroke grammar, standing in for the Arcade on that
+ * spoke's own pages — see DESIGN.md's "signature visual element" note. The
+ * Heisman Park Ledger's stadium mark is the first instance. That's an
+ * extension of this rule, not a second sitewide motif competing with it.
  */
 type ArcadeProps = {
   bays?: number;
