@@ -29,13 +29,14 @@ export const projects: ProjectMeta[] = [
     status: "live",
   },
   {
-    slug: "ou-rankings",
-    title: "OU Rankings History",
+    slug: "heisman-park-ledger",
+    title: "The Heisman Park Ledger",
     wing: "analytics",
     category: "Sport",
-    description: "Every AP poll placement, tracked against season outcomes.",
-    dataSource: "collegefootballdata.com API",
-    status: "planned",
+    description:
+      "A Power Index for every Oklahoma Sooners football season since 1895, normalized across eras.",
+    dataSource: "Wikipedia API + collegefootballdata.com API",
+    status: "live",
   },
   {
     slug: "coffee",
