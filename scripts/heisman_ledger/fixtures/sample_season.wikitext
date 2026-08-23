@@ -1,0 +1,51 @@
+{{Infobox NCAA football yearly team
+| Year = 1974
+| TeamName = Oklahoma Sooners
+| Conference = Big Eight Conference
+| ConferenceVacated =
+| ShortConference = Big Eight
+| Record = 11-0
+| ConfRecord = 7-0
+| HeadCoach = Barry Switzer
+| HCYear = 2nd
+| Bowl = None (postseason ban)
+| BowlResult =
+| APfinalrank = 1
+| ApFinalRank = 1
+}}
+
+The '''1974 Oklahoma Sooners football team''' represented the University of
+Oklahoma in the 1974 NCAA Division I football season. Playing under a bowl
+and television ban imposed by NCAA probation, the Sooners went undefeated
+and were later voted national champions by the AP poll once Alabama lost
+its bowl game.
+
+Rod Shoate and Joe Washington were named consensus All-Americans.
+
+==Schedule==
+{| class="wikitable"
+|-
+! Date !! Opponent !! Rank !! Site !! Result !! Attendance
+|-
+| September 14 || Baylor || #2 || Norman, Oklahoma || W 28-11 || 61000
+|-
+| September 21 || at Utah State || #2 || Logan, Utah || W 72-3 || 22000
+|-
+| September 28 || Texas || #2 || Dallas, Texas (Cotton Bowl) || W 16-13 || 75000
+|-
+| October 19 || Texas A&M || #1 || Norman, Oklahoma || W 21-3 || 61000
+|-
+| October 26 || at Iowa State || #1 || Ames, Iowa || W 34-17 || 40000
+|-
+| November 2 || Kansas || #1 || Norman, Oklahoma || W 45-0 || 61000
+|-
+| November 9 || at Kansas State || #1 || Manhattan, Kansas || W 43-12 || 30000
+|-
+| November 16 || Missouri || #1 || Norman, Oklahoma || W 37-0 || 61000
+|-
+| November 23 || Colorado || #1 || Norman, Oklahoma || W 49-20 || 61000
+|-
+| November 29 || at Oklahoma State || #1 || Stillwater, Oklahoma || W 44-9 || 50000
+|-
+| December 7 || at Nebraska || #1 || Lincoln, Nebraska || W 28-14 || 76000
+|}

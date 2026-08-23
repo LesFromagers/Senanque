@@ -1,0 +1,92 @@
+# Heisman Park Ledger — data pipeline
+
+Five scripts, run in order, that turn the 27 hand-verified rows in
+`data/heisman-ledger/ou_seasons_verified.csv` plus a Wikipedia bulk pull into
+the merged dataset the dashboard and the Supabase schema consume.
+
+```
+pull_wikipedia.py     # Step 1 — the ~105 remaining seasons, Wikipedia only
+pull_cfbd.py          # Step 2 — SP+/efficiency data, 2005-present, CFBD API
+merge_dataset.py      # Step 3 — merge verified + pulled + CFBD, assign data_tier,
+                       #          emit the master season/game CSVs + a gap report
+csv_to_json.py        # Step 4 — master_seasons.csv -> the JSON the Next.js app imports
+generate_seed_sql.py  # Step 5 — master CSVs -> supabase/heisman-ledger/seed.sql
+```
+
+## Hard constraints (see `Heisman-Park-Ledger-Cowork-Brief.md`)
+
+- **Wikipedia only** for the automated/bulk pull. Real `User-Agent`, throttled
+  to ~1 request/sec (`--sleep`).
+- **Never build an automated scraper against Sports-Reference or similar
+  ToS-restricted sites.** If a fact there would help, this pipeline logs a
+  gap instead of reaching for it — cross-checking those sites is a manual,
+  human-paced job for Matt, not something this script should ever attempt.
+- **Never fabricate.** Every field that doesn't come back from a legitimate
+  fetch is left `NULL`/blank and logged to a gap report, not guessed.
+
+## Running it
+
+```bash
+cd scripts/heisman_ledger
+pip install -r requirements.txt
+
+# Step 1 — Wikipedia (network access to en.wikipedia.org required)
+python pull_wikipedia.py --out ../../data/heisman-ledger/pulled
+
+# Step 2 — CFBD (needs CFBD_API_KEY in the environment; never paste the key
+# into a file or commit — export it in your shell for this one run)
+CFBD_API_KEY=... python pull_cfbd.py --out ../../data/heisman-ledger/pulled
+
+# Step 3 — merge everything
+python merge_dataset.py \
+  --verified ../../data/heisman-ledger/ou_seasons_verified.csv \
+  --pulled ../../data/heisman-ledger/pulled \
+  --out ../../data/heisman-ledger/master
+
+# Step 4 — regenerate the JSON the Next.js app imports
+python csv_to_json.py
+
+# Step 5 — regenerate the Supabase seed file
+python generate_seed_sql.py
+```
+
+`merge_dataset.py` never overwrites a verified row — the 27 seasons in
+`ou_seasons_verified.csv` win every field-level conflict, no exceptions.
+
+## Setting up Supabase (one-time)
+
+The dashboard works today with zero Supabase setup — `lib/heisman-ledger/data.ts`
+reads the committed static JSON until it sees Supabase credentials. Wiring
+up the real database:
+
+1. At [supabase.com](https://supabase.com), create a new project (any
+   region; the free tier is plenty for this dataset's size).
+2. In **Project Settings → API**, copy the **Project URL** and the
+   **anon public** key. Do *not* copy the service-role/secret key into
+   anything committed or pasted into a cloud AI session — it only ever
+   belongs in your own shell environment for a one-off script run.
+3. In the Supabase dashboard's **SQL Editor**, paste and run
+   `supabase/heisman-ledger/schema.sql`, then `supabase/heisman-ledger/seed.sql`.
+4. Add to Vercel's Environment Variables (Project Settings → Environment
+   Variables) and to your local `.env.local`:
+   - `SUPABASE_URL` — the Project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — the anon public key
+5. Redeploy (or restart `npm run dev` locally). `getSeasons()` picks up
+   Supabase automatically — no other code change needed.
+
+Re-run `generate_seed_sql.py` and re-paste `seed.sql` any time
+`merge_dataset.py` produces a new `master_seasons.csv` (e.g. after the
+Wikipedia bulk pull finishes, or a manual-review fix lands).
+
+## Offline self-test
+
+`pull_wikipedia.py`'s table/infobox parsing can be exercised without network
+access, against a saved wikitext fixture:
+
+```bash
+python test_parser.py
+```
+
+This is how the parser was validated in the session that wrote it — this
+sandbox's network policy didn't allow live `en.wikipedia.org` calls, so the
+fixture stands in until the real pull is run somewhere with access.

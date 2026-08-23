@@ -14,9 +14,17 @@
   --color-gold: #b98a2e;
   --color-sage: #95a08c;
   --color-stone: #a39f91;
+  /* Scoped to the Heisman Park Ledger only — its wordmark, rank-1 seal,
+     rank-1 index figure, beat-marks, and "Iconic moment" label. Never used
+     elsewhere; never enters SERIES_COLOR_ORDER. See DESIGN.md's
+     "Sub-project palette extensions" for the pattern this follows. */
+  --color-garnet: #6e2e34;
 
   --font-display: var(--font-literata);
   --font-sans: var(--font-inter);
+  /* Tabular figures only (index scores, records, dates in dense tables) —
+     never running text or labels. System stack, no webfont to load. */
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --tracking-label: 0.22em;
 }
