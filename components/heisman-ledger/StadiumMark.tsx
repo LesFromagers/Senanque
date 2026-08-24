@@ -5,21 +5,27 @@
  * one-fill-thin-stroke grammar as the hub's Arcade (components/brand/
  * Arcade.tsx), standing in for it on this project's own pages.
  *
- * Pavilion/light-tower/scoreboard coordinates were measured directly off
- * the locked design PDF (pixel-analysis of a 600 DPI render). The center
- * bay was redrawn a level past that, against a photo of Gaylord Family
- * Oklahoma Memorial Stadium's actual south entrance: the tower has to
- * come down as one continuous mass from the scoreboard block to the
- * ground-level arched entrance — a consistent width the whole way, not a
- * narrow gable/mullion neck that pinches in and widens back out. The
- * pediment, tracery mullions, and pointed portal all share one width now.
+ * Every coordinate here comes from pixel-analysis of the locked reference
+ * drawing (row/column scans for non-background runs, separating charcoal
+ * from stone by color distance) rather than eyeballing a preview — that's
+ * what caught the real structure of the center bay, which three earlier
+ * by-eye passes all got wrong: it isn't a single narrow gable pinching
+ * down from the scoreboard to the entrance. It's a WIDE box — the same
+ * width as the scoreboard above it — that runs from the scoreboard's own
+ * base down to the second-story cornice line. A narrower tracery gable is
+ * inset within that box (its apex touching the scoreboard's underside),
+ * and its legs keep going *past* the box's own bottom edge, straight
+ * through the window band, down to the string course. Below that, a
+ * separate, similarly narrow pointed portal is the ground-level entrance.
+ * Three distinct widths, not one: wide box, narrower gable/mullions,
+ * narrower still portal — nested, not unified.
  */
 type StadiumMarkProps = {
   className?: string;
 };
 
-const CENTER_X = 1459.5;
-const GROUND_Y = 1238;
+const CENTER_X = 520;
+const GROUND_Y = 372;
 
 // Charcoal (primary structure) vs Stone (secondary/decorative) — matches
 // the reference's own line-weight hierarchy, not just a single flat stroke.
@@ -37,48 +43,55 @@ function evenBoxes(start: number, end: number, count: number, boxWidth: number):
 }
 
 export function StadiumMark({ className }: StadiumMarkProps) {
-  const strokeWidth = 5;
-  const strokeWidthFine = 3.5;
+  const strokeWidth = 2;
+  const strokeWidthFine = 1.3;
 
-  const pavilionInnerEdge = 642;
-  const arcadeOuterEdge = 2277;
+  const pavilionInnerEdge = 271;
+  const arcadeOuterEdge = mirror(271);
 
-  // The tower: one consistent half-width from the pediment base all the
-  // way to the ground-level portal — no narrowing in the middle.
-  const towerHalfWidth = 210;
-  const towerL = CENTER_X - towerHalfWidth;
-  const towerR = CENTER_X + towerHalfWidth;
-  const pedimentApex = { x: CENTER_X, y: 468 }; // touches the scoreboard block's bottom edge
-  const pedimentBaseY = 560;
-  const cornice1Y = 724;
-  const cornice2Y = 780;
-  const stringCourseY = 974;
-  const portalTransitionY = 1125; // where the portal's vertical legs give way to the pointed top
-  const portalApex = { x: CENTER_X, y: 1030 };
+  // The wide box: scoreboard width, continued straight down to the cornice.
+  const towerL = 407.5;
+  const towerR = 632.5;
+  const boxTopY = 63;
+  const scoreboardDividerY = 135; // splits the lavender display from the plain wall below
+  const cornice1Y = 217; // the box's own bottom edge — and the full-facade cornice line
+
+  // The narrower tracery gable, inset in the box — apex touches the divider,
+  // legs run straight past the box's bottom edge into the window band.
+  const gableApex = { x: CENTER_X, y: 134 };
+  const gableLegX = { l: 480, r: 560 };
+  const gableTransitionY = 180;
+  const stringCourseY = 294;
 
   const mullions = [
-    { x: towerL + 35, top: 690 },
-    { x: towerL + 105, top: 630 },
-    { x: CENTER_X, top: 600 },
-    { x: towerR - 105, top: 630 },
-    { x: towerR - 35, top: 690 },
+    { x: 494, top: 220 },
+    { x: 507, top: 205 },
+    { x: CENTER_X, top: 195 },
+    { x: 533, top: 205 },
+    { x: 546, top: 220 },
   ];
 
-  // Second-story windows, fit between the pavilion and the tower.
-  const windowY = 830;
-  const windowH = 110;
-  const windowW = 90;
-  const leftWindowXs = evenBoxes(pavilionInnerEdge, towerL, 4, windowW);
+  // The ground-level portal — its own, still-narrower lancet.
+  const portalApex = { x: CENTER_X, y: 308 };
+  const portalLegX = { l: 489, r: 551 };
+  const portalTransitionY = 338;
+
+  // Second-story windows, fit between the pavilion and the wide box.
+  const cornice2Y = 233;
+  const windowY = 245;
+  const windowH = 39;
+  const windowW = 29;
+  const leftWindowXs = evenBoxes(pavilionInnerEdge, towerL, 3, windowW);
 
   // Ground-arcade round arches, same span as the windows above them.
-  const springY = 1120;
+  const springY = 322;
   const archCount = 3;
-  const archWidth = (towerL - pavilionInnerEdge) / archCount - 20;
+  const archWidth = 30;
   const leftArchXs = evenBoxes(pavilionInnerEdge, towerL, archCount, archWidth);
 
   return (
     <svg
-      viewBox="0 0 2940 1280"
+      viewBox="0 0 1050 400"
       width="100%"
       className={className}
       role="img"
@@ -86,38 +99,38 @@ export function StadiumMark({ className }: StadiumMarkProps) {
     >
       <g fill="none" strokeLinecap="square">
         {/* ground line */}
-        <line x1={30} y1={GROUND_Y} x2={2889} y2={GROUND_Y} className={CHARCOAL} strokeWidth={strokeWidth} />
+        <line x1={12} y1={GROUND_Y} x2={1038} y2={GROUND_Y} className={CHARCOAL} strokeWidth={strokeWidth} />
 
         {/* light towers: box with 2 dividers, pole to ground, 5-rod symmetric fan on the block */}
         {[
-          { boxX: [89, 216] as [number, number], poleX: 152.5 },
-          { boxX: [mirror(216), mirror(89)] as [number, number], poleX: mirror(152.5) },
+          { boxX: [103, 142] as [number, number], poleX: 122.5 },
+          { boxX: [mirror(142), mirror(103)] as [number, number], poleX: mirror(122.5) },
         ].map(({ boxX, poleX }) => (
           <g key={poleX}>
-            <rect x={boxX[0]} y={107} width={boxX[1] - boxX[0]} height={108} className={CHARCOAL} strokeWidth={strokeWidthFine} />
-            <line x1={boxX[0]} y1={143} x2={boxX[1]} y2={143} className={STONE} strokeWidth={strokeWidthFine} />
-            <line x1={boxX[0]} y1={179} x2={boxX[1]} y2={179} className={STONE} strokeWidth={strokeWidthFine} />
-            <line x1={poleX} y1={215} x2={poleX} y2={GROUND_Y} className={STONE} strokeWidth={strokeWidthFine} />
+            <rect x={boxX[0]} y={27} width={boxX[1] - boxX[0]} height={32} className={CHARCOAL} strokeWidth={strokeWidthFine} />
+            <line x1={boxX[0]} y1={39} x2={boxX[1]} y2={39} className={STONE} strokeWidth={strokeWidthFine} />
+            <line x1={boxX[0]} y1={50} x2={boxX[1]} y2={50} className={STONE} strokeWidth={strokeWidthFine} />
+            <line x1={poleX} y1={59} x2={poleX} y2={GROUND_Y} className={STONE} strokeWidth={strokeWidthFine} />
           </g>
         ))}
 
         {/* corner pavilions: flat lintel, lancet recess (pointed top, vertical legs) */}
         {[
-          { sides: [280, 642] as [number, number], recessLegs: [372, 549] as [number, number], apexX: 461 },
-          { sides: [mirror(642), mirror(280)] as [number, number], recessLegs: [mirror(549), mirror(372)] as [number, number], apexX: mirror(461) },
+          { sides: [161, 271] as [number, number], recessLegs: [189.5, 243] as [number, number], apexX: 216 },
+          { sides: [mirror(271), mirror(161)] as [number, number], recessLegs: [mirror(243), mirror(189.5)] as [number, number], apexX: mirror(216) },
         ].map(({ sides, recessLegs, apexX }) => (
           <g key={apexX} className={CHARCOAL} strokeWidth={strokeWidth}>
-            <line x1={sides[0]} y1={610} x2={sides[1]} y2={610} />
-            <line x1={sides[0]} y1={610} x2={sides[0]} y2={GROUND_Y} />
-            <line x1={sides[1]} y1={610} x2={sides[1]} y2={GROUND_Y} />
-            <path d={`M${recessLegs[0]} ${GROUND_Y} V920 L${apexX} 795 L${recessLegs[1]} 920 V${GROUND_Y}`} />
+            <line x1={sides[0]} y1={178} x2={sides[1]} y2={178} />
+            <line x1={sides[0]} y1={178} x2={sides[0]} y2={GROUND_Y} />
+            <line x1={sides[1]} y1={178} x2={sides[1]} y2={GROUND_Y} />
+            <path d={`M${recessLegs[0]} ${GROUND_Y} V275 L${apexX} 235 L${recessLegs[1]} 275 V${GROUND_Y}`} />
           </g>
         ))}
 
-        {/* second-story cornice (double line) — runs pavilion to tower, both sides */}
-        <line x1={pavilionInnerEdge} y1={cornice1Y} x2={towerL} y2={cornice1Y} className={STONE} strokeWidth={strokeWidthFine} />
+        {/* second-story cornice (thick line, then a thinner one at the window band's own top) */}
+        <line x1={pavilionInnerEdge} y1={cornice1Y} x2={towerL} y2={cornice1Y} className={CHARCOAL} strokeWidth={strokeWidth} />
+        <line x1={towerR} y1={cornice1Y} x2={arcadeOuterEdge} y2={cornice1Y} className={CHARCOAL} strokeWidth={strokeWidth} />
         <line x1={pavilionInnerEdge} y1={cornice2Y} x2={towerL} y2={cornice2Y} className={STONE} strokeWidth={strokeWidthFine} />
-        <line x1={towerR} y1={cornice1Y} x2={arcadeOuterEdge} y2={cornice1Y} className={STONE} strokeWidth={strokeWidthFine} />
         <line x1={towerR} y1={cornice2Y} x2={arcadeOuterEdge} y2={cornice2Y} className={STONE} strokeWidth={strokeWidthFine} />
 
         {/* second-story windows */}
@@ -143,36 +156,41 @@ export function StadiumMark({ className }: StadiumMarkProps) {
           );
         })}
 
-        {/* the tower: pediment, continuous side walls, tracery mullions, pointed portal beneath — all one width */}
+        {/* the wide box: scoreboard width, continued down to the cornice */}
+        <rect x={towerL} y={boxTopY} width={towerR - towerL} height={cornice1Y - boxTopY} className={CHARCOAL} strokeWidth={strokeWidth} />
+        <line x1={towerL} y1={scoreboardDividerY} x2={towerR} y2={scoreboardDividerY} className={CHARCOAL} strokeWidth={strokeWidth} />
+
+        {/* the one Lavender fill, inset in the scoreboard's own upper half */}
+        <rect x={420.5} y={80} width={199} height={47} className="fill-lavender stroke-charcoal" strokeWidth={strokeWidthFine} />
+
+        {/* the tracery gable: narrower than the box, apex on the divider, legs running past the box's own bottom edge into the window band */}
         <path
-          d={`M${towerL} ${pedimentBaseY} L${pedimentApex.x} ${pedimentApex.y} L${towerR} ${pedimentBaseY}`}
+          d={`M${gableLegX.l} ${gableTransitionY} L${gableApex.x} ${gableApex.y} L${gableLegX.r} ${gableTransitionY}`}
           className={CHARCOAL}
           strokeWidth={strokeWidth}
         />
-        <line x1={towerL} y1={pedimentBaseY} x2={towerL} y2={portalTransitionY} className={CHARCOAL} strokeWidth={strokeWidth} />
-        <line x1={towerR} y1={pedimentBaseY} x2={towerR} y2={portalTransitionY} className={CHARCOAL} strokeWidth={strokeWidth} />
+        <line x1={gableLegX.l} y1={gableTransitionY} x2={gableLegX.l} y2={stringCourseY} className={CHARCOAL} strokeWidth={strokeWidth} />
+        <line x1={gableLegX.r} y1={gableTransitionY} x2={gableLegX.r} y2={stringCourseY} className={CHARCOAL} strokeWidth={strokeWidth} />
         {mullions.map((m) => (
           <line key={m.x} x1={m.x} y1={m.top} x2={m.x} y2={stringCourseY} className={STONE} strokeWidth={strokeWidthFine} />
         ))}
-        {/* portal: lancet shape (vertical legs, then the pitched top) at the tower's own width */}
+
+        {/* the ground-level portal: its own, still-narrower lancet */}
         <path
-          d={`M${towerL} ${GROUND_Y} V${portalTransitionY} L${portalApex.x} ${portalApex.y} L${towerR} ${portalTransitionY} V${GROUND_Y}`}
+          d={`M${portalLegX.l} ${GROUND_Y} V${portalTransitionY} L${portalApex.x} ${portalApex.y} L${portalLegX.r} ${portalTransitionY} V${GROUND_Y}`}
           className={CHARCOAL}
           strokeWidth={strokeWidth}
         />
 
-        {/* scoreboard block, staggered light-rod fan above it */}
-        <rect x={1088} y={230} width={743} height={233} className={CHARCOAL} strokeWidth={strokeWidth} />
-        {/* the one Lavender fill */}
-        <rect x={1133} y={260} width={653} height={173} className="fill-lavender stroke-charcoal" strokeWidth={strokeWidthFine} />
+        {/* staggered light-rod fan above the scoreboard block */}
         {[
-          { x: CENTER_X, top: 59 },
-          { x: 1349.5, top: 88 },
-          { x: mirror(1349.5), top: 88 },
-          { x: 1239.5, top: 118 },
-          { x: mirror(1239.5), top: 118 },
+          { x: CENTER_X, top: 13 },
+          { x: 486.5, top: 22 },
+          { x: mirror(486.5), top: 22 },
+          { x: 453, top: 31 },
+          { x: mirror(453), top: 31 },
         ].map((rod) => (
-          <line key={rod.x} x1={rod.x} y1={230} x2={rod.x} y2={rod.top} className={STONE} strokeWidth={strokeWidthFine} />
+          <line key={rod.x} x1={rod.x} y1={boxTopY} x2={rod.x} y2={rod.top} className={STONE} strokeWidth={strokeWidthFine} />
         ))}
       </g>
     </svg>
