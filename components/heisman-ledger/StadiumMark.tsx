@@ -130,17 +130,17 @@ export function StadiumMark({ className }: StadiumMarkProps) {
         {/* second-story cornice (thick line, then a thinner one at the window band's own top) */}
         <line x1={pavilionInnerEdge} y1={cornice1Y} x2={towerL} y2={cornice1Y} className={CHARCOAL} strokeWidth={strokeWidth} />
         <line x1={towerR} y1={cornice1Y} x2={arcadeOuterEdge} y2={cornice1Y} className={CHARCOAL} strokeWidth={strokeWidth} />
-        <line x1={pavilionInnerEdge} y1={cornice2Y} x2={towerL} y2={cornice2Y} className={STONE} strokeWidth={strokeWidthFine} />
-        <line x1={towerR} y1={cornice2Y} x2={arcadeOuterEdge} y2={cornice2Y} className={STONE} strokeWidth={strokeWidthFine} />
+        <line x1={pavilionInnerEdge} y1={cornice2Y} x2={gableLegX.l} y2={cornice2Y} className={STONE} strokeWidth={strokeWidthFine} />
+        <line x1={gableLegX.r} y1={cornice2Y} x2={arcadeOuterEdge} y2={cornice2Y} className={STONE} strokeWidth={strokeWidthFine} />
 
         {/* second-story windows */}
         {[...leftWindowXs, ...leftWindowXs.map((x) => mirror(x + windowW) - windowW)].map((x) => (
           <rect key={x} x={x} y={windowY} width={windowW} height={windowH} className={STONE} strokeWidth={strokeWidthFine} />
         ))}
 
-        {/* string course above the ground arcade — runs pavilion to tower, both sides */}
-        <line x1={pavilionInnerEdge} y1={stringCourseY} x2={towerL} y2={stringCourseY} className={STONE} strokeWidth={strokeWidthFine} />
-        <line x1={towerR} y1={stringCourseY} x2={arcadeOuterEdge} y2={stringCourseY} className={STONE} strokeWidth={strokeWidthFine} />
+        {/* string course above the ground arcade — runs pavilion all the way to the gable's own legs, through the wide box */}
+        <line x1={pavilionInnerEdge} y1={stringCourseY} x2={gableLegX.l} y2={stringCourseY} className={STONE} strokeWidth={strokeWidthFine} />
+        <line x1={gableLegX.r} y1={stringCourseY} x2={arcadeOuterEdge} y2={stringCourseY} className={STONE} strokeWidth={strokeWidthFine} />
 
         {/* ground arcade round arches, flanking the tower */}
         {[...leftArchXs, ...leftArchXs.map((x) => mirror(x + archWidth) - archWidth)].map((legL) => {
