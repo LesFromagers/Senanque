@@ -135,8 +135,10 @@ export function StadiumMark({ className }: StadiumMarkProps) {
             />
           );
         })}
+        {/* Lancet, not a plain triangle — vertical legs to y=1125, then the
+            pitched top to the apex, matching the pavilion recess shape. */}
         <path
-          d={`M${portalLegs[0]} ${GROUND_Y} L${CENTER_X} 1030 L${portalLegs[1]} ${GROUND_Y}`}
+          d={`M${portalLegs[0]} ${GROUND_Y} V1125 L${CENTER_X} 1030 L${portalLegs[1]} 1125 V${GROUND_Y}`}
           className={CHARCOAL}
           strokeWidth={strokeWidth}
         />
