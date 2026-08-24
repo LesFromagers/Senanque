@@ -13,7 +13,7 @@ export interface LedgerRow {
   season: SeasonRecord;
 }
 
-type SortKey = "rank" | "year" | "record" | "powerIndex" | "pointDiff" | "sos" | "offense" | "defense";
+type SortKey = "rank" | "year" | "record" | "powerIndex" | "pointDiff" | "offense" | "defense";
 
 const SORT_LABELS: Record<SortKey, string> = {
   rank: "Rank",
@@ -21,10 +21,15 @@ const SORT_LABELS: Record<SortKey, string> = {
   record: "Record",
   powerIndex: "Index",
   pointDiff: "Pt Diff/G",
-  sos: "SOS",
   offense: "Off. Eff.",
   defense: "Def. Eff.",
 };
+
+// Special View-dropdown values that set a sort rather than filter rows by
+// coach — kept distinct from a real coach name so the two concerns (which
+// rows show, how they're ordered) don't collide in one select's value.
+const VIEW_OFFENSE = "__offense_ranking__";
+const VIEW_DEFENSE = "__defense_ranking__";
 
 function winsFromRecord(record: string | null): number {
   if (!record) return -1;
@@ -43,15 +48,17 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
     return Array.from(set).sort();
   }, [rows]);
 
+  const isCoachFilter = coachFilter !== "all" && coachFilter !== VIEW_OFFENSE && coachFilter !== VIEW_DEFENSE;
+
   const filtered = useMemo(() => {
     return rows.filter((r) => {
-      if (coachFilter !== "all" && r.season.headCoach !== coachFilter) return false;
+      if (isCoachFilter && r.season.headCoach !== coachFilter) return false;
       if (query && !String(r.season.year).includes(query) && !r.season.headCoach?.toLowerCase().includes(query.toLowerCase())) {
         return false;
       }
       return true;
     });
-  }, [rows, coachFilter, query]);
+  }, [rows, coachFilter, isCoachFilter, query]);
 
   const sorted = useMemo(() => {
     const withKey = [...filtered];
@@ -73,15 +80,19 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
         case "pointDiff":
           diff = (a.result.pointDifferentialPerGame ?? -999) - (b.result.pointDifferentialPerGame ?? -999);
           break;
-        case "sos":
-          diff = (a.season.sosAdjustedMargin ?? -999) - (b.season.sosAdjustedMargin ?? -999);
-          break;
         case "offense":
           diff = (a.season.offensePpa ?? a.season.pointsFor ?? -999) - (b.season.offensePpa ?? b.season.pointsFor ?? -999);
           break;
-        case "defense":
-          diff = (a.season.defensePpa ?? a.season.pointsAgainst ?? -999) - (b.season.defensePpa ?? b.season.pointsAgainst ?? -999);
+        case "defense": {
+          // Lower PPA/points-allowed is *better* defense, so quality is the
+          // negation of the raw stat — this way "descending" reads as
+          // best-defense-first, the way a fan expects a ranking to read,
+          // not just "biggest raw number first".
+          const qa = a.season.defensePpa !== null ? -a.season.defensePpa : a.season.pointsAgainst !== null ? -a.season.pointsAgainst : -Infinity;
+          const qb = b.season.defensePpa !== null ? -b.season.defensePpa : b.season.pointsAgainst !== null ? -b.season.pointsAgainst : -Infinity;
+          diff = qa - qb;
           break;
+        }
       }
       return sortAsc ? diff : -diff;
     });
@@ -105,7 +116,25 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
     }
   }
 
-  const contextLabel = coachFilter === "all" ? "All-Time" : coachFilter;
+  const contextLabel =
+    coachFilter === VIEW_OFFENSE
+      ? "Top Offense"
+      : coachFilter === VIEW_DEFENSE
+        ? "Top Defense"
+        : coachFilter === "all"
+          ? "All-Time"
+          : coachFilter;
+
+  function handleViewChange(value: string) {
+    setCoachFilter(value);
+    if (value === VIEW_OFFENSE) {
+      setSortKey("offense");
+      setSortAsc(false);
+    } else if (value === VIEW_DEFENSE) {
+      setSortKey("defense");
+      setSortAsc(false);
+    }
+  }
 
   return (
     <div>
@@ -114,10 +143,12 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
           View
           <select
             value={coachFilter}
-            onChange={(e) => setCoachFilter(e.target.value)}
+            onChange={(e) => handleViewChange(e.target.value)}
             className="rounded-sm border border-stone/50 bg-oat px-2 py-1 text-sm text-charcoal"
           >
             <option value="all">Overall</option>
+            <option value={VIEW_OFFENSE}>Offensive Ranking (desc.)</option>
+            <option value={VIEW_DEFENSE}>Defensive Ranking (desc.)</option>
             {coaches.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -149,7 +180,6 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
                   ["record", "Record"],
                   ["powerIndex", "Index"],
                   ["pointDiff", "Pt Diff/G"],
-                  ["sos", "SOS"],
                   ["offense", "Off. Eff."],
                   ["defense", "Def. Eff."],
                   ["marks", "Marks"],
@@ -213,11 +243,6 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {result.pointDifferentialPerGame !== null ? result.pointDifferentialPerGame.toFixed(1) : "—"}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {season.sosAdjustedMargin !== null && season.sosAdjustedMargin !== undefined
-                      ? season.sosAdjustedMargin.toFixed(1)
-                      : "—"}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {season.offensePpa !== null ? season.offensePpa.toFixed(2) : season.pointsFor !== null ? `${season.pointsFor} PF` : "—"}
