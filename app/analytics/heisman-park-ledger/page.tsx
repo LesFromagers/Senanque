@@ -37,8 +37,6 @@ export default async function HeismanParkLedgerPage() {
           Analytics
         </Link>
         <span>/</span>
-        <span>OU Football Rankings</span>
-        <span>/</span>
         <span className="text-charcoal">The Ledger</span>
       </nav>
 
