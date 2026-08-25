@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BelfryIcon } from "@/components/icons/BelfryIcon";
+import { MenuIcon } from "@/components/icons/MenuIcon";
+import { CloseIcon } from "@/components/icons/CloseIcon";
 
 const NAV_LINKS = [
   { label: "Analytics", href: "/#work", match: "/analytics" },
@@ -13,23 +16,37 @@ const NAV_LINKS = [
 // Not yet built — rendered as inert text rather than a dead link.
 const PLACEHOLDER_LINKS = ["About"];
 
+/**
+ * Root cause of the sitewide horizontal-scroll bug: this row of nav links
+ * plus the Résumé badge was a single non-wrapping flex line with no
+ * mobile treatment — five-plus items easily wider than any phone
+ * viewport, forcing the whole page to overflow horizontally on every
+ * route that renders it (i.e. every route, via the root layout). Below
+ * `md` the full nav now collapses behind a hamburger toggle instead of
+ * trying to fit on one line.
+ */
 export function Header() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   return (
     <header className="border-b border-stone/40">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="/" className="flex items-center gap-2">
-          <BelfryIcon className="h-6 w-6 text-plum" />
-          <span className="font-display text-lg font-light text-charcoal">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-5">
+        <Link
+          href="/"
+          className="flex min-w-0 items-center gap-2"
+          onClick={() => setOpen(false)}
+        >
+          <BelfryIcon className="h-6 w-6 shrink-0 text-plum" />
+          <span className="truncate font-display text-wordmark font-light text-charcoal">
             Senanque
           </span>
-          <span className="hidden text-xs tracking-label uppercase text-stone sm:inline">
+          <span className="hidden shrink-0 text-xs tracking-label uppercase text-stone sm:inline">
             Intelligence
           </span>
         </Link>
 
-        <nav className="flex items-center gap-6">
+        <nav className="hidden items-center gap-6 md:flex">
           {NAV_LINKS.map((link) => {
             const isActive = pathname.startsWith(link.match);
             return (
@@ -55,7 +72,51 @@ export function Header() {
             Résumé
           </span>
         </nav>
+
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="flex h-9 w-9 shrink-0 items-center justify-center text-charcoal md:hidden"
+        >
+          {open ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+        </button>
       </div>
+
+      {open && (
+        <nav
+          id="mobile-nav"
+          className="flex flex-col gap-1 border-t border-stone/40 px-4 py-4 md:hidden"
+        >
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname.startsWith(link.match);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={
+                  isActive
+                    ? "rounded-sm px-2 py-2.5 text-sm font-medium text-charcoal underline decoration-gold decoration-2 underline-offset-4"
+                    : "rounded-sm px-2 py-2.5 text-sm font-medium text-charcoal/80 transition-colors hover:bg-stone/10 hover:text-plum"
+                }
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+          {PLACEHOLDER_LINKS.map((label) => (
+            <span key={label} className="px-2 py-2.5 text-sm font-medium text-stone">
+              {label}
+            </span>
+          ))}
+          <span className="mt-2 w-fit rounded-sm border border-plum px-3 py-1.5 text-sm font-medium text-plum">
+            Résumé
+          </span>
+        </nav>
+      )}
     </header>
   );
 }

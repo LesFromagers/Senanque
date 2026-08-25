@@ -9,7 +9,7 @@ export function Hero() {
           <p className="text-xs tracking-label uppercase text-stone">
             Oklahoma City · BI &amp; Data Analysis
           </p>
-          <h1 className="mt-4 font-display text-4xl font-light leading-tight text-charcoal sm:text-5xl">
+          <h1 className="mt-4 font-display text-5xl font-light text-charcoal">
             Analytics &amp; Agentics for the Contemplative
           </h1>
           <p className="mt-6 max-w-lg text-charcoal/90">

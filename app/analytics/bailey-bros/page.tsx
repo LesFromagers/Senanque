@@ -25,7 +25,7 @@ export default async function BaileyBrosPage() {
       <Arcade bays={3} size="marker" className="mb-10 max-w-xs" />
 
       <p className="text-xs tracking-label uppercase text-stone">Analytics · FRED API</p>
-      <h1 className="mt-2 font-display text-3xl font-light text-charcoal sm:text-4xl">
+      <h1 className="mt-2 font-display text-4xl font-light text-charcoal">
         Bailey Bros. Economic Barometer
       </h1>
       <p className="mt-4 max-w-2xl text-charcoal/90">

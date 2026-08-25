@@ -7,6 +7,7 @@ import { BeatMarks } from "./BeatMarks";
 import { GapBadge } from "./GapBadge";
 import { HeismanTrophyIcon } from "./HeismanTrophyIcon";
 import { WaxSealIcon } from "./WaxSealIcon";
+import { ChevronDownIcon } from "@/components/icons/ChevronDownIcon";
 
 export interface LedgerRow {
   result: PowerIndexResult;
@@ -42,6 +43,8 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
   const [sortAsc, setSortAsc] = useState(true);
   const [coachFilter, setCoachFilter] = useState<string>("all");
   const [query, setQuery] = useState("");
+  // Mobile column-collapse: which row's detail strip is tapped open, below md.
+  const [expandedYear, setExpandedYear] = useState<number | null>(null);
 
   const coaches = useMemo(() => {
     const set = new Set(rows.map((r) => r.season.headCoach).filter((c): c is string => Boolean(c)));
@@ -168,7 +171,18 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
         </span>
       </div>
 
-      <div className="overflow-x-auto">
+      {/*
+        Two renderings of the same rows, not two components: below `md` the
+        table (built for eight-plus dense columns) never fits a phone
+        viewport gracefully even scrolled, so it's swapped for a stacked
+        list — Rank/Year/Coach/Index up front, the rest revealed per row by
+        tapping the chevron. `md` and up keep the original table untouched,
+        ledger aesthetic (mono figures, wax seal, thin rules) intact in
+        both. The overflow-x-auto/min-w-[900px] pairing on the table is a
+        second line of defense in case a future column addition pushes the
+        table wider than an md-and-up viewport too.
+      */}
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[900px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-charcoal/20 text-left text-xs tracking-label uppercase text-stone">
@@ -262,6 +276,99 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
           </tbody>
         </table>
       </div>
+
+      <ul className="divide-y divide-stone/20 border-t border-charcoal/20 md:hidden">
+        {sorted.map(({ result, season }) => {
+          const isTop = topInContext?.season.year === season.year;
+          const isExpanded = expandedYear === season.year;
+          return (
+            <li key={season.year} className={isTop ? "bg-lavender/20" : ""}>
+              <div className="flex items-center gap-3 px-3 py-3">
+                <span className="flex shrink-0 items-center gap-1.5 font-mono text-sm">
+                  {isTop && (
+                    <span className="inline-block h-7 w-7 shrink-0">
+                      <WaxSealIcon contextLabel={contextLabel} />
+                    </span>
+                  )}
+                  {result.rank}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/analytics/heisman-park-ledger/${season.year}`}
+                    className="font-sans font-medium text-charcoal hover:text-plum hover:underline"
+                  >
+                    {season.year}
+                  </Link>
+                  <p className="truncate text-xs text-charcoal/70">{season.headCoach ?? "—"}</p>
+                </div>
+                <span className="shrink-0 whitespace-nowrap font-mono text-sm font-medium text-charcoal">
+                  <span className="inline-flex items-center gap-1">
+                    {result.powerIndex.toFixed(1)}
+                    {season.heismanWinner && (
+                      <span title={`Heisman winner: ${season.heismanWinner}`} className="text-gold">
+                        <HeismanTrophyIcon className="h-4 w-4" />
+                      </span>
+                    )}
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setExpandedYear(isExpanded ? null : season.year)}
+                  aria-expanded={isExpanded}
+                  aria-label={`${isExpanded ? "Hide" : "Show"} full stats for ${season.year}`}
+                  className="shrink-0 p-1 text-stone transition-colors hover:text-plum"
+                >
+                  <ChevronDownIcon
+                    className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                  />
+                </button>
+              </div>
+
+              {isExpanded && (
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-stone/20 bg-oat/60 px-3 py-3 font-mono text-sm">
+                  <div>
+                    <dt className="font-sans text-xs tracking-label uppercase text-stone">Record</dt>
+                    <dd className="mt-0.5">{season.finalRecord ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-sans text-xs tracking-label uppercase text-stone">Pt Diff/G</dt>
+                    <dd className="mt-0.5">
+                      {result.pointDifferentialPerGame !== null ? result.pointDifferentialPerGame.toFixed(1) : "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-sans text-xs tracking-label uppercase text-stone">Off. Eff.</dt>
+                    <dd className="mt-0.5">
+                      {season.offensePpa !== null
+                        ? season.offensePpa.toFixed(2)
+                        : season.pointsFor !== null
+                          ? `${season.pointsFor} PF`
+                          : "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-sans text-xs tracking-label uppercase text-stone">Def. Eff.</dt>
+                    <dd className="mt-0.5">
+                      {season.defensePpa !== null
+                        ? season.defensePpa.toFixed(2)
+                        : season.pointsAgainst !== null
+                          ? `${season.pointsAgainst} PA`
+                          : "—"}
+                    </dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="font-sans text-xs tracking-label uppercase text-stone">Marks</dt>
+                    <dd className="mt-1 flex items-center gap-2 font-sans">
+                      <BeatMarks beatTexas={season.beatTexas} beatOsu={season.beatOsu} />
+                      <GapBadge gaps={result.gaps} />
+                    </dd>
+                  </div>
+                </dl>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

@@ -45,7 +45,7 @@ export default async function HeismanParkLedgerPage() {
       <p className="text-center text-xs tracking-label uppercase text-stone">
         Analytics · collegefootballdata.com + Wikipedia
       </p>
-      <h1 className="mt-2 text-center font-display text-4xl font-light text-garnet sm:text-5xl">
+      <h1 className="mt-2 text-center font-display text-5xl font-light text-garnet">
         The Heisman Park Ledger
       </h1>
       <p className="mt-3 text-center font-display text-lg italic text-charcoal/80">
