@@ -110,13 +110,27 @@ def pull_year(session: requests.Session, year: int) -> dict:
     # yards, turnovers. OU's own offensive output only; see the module
     # docstring for why there's no matching "yards allowed" pull here.
     stats = fetch_json(session, "/stats/season", {"year": year, "team": TEAM})
-    if stats:
+    returned: dict[str, object] = {}
+    if isinstance(stats, list):
         for entry in stats:
-            column = STATS_SEASON_CATEGORIES.get(entry.get("statName"))
-            if column:
-                row[column] = entry.get("statValue")
-    if row.get("offense_total_yards") is None:
-        row["notes"] += f"no season-stats total yards returned for {year}; "
+            if isinstance(entry, dict) and entry.get("statName") is not None:
+                returned[str(entry["statName"])] = entry.get("statValue")
+
+    for category, column in STATS_SEASON_CATEGORIES.items():
+        row[column] = returned.get(category)
+
+    missing = [cat for cat, col in STATS_SEASON_CATEGORIES.items() if row.get(col) is None]
+    if missing:
+        # The point of naming what CFBD *did* return: a statName spelling
+        # change is diagnosable straight from the CSV, without re-running
+        # the pull to find out what broke.
+        if returned:
+            row["notes"] += (
+                f"{year}: no value for statName(s) {', '.join(sorted(missing))}; "
+                f"CFBD returned {len(returned)} statNames instead: {', '.join(sorted(returned))}; "
+            )
+        else:
+            row["notes"] += f"{year}: /stats/season returned no rows at all; "
 
     for field in CFBD_FIELDS:
         row.setdefault(field, None)
