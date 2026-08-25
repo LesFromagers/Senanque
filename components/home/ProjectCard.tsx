@@ -46,26 +46,37 @@ function BarsThumbnail({ trend }: { trend: boolean }) {
 }
 
 // Real column names from RankTable, laid out as an actual grid — the
-// point is to read as a table, not a chart. Non-rank cells are neutral
-// skeleton bars rather than any figure: a preview of the dashboard's
-// *shape*, never a claim about its data.
-const TABLE_COLUMNS = ["Rank", "Year", "Coach", "Index"];
-const TABLE_ROWS = 4;
+// point is to read as a table, not a chart. Year/Coach stay neutral
+// skeleton bars (no figure implied), but Index and Marks borrow the
+// same conditional coloring RankTable itself uses, so the preview
+// reads as "this dashboard highlights things," not just decoration:
+//   Garnet — a true beat-mark, and (per DESIGN.md) the rank-1 index
+//            figure; one of Garnet's few scoped uses, never the shared
+//            chart-series order.
+//   Gold   — a split result / a data gap (GapBadge's existing color).
+//   Stone  — not scheduled, or no mark at all.
+const TABLE_COLUMNS = ["Rank", "Year", "Coach", "Index", "Marks"];
+const MARK_COLOR = ["var(--color-garnet)", "var(--color-gold)", "var(--color-stone)", "var(--color-garnet)"];
+const TABLE_ROWS = MARK_COLOR.length;
 
 function TableThumbnail() {
   return (
     <div className="flex h-28 flex-col gap-2 border-b border-stone/40 bg-oat px-4 py-3.5 font-mono">
-      <div className="grid grid-cols-4 gap-2 border-b border-stone/30 pb-1.5 text-[9px] tracking-label uppercase text-stone">
+      <div className="grid grid-cols-5 gap-2 border-b border-stone/30 pb-1.5 text-[8px] tracking-label uppercase text-stone">
         {TABLE_COLUMNS.map((col) => (
           <span key={col}>{col}</span>
         ))}
       </div>
       {Array.from({ length: TABLE_ROWS }).map((_, i) => (
-        <div key={i} className="grid grid-cols-4 items-center gap-2">
+        <div key={i} className="grid grid-cols-5 items-center gap-2">
           <span className={`text-xs ${i === 0 ? "font-medium text-charcoal" : "text-stone"}`}>{i + 1}</span>
           <span className="h-1.5 rounded-sm bg-stone/25" />
           <span className="h-1.5 rounded-sm bg-stone/25" />
-          <span className={`h-1.5 rounded-sm ${i === 0 ? "bg-lavender" : "bg-stone/25"}`} />
+          <span
+            className="h-1.5 rounded-sm"
+            style={{ backgroundColor: i === 0 ? "var(--color-garnet)" : "var(--color-stone)", opacity: i === 0 ? 1 : 0.25 }}
+          />
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: MARK_COLOR[i] }} />
         </div>
       ))}
     </div>
