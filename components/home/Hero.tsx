@@ -38,7 +38,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="mt-12 sm:mt-16">
+      <div className="mt-6 sm:mt-8">
         <PracticeArcade />
       </div>
     </section>

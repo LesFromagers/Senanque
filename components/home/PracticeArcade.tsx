@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BelfryMark } from "./BelfryMark";
 
@@ -14,6 +17,12 @@ import { BelfryMark } from "./BelfryMark";
  * and light up Lavender with the label on hover, 200ms. Mobile: no
  * hover to rely on, so Theology stands filled by default and every
  * label stays visible in Stone.
+ *
+ * Arrival beat: on desktop, Theology lights briefly on mount and then
+ * settles back to the hover-only state — half a second that tells a
+ * first-time visitor the mark is interactive before it goes quiet.
+ * Mobile is unaffected (Theology is already permanently filled there).
+ * Skipped entirely under prefers-reduced-motion.
  */
 const PRACTICES = [
   { label: "Economics", short: "Econ" },
@@ -26,7 +35,23 @@ const PRACTICES = [
 const bayBase =
   "flex-none box-border flex items-end justify-center overflow-hidden whitespace-nowrap uppercase cursor-pointer transition-colors duration-200 pb-3 border-plum border-b-0";
 
+const ARRIVAL_HOLD_MS = 600;
+
 export function PracticeArcade() {
+  const [arrived, setArrived] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Deferred via setTimeout (rather than called directly) so the effect
+    // only ever schedules work instead of setting state synchronously.
+    const onTimer = setTimeout(() => setArrived(true), 0);
+    const offTimer = setTimeout(() => setArrived(false), ARRIVAL_HOLD_MS);
+    return () => {
+      clearTimeout(onTimer);
+      clearTimeout(offTimer);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="relative h-[166px] w-full max-w-[344px] sm:h-[318px] sm:max-w-[661px]">
@@ -50,7 +75,11 @@ export function PracticeArcade() {
                 key={practice.label}
                 href="#work"
                 aria-label={`View ${practice.label} work`}
-                className={`${bayBase} relative w-[92px] h-[55px] border-2 rounded-none bg-lavender text-charcoal text-[8px] tracking-[0.08em] sm:w-[165px] sm:h-[120px] sm:border-4 sm:bg-oat sm:text-transparent sm:hover:bg-lavender sm:hover:text-charcoal sm:text-[12px] sm:tracking-[0.12em]`}
+                className={`${bayBase} relative w-[92px] h-[55px] border-2 rounded-none bg-lavender text-charcoal text-[8px] tracking-[0.08em] sm:w-[165px] sm:h-[120px] sm:border-4 sm:text-[12px] sm:tracking-[0.12em] ${
+                  arrived
+                    ? "sm:bg-lavender sm:text-charcoal"
+                    : "sm:bg-oat sm:text-transparent sm:hover:bg-lavender sm:hover:text-charcoal"
+                }`}
               >
                 <span
                   aria-hidden="true"
