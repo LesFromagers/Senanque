@@ -45,29 +45,27 @@ function BarsThumbnail({ trend }: { trend: boolean }) {
   );
 }
 
-// Illustrative row shape only — decreasing, unlabeled bars, never real
-// figures. The real ranking lives at the dashboard; this is a preview of
-// its *form* (a ranked table), not a claim about its data.
-const ROW_WIDTHS = [92, 76, 64, 50];
+// Real column names from RankTable, laid out as an actual grid — the
+// point is to read as a table, not a chart. Non-rank cells are neutral
+// skeleton bars rather than any figure: a preview of the dashboard's
+// *shape*, never a claim about its data.
+const TABLE_COLUMNS = ["Rank", "Year", "Coach", "Index"];
+const TABLE_ROWS = 4;
 
 function TableThumbnail() {
   return (
-    <div className="flex h-28 flex-col justify-center gap-2.5 border-b border-stone/40 bg-oat px-4">
-      {ROW_WIDTHS.map((w, i) => (
-        <div key={i} className="flex items-center gap-2.5">
-          <span
-            className={`w-3 text-right font-mono text-[11px] ${i === 0 ? "font-medium text-charcoal" : "text-stone"}`}
-          >
-            {i + 1}
-          </span>
-          <span
-            className="h-2 flex-none rounded-sm"
-            style={{
-              width: `${w}%`,
-              backgroundColor: i === 0 ? "var(--color-lavender)" : "var(--color-stone)",
-              opacity: i === 0 ? 1 : 0.45,
-            }}
-          />
+    <div className="flex h-28 flex-col gap-2 border-b border-stone/40 bg-oat px-4 py-3.5 font-mono">
+      <div className="grid grid-cols-4 gap-2 border-b border-stone/30 pb-1.5 text-[9px] tracking-label uppercase text-stone">
+        {TABLE_COLUMNS.map((col) => (
+          <span key={col}>{col}</span>
+        ))}
+      </div>
+      {Array.from({ length: TABLE_ROWS }).map((_, i) => (
+        <div key={i} className="grid grid-cols-4 items-center gap-2">
+          <span className={`text-xs ${i === 0 ? "font-medium text-charcoal" : "text-stone"}`}>{i + 1}</span>
+          <span className="h-1.5 rounded-sm bg-stone/25" />
+          <span className="h-1.5 rounded-sm bg-stone/25" />
+          <span className={`h-1.5 rounded-sm ${i === 0 ? "bg-lavender" : "bg-stone/25"}`} />
         </div>
       ))}
     </div>
