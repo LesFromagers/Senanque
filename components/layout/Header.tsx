@@ -38,11 +38,24 @@ export function Header() {
           onClick={() => setOpen(false)}
         >
           <BelfryIcon className="h-6 w-6 shrink-0 text-plum" />
-          <span className="truncate font-display text-wordmark font-light text-charcoal">
-            Senanque
-          </span>
-          <span className="hidden shrink-0 text-xs tracking-label uppercase text-stone sm:inline">
-            Intelligence
+          {/*
+            "Senanque | Intelligence" reads as one lockup, baseline-aligned,
+            at every width — no longer dropping "Intelligence" below `sm`.
+            Each piece is its own flex child so a very narrow viewport
+            truncates the wordmark itself before it ever pushes the pipe
+            or "Intelligence" off — those two stay put as the fixed part
+            of the mark.
+          */}
+          <span className="flex min-w-0 items-baseline gap-2">
+            <span className="truncate font-display text-wordmark font-light text-charcoal">
+              Senanque
+            </span>
+            <span className="shrink-0 text-stone/50" aria-hidden="true">
+              |
+            </span>
+            <span className="shrink-0 text-xs tracking-label uppercase text-stone">
+              Intelligence
+            </span>
           </span>
         </Link>
 
