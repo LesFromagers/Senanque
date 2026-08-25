@@ -6,6 +6,12 @@
  * weights (mobile/desktop), because stroke doesn't scale linearly with
  * size across those two contexts. See PracticeArcade, which is the only
  * place this is used.
+ *
+ * The cap's apex sits exactly on the viewBox's top edge (y=3.6) and the
+ * roof's base corners sit exactly on its bottom edge (y=15.6), so the
+ * stroke's natural bulge past each vertex would otherwise be clipped
+ * flat by the SVG viewport — `overflow: visible` lets it render past
+ * the box instead of chopping the peak square.
  */
 export function BelfryMark({
   width,
@@ -27,6 +33,7 @@ export function BelfryMark({
       strokeWidth={strokeWidth}
       strokeLinecap="butt"
       strokeLinejoin="miter"
+      style={{ overflow: "visible" }}
       className={className}
       aria-hidden="true"
     >

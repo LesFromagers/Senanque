@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BelfryMark } from "./BelfryMark";
+import { PRACTICES } from "@/lib/practices";
 
 /**
  * The homepage hero mark: the belfry standing on a wide, square-piered
@@ -24,14 +25,6 @@ import { BelfryMark } from "./BelfryMark";
  * Mobile is unaffected (Theology is already permanently filled there).
  * Skipped entirely under prefers-reduced-motion.
  */
-const PRACTICES = [
-  { label: "Economics", short: "Econ" },
-  { label: "Sports", short: "Sports" },
-  { label: "Theology", short: "Theology" },
-  { label: "Art", short: "Art" },
-  { label: "Games", short: "Games" },
-] as const;
-
 const bayBase =
   "flex-none box-border flex items-end justify-center overflow-hidden whitespace-nowrap uppercase cursor-pointer transition-colors duration-200 pb-3 border-plum border-b-0";
 
