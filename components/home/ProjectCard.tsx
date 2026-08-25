@@ -47,25 +47,20 @@ function BarsThumbnail({ trend }: { trend: boolean }) {
 
 // Real column names from RankTable, laid out as an actual grid — the
 // point is to read as a table, not a chart. Year/Coach stay neutral
-// skeleton bars (no figure implied), but Index and Marks borrow the
-// same conditional coloring RankTable itself uses, so the preview
-// reads as "this dashboard highlights things," not just decoration:
-//   Lavender — the top-in-context row (RankTable's own bg-lavender/20
-//              row highlight + the wax seal), so it lives in Marks,
-//              decoupled from the Index column below.
-//   Garnet   — a true beat-mark, and (per DESIGN.md) the rank-1 index
-//              figure; one of Garnet's few scoped uses, never the
-//              shared chart-series order.
-//   Gold     — a split result / a data gap (GapBadge's existing color).
-//   Stone    — not scheduled, or no mark at all.
+// skeleton bars (no figure implied); Index and Marks share one accent
+// per row, Garnet -> Gold -> Charcoal -> Lavender, so the preview
+// reads as coordinated conditional formatting rather than decoration.
+// Garnet on row one doubles as the rank-1 index figure — one of
+// Garnet's few scoped uses per DESIGN.md, never the shared
+// chart-series order.
 const TABLE_COLUMNS = ["Rank", "Year", "Coach", "Index", "Marks"];
-const MARK_COLOR = [
-  "var(--color-lavender)",
+const ROW_COLOR = [
   "var(--color-garnet)",
   "var(--color-gold)",
-  "var(--color-stone)",
+  "var(--color-charcoal)",
+  "var(--color-lavender)",
 ];
-const TABLE_ROWS = MARK_COLOR.length;
+const TABLE_ROWS = ROW_COLOR.length;
 
 function TableThumbnail() {
   return (
@@ -80,11 +75,8 @@ function TableThumbnail() {
           <span className={`text-xs ${i === 0 ? "font-medium text-charcoal" : "text-stone"}`}>{i + 1}</span>
           <span className="h-1.5 rounded-sm bg-stone/25" />
           <span className="h-1.5 rounded-sm bg-stone/25" />
-          <span
-            className="h-1.5 rounded-sm"
-            style={{ backgroundColor: i === 0 ? "var(--color-garnet)" : "var(--color-stone)", opacity: i === 0 ? 1 : 0.25 }}
-          />
-          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: MARK_COLOR[i] }} />
+          <span className="h-1.5 rounded-sm" style={{ backgroundColor: ROW_COLOR[i] }} />
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ROW_COLOR[i] }} />
         </div>
       ))}
     </div>
