@@ -62,6 +62,11 @@ interface RawSeasonJson {
   sp_overall: number | null;
   sp_offense: number | null;
   sp_defense: number | null;
+  /** Absent from the committed JSON until the next CFBD pull regenerates it — see fromJson's ?? null. */
+  offense_total_yards?: number | null;
+  offense_rushing_yards?: number | null;
+  offense_passing_yards?: number | null;
+  offense_turnovers?: number | null;
   /** Only present on a Supabase row today (see schema.sql) — absent from the static JSON until the SOS pull exists. */
   sos_adjusted_margin?: number | null;
 }
@@ -91,6 +96,13 @@ function fromJson(row: RawSeasonJson): SeasonRecord {
     spOverall: row.sp_overall,
     spOffense: row.sp_offense,
     spDefense: row.sp_defense,
+    // ?? null, not a plain pass-through: the committed JSON predates these
+    // columns until the next CFBD pull regenerates it, so the key is
+    // simply absent (undefined) on every row today, not present-and-null.
+    offenseTotalYards: row.offense_total_yards ?? null,
+    offenseRushingYards: row.offense_rushing_yards ?? null,
+    offensePassingYards: row.offense_passing_yards ?? null,
+    offenseTurnovers: row.offense_turnovers ?? null,
     sosAdjustedMargin: row.sos_adjusted_margin ?? null,
   };
 }

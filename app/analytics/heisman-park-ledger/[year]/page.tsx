@@ -93,6 +93,41 @@ export default async function SeasonDetailPage({
         </div>
       </dl>
 
+      {season.dataTier === 1 && (
+        <div className="mt-8 border-t border-stone/30 pt-6">
+          <p className="text-xs tracking-label uppercase text-stone">CFBD efficiency &amp; yardage</p>
+          <dl className="mt-3 grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
+            <div>
+              <dt className="text-xs tracking-label uppercase text-stone">Off./Def. PPA</dt>
+              <dd className="font-mono text-charcoal">
+                {season.offensePpa !== null ? season.offensePpa.toFixed(2) : "—"} /{" "}
+                {season.defensePpa !== null ? season.defensePpa.toFixed(2) : "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs tracking-label uppercase text-stone">SP+ Overall</dt>
+              <dd className="font-mono text-charcoal">{season.spOverall !== null ? season.spOverall.toFixed(1) : "—"}</dd>
+            </div>
+            <div>
+              <dt className="text-xs tracking-label uppercase text-stone">Total/Rush/Pass Yds</dt>
+              <dd className="font-mono text-charcoal">
+                {season.offenseTotalYards ?? "—"} / {season.offenseRushingYards ?? "—"} /{" "}
+                {season.offensePassingYards ?? "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs tracking-label uppercase text-stone">Turnovers</dt>
+              <dd className="font-mono text-charcoal">{season.offenseTurnovers ?? "—"}</dd>
+            </div>
+          </dl>
+          <p className="mt-3 text-xs text-stone">
+            Yardage and turnovers are OU&rsquo;s own raw offensive output from CFBD — there&rsquo;s no
+            matching &ldquo;yards allowed&rdquo; figure (see method page); defense PPA above is the real,
+            opponent-adjusted defensive number the Power Index uses.
+          </p>
+        </div>
+      )}
+
       {season.notableAllAmericans && (
         <p className="mt-6 text-sm text-charcoal/90">
           <span className="text-xs tracking-label uppercase text-stone">All-Americans </span>
