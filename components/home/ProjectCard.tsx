@@ -48,8 +48,8 @@ function BarsThumbnail({ trend }: { trend: boolean }) {
 // Real column names from RankTable, laid out as an actual grid — the
 // point is to read as a table, not a chart. Year/Coach stay neutral
 // skeleton bars (no figure implied); Index and Marks share one accent
-// per row, Garnet -> Gold -> Charcoal -> Lavender, so the preview
-// reads as coordinated conditional formatting rather than decoration.
+// per row, Garnet -> Gold -> Sage -> Lavender, so the preview reads
+// as coordinated conditional formatting rather than decoration.
 // Garnet on row one doubles as the rank-1 index figure — one of
 // Garnet's few scoped uses per DESIGN.md, never the shared
 // chart-series order.
@@ -57,7 +57,7 @@ const TABLE_COLUMNS = ["Rank", "Year", "Coach", "Index", "Marks"];
 const ROW_COLOR = [
   "var(--color-garnet)",
   "var(--color-gold)",
-  "var(--color-charcoal)",
+  "var(--color-sage)",
   "var(--color-lavender)",
 ];
 const TABLE_ROWS = ROW_COLOR.length;
