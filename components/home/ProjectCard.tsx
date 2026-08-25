@@ -50,13 +50,21 @@ function BarsThumbnail({ trend }: { trend: boolean }) {
 // skeleton bars (no figure implied), but Index and Marks borrow the
 // same conditional coloring RankTable itself uses, so the preview
 // reads as "this dashboard highlights things," not just decoration:
-//   Garnet — a true beat-mark, and (per DESIGN.md) the rank-1 index
-//            figure; one of Garnet's few scoped uses, never the shared
-//            chart-series order.
-//   Gold   — a split result / a data gap (GapBadge's existing color).
-//   Stone  — not scheduled, or no mark at all.
+//   Lavender — the top-in-context row (RankTable's own bg-lavender/20
+//              row highlight + the wax seal), so it lives in Marks,
+//              decoupled from the Index column below.
+//   Garnet   — a true beat-mark, and (per DESIGN.md) the rank-1 index
+//              figure; one of Garnet's few scoped uses, never the
+//              shared chart-series order.
+//   Gold     — a split result / a data gap (GapBadge's existing color).
+//   Stone    — not scheduled, or no mark at all.
 const TABLE_COLUMNS = ["Rank", "Year", "Coach", "Index", "Marks"];
-const MARK_COLOR = ["var(--color-garnet)", "var(--color-gold)", "var(--color-stone)", "var(--color-garnet)"];
+const MARK_COLOR = [
+  "var(--color-lavender)",
+  "var(--color-garnet)",
+  "var(--color-gold)",
+  "var(--color-stone)",
+];
 const TABLE_ROWS = MARK_COLOR.length;
 
 function TableThumbnail() {
