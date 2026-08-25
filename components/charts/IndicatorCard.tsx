@@ -15,7 +15,7 @@ export function IndicatorCard({ indicator, color }: IndicatorCardProps) {
 
   if (indicator.status === "unavailable") {
     return (
-      <div className="rounded-sm border border-dashed border-stone/60 p-5">
+      <div className="min-w-0 rounded-sm border border-dashed border-stone/60 p-5">
         <h3 className="font-display text-lg font-light text-charcoal">{indicator.title}</h3>
         <p className="mt-2 text-sm text-stone">
           {indicator.unavailableMessage ?? "Live data unavailable."}
@@ -29,10 +29,10 @@ export function IndicatorCard({ indicator, color }: IndicatorCardProps) {
 
   return (
     <div
-      className={`rounded-sm border p-5 ${indicator.warning ? "border-gold/60 bg-gold/5" : "border-stone/40"}`}
+      className={`min-w-0 rounded-sm border p-5 ${indicator.warning ? "border-gold/60 bg-gold/5" : "border-stone/40"}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
           <h3 className="font-display text-lg font-light text-charcoal">{indicator.title}</h3>
           {indicator.latestValue !== undefined && (
             <p className="mt-1 font-display text-2xl font-light text-charcoal">
