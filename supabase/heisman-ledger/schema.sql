@@ -35,6 +35,16 @@ create table if not exists heisman_ledger_seasons (
   sp_overall double precision,
   sp_offense double precision,
   sp_defense double precision,
+  -- Raw season counting stats (api/stats/season, 2005+), OU's own offensive
+  -- output only. No matching "yards allowed" column — CFBD's season-stats
+  -- endpoint doesn't split by offense/defense, so a real defensive-yardage
+  -- figure isn't available without a per-opponent reconciliation this
+  -- pipeline doesn't do. defense_ppa above is the actual defensive-quality
+  -- figure the Power Index uses; these four are supplementary context.
+  offense_total_yards integer,
+  offense_rushing_yards integer,
+  offense_passing_yards integer,
+  offense_turnovers integer,
   -- Iterative-SRS opponent-adjusted margin. NULL until the second-order
   -- opponent-season pull exists — see gap_report_verified_batch.md's "Not
   -- started at all" section. Never fabricated in its place.

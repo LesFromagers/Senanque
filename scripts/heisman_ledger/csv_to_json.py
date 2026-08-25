@@ -19,7 +19,14 @@ import json
 import re
 from pathlib import Path
 
-INT_FIELDS = ("year", "data_tier")
+INT_FIELDS = (
+    "year",
+    "data_tier",
+    "offense_total_yards",
+    "offense_rushing_yards",
+    "offense_passing_yards",
+    "offense_turnovers",
+)
 APPROXIMATE_INT_FIELDS = ("points_for", "points_against")
 FLOAT_FIELDS = (
     "offense_ppa",
@@ -50,7 +57,10 @@ def convert(src: Path, out: Path) -> int:
                 if v in (None, ""):
                     clean[k] = None
                 elif k in INT_FIELDS:
-                    clean[k] = int(v)
+                    # int(v) directly would choke on a CFBD stat value that
+                    # round-tripped through the CSV as "5234.0" — same
+                    # tolerant parse merge_dataset.py already uses.
+                    clean[k] = int(float(v))
                 elif k in APPROXIMATE_INT_FIELDS:
                     value, is_approx = parse_approximate_int(v)
                     clean[k] = value

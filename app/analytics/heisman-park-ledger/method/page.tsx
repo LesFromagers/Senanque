@@ -30,6 +30,16 @@ export default function MethodPage() {
             Sports-Reference or a similar ToS-restricted site — a fact worth cross-checking
             there is flagged for a human to check by hand instead.
           </p>
+          <p className="mt-2">
+            From 2005 forward, CFBD also supplies OU&rsquo;s own raw total/rushing/passing yards
+            and turnovers, shown on each season&rsquo;s detail page as context alongside the
+            efficiency numbers. There&rsquo;s deliberately no matching &ldquo;yards allowed&rdquo;
+            figure — CFBD&rsquo;s season-stats endpoint doesn&rsquo;t split by offense/defense, and
+            a real one would mean reconciling every opponent&rsquo;s own season stats
+            game-by-game, which this pipeline doesn&rsquo;t do. Defense PPA (above) is the actual,
+            opponent-adjusted defensive-quality number the Power Index uses; the raw yardage
+            fields are supplementary, not a scoring input.
+          </p>
         </section>
 
         <section>

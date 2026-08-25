@@ -6,7 +6,8 @@ the merged dataset the dashboard and the Supabase schema consume.
 
 ```
 pull_wikipedia.py     # Step 1 — the ~105 remaining seasons, Wikipedia only
-pull_cfbd.py          # Step 2 — SP+/efficiency data, 2005-present, CFBD API
+pull_cfbd.py          # Step 2 — SP+/efficiency + raw yardage/turnovers,
+                       #          2005-present, CFBD API
 merge_dataset.py      # Step 3 — merge verified + pulled + CFBD, assign data_tier,
                        #          emit the master season/game CSVs + a gap report
 csv_to_json.py        # Step 4 — master_seasons.csv -> the JSON the Next.js app imports
@@ -22,7 +23,14 @@ generate_seed_sql.py  # Step 5 — master CSVs -> supabase/heisman-ledger/seed.s
   gap instead of reaching for it — cross-checking those sites is a manual,
   human-paced job for Matt, not something this script should ever attempt.
 - **Never fabricate.** Every field that doesn't come back from a legitimate
-  fetch is left `NULL`/blank and logged to a gap report, not guessed.
+  fetch is left `NULL`/blank and logged to a gap report, not guessed. This is
+  why `pull_cfbd.py` pulls OU's own raw yardage/turnovers but leaves
+  "yards allowed" (defensive yardage) alone entirely — CFBD's season-stats
+  endpoint doesn't split by offense/defense, and computing a real
+  yards-allowed figure would mean reconciling every opponent's own season
+  stats game-by-game, which this pipeline doesn't do. `defense_ppa` (already
+  pulled, era- and opponent-adjusted) is the real defensive-quality number;
+  don't add a guessed yards-allowed column in its place.
 
 ## Running it
 

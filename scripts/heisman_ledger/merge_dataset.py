@@ -17,7 +17,7 @@ from typing import Optional
 
 from schema import GAME_FIELDS, SEASON_FIELDS
 
-MASTER_FIELDS = SEASON_FIELDS + [
+CFBD_MERGE_FIELDS = [
     "offense_ppa",
     "defense_ppa",
     "offense_success_rate",
@@ -25,7 +25,13 @@ MASTER_FIELDS = SEASON_FIELDS + [
     "sp_overall",
     "sp_offense",
     "sp_defense",
+    "offense_total_yards",
+    "offense_rushing_yards",
+    "offense_passing_yards",
+    "offense_turnovers",
 ]
+
+MASTER_FIELDS = SEASON_FIELDS + CFBD_MERGE_FIELDS
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -87,7 +93,7 @@ def main() -> None:
             # A CFBD hit is what actually promotes a season to tier 1 — not
             # just "year >= 2005" on its own, in case CFBD has a gap.
             row["data_tier"] = "1"
-            for field in ["offense_ppa", "defense_ppa", "offense_success_rate", "defense_success_rate", "sp_overall", "sp_offense", "sp_defense"]:
+            for field in CFBD_MERGE_FIELDS:
                 row[field] = cfbd.get(field)
         elif year >= 2005:
             gap_lines.append(f"- **{year}**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.")

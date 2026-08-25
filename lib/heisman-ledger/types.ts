@@ -32,6 +32,20 @@ export interface SeasonRecord {
   spOffense: number | null;
   spDefense: number | null;
   /**
+   * Raw season counting stats from CFBD's api/stats/season (2005+ only) —
+   * OU's own offensive output, supplementary context alongside the
+   * era-adjusted offensePpa/defensePpa above. There's no matching "yards
+   * allowed" figure: CFBD's season-stats endpoint doesn't split by
+   * offense/defense, so a real defensive-yardage number isn't available
+   * without reconciling every opponent's own season stats game-by-game —
+   * left undone rather than approximated. defensePpa remains the actual
+   * defensive-quality figure the Power Index uses.
+   */
+  offenseTotalYards: number | null;
+  offenseRushingYards: number | null;
+  offensePassingYards: number | null;
+  offenseTurnovers: number | null;
+  /**
    * Iterative-SRS opponent-adjusted point margin. Not populated by anything
    * in this codebase yet — computing it needs each opponent's own
    * season-long game log (a second-order pull explicitly out of scope for
