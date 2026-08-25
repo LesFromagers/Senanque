@@ -75,6 +75,12 @@ up the real database:
    belongs in your own shell environment for a one-off script run.
 3. In the Supabase dashboard's **SQL Editor**, paste and run
    `supabase/heisman-ledger/schema.sql`, then `supabase/heisman-ledger/seed.sql`.
+
+   **If the project already existed before the CFBD counting-stat columns
+   landed**, run `supabase/heisman-ledger/migrations/2026-08-25-add-cfbd-counting-stats.sql`
+   in between. `schema.sql` uses `create table if not exists`, so re-running
+   it against an existing table adds nothing, and `seed.sql` will fail with
+   `column "offense_total_yards" ... does not exist`.
 4. Add to Vercel's Environment Variables (Project Settings → Environment
    Variables) and to your local `.env.local`:
    - `SUPABASE_URL` — the Project URL

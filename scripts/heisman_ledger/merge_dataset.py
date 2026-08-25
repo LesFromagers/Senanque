@@ -17,7 +17,11 @@ from typing import Optional
 
 from schema import GAME_FIELDS, SEASON_FIELDS
 
-CFBD_MERGE_FIELDS = [
+# SP+/PPA and the raw counting stats come from two different CFBD endpoints
+# that fail independently (see pull_cfbd.py) — kept as separate lists so a
+# year with season totals but no SP+ rating still keeps its yardage instead
+# of losing it because the *other* endpoint happened to come back empty.
+CFBD_EFFICIENCY_FIELDS = [
     "offense_ppa",
     "defense_ppa",
     "offense_success_rate",
@@ -25,13 +29,16 @@ CFBD_MERGE_FIELDS = [
     "sp_overall",
     "sp_offense",
     "sp_defense",
+]
+
+CFBD_COUNTING_FIELDS = [
     "offense_total_yards",
     "offense_rushing_yards",
     "offense_passing_yards",
     "offense_turnovers",
 ]
 
-MASTER_FIELDS = SEASON_FIELDS + CFBD_MERGE_FIELDS
+MASTER_FIELDS = SEASON_FIELDS + CFBD_EFFICIENCY_FIELDS + CFBD_COUNTING_FIELDS
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -89,11 +96,17 @@ def main() -> None:
     for year in sorted(merged):
         row = merged[year]
         cfbd = cfbd_by_year.get(year)
+        if cfbd:
+            # Counting stats are copied whenever the CFBD row exists at all —
+            # /stats/season succeeds or fails independently of /ratings/sp,
+            # which is what actually gates data_tier below.
+            for field in CFBD_COUNTING_FIELDS:
+                row[field] = cfbd.get(field)
         if cfbd and cfbd.get("sp_overall") not in (None, ""):
             # A CFBD hit is what actually promotes a season to tier 1 — not
             # just "year >= 2005" on its own, in case CFBD has a gap.
             row["data_tier"] = "1"
-            for field in CFBD_MERGE_FIELDS:
+            for field in CFBD_EFFICIENCY_FIELDS:
                 row[field] = cfbd.get(field)
         elif year >= 2005:
             gap_lines.append(f"- **{year}**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.")
