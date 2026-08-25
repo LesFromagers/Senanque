@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Arcade } from "@/components/brand/Arcade";
+import { PracticeArcade } from "./PracticeArcade";
 
 export function Hero() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
-      <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-        <div>
+      <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between sm:gap-12">
+        <div className="max-w-xl">
           <p className="text-xs tracking-label uppercase text-stone">
             Oklahoma City · BI &amp; Data Analysis
           </p>
@@ -32,7 +32,14 @@ export function Hero() {
             </Link>
           </div>
         </div>
-        <Arcade bays={5} size="hero" caption={{ title: "Abbaye de Sénanque", year: "1148" }} />
+        <div className="flex shrink-0 flex-row gap-6 text-xs tracking-label uppercase text-stone sm:flex-col sm:gap-1.5 sm:text-right">
+          <span>Abbaye de Sénanque</span>
+          <span>1148</span>
+        </div>
+      </div>
+
+      <div className="mt-12 sm:mt-16">
+        <PracticeArcade />
       </div>
     </section>
   );
