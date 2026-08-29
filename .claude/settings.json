@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "sandbox": {
+    "network": {
+      "allowedDomains": [
+        "en.wikipedia.org",
+        "api.collegefootballdata.com",
+        "ncaa.com",
+        "ncaa.org"
+      ]
+    }
+  }
+}
