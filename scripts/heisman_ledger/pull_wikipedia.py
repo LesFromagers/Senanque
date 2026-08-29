@@ -68,8 +68,20 @@ def load_verified_years(verified_csv: Path) -> set[int]:
         return {int(row["year"]) for row in csv.DictReader(f)}
 
 
+MAX_RETRIES = 5
+
+
 def fetch_wikitext(session: requests.Session, title: str) -> Optional[str]:
-    """Returns the page's current wikitext, or None if the title doesn't resolve."""
+    """
+    Returns the page's current wikitext, or None if the title doesn't
+    resolve. Retries a 429/5xx with backoff (honoring a Retry-After header
+    when the server sends one) rather than surfacing it as a fetch error —
+    a full 131-season run confirmed this matters: a burst of testing calls
+    against the live API before this run left the pull rate-limited on and
+    off for most of its length, and every 429 that wasn't retried got
+    mislabeled downstream as "no Wikipedia season article found" — a false
+    gap, not a real one, for a season this source does have.
+    """
     params = {
         "action": "query",
         "prop": "revisions",
@@ -79,8 +91,17 @@ def fetch_wikitext(session: requests.Session, title: str) -> Optional[str]:
         "redirects": 1,
         "titles": title,
     }
-    resp = session.get(API_URL, params=params, timeout=20)
-    resp.raise_for_status()
+    for attempt in range(MAX_RETRIES):
+        resp = session.get(API_URL, params=params, timeout=20)
+        if resp.status_code == 429 or resp.status_code >= 500:
+            if attempt == MAX_RETRIES - 1:
+                resp.raise_for_status()
+            retry_after = resp.headers.get("Retry-After")
+            wait = float(retry_after) if retry_after else min(5 * (2**attempt), 60)
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        break
     data = resp.json()
     pages = data.get("query", {}).get("pages", {})
     for page in pages.values():
