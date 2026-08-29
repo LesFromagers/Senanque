@@ -135,20 +135,25 @@ def clean_multiline(text: str) -> list[str]:
 
 def find_infobox(wikicode: mwph.wikicode.Wikicode):
     """
-    Every OU season article checked while building this pull (1896 through
-    2020, old and new) uses the same standardized template regardless of
-    era: {{Infobox college sports team season}} -- not the football-
-    specific name this function originally looked for (that assumption was
-    never checked against a live page; see this script's README note on
-    the offline-fixture-only validation this was originally shipped with).
-    Kept "football" as an alternate match too, in case a stray page still
-    uses an older/different infobox template.
+    OU season articles don't use one consistent infobox template name --
+    Wikipedia's own editors have migrated pages to a newer template
+    piecemeal, not all at once. Confirmed against real pages (not the
+    football-specific name this function originally looked for, which was
+    never checked against a live page — see this script's README note on
+    the offline-fixture-only validation this was originally shipped with):
+    most years use {{Infobox college sports team season}}, but a real
+    scan across the full 1895-2025 pull turned up a second live variant,
+    {{Infobox NCAA team season}}, on several mid-2000s/2010s pages
+    (2007, 2018, e.g.) that haven't been migrated. Matching on "team
+    season" catches both without needing to enumerate every template-name
+    variant Wikipedia might still have in the wild; "football" is kept as
+    a further fallback for any older/different infobox a stray page uses.
     """
     for template in wikicode.filter_templates():
         name = template.name.strip().lower()
         if "infobox" not in name:
             continue
-        if "football" in name or "college sports team" in name:
+        if "football" in name or "team season" in name:
             return template
     return None
 
