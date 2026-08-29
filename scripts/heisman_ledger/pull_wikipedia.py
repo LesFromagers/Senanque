@@ -30,6 +30,15 @@ import requests
 
 from schema import GAME_FIELDS, SEASON_FIELDS, GameRow, SeasonRow, data_tier_for
 
+# This file lives at scripts/heisman_ledger/pull_wikipedia.py -- three
+# parents up is the repo root. Anchoring the --verified/--out defaults
+# here, rather than to a plain relative "../../data/...", means they
+# resolve correctly no matter what directory this script is invoked from
+# -- a relative default silently resolves against the process's cwd, not
+# the script's own location, and writes outside the repo when run from
+# somewhere other than scripts/heisman_ledger.
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 API_URL = "https://en.wikipedia.org/w/api.php"
 
 # Identifies the bot and gives Wikipedia a way to reach the project without
@@ -408,9 +417,9 @@ def main() -> None:
     parser.add_argument(
         "--verified",
         type=Path,
-        default=Path("../../data/heisman-ledger/ou_seasons_verified.csv"),
+        default=REPO_ROOT / "data/heisman-ledger/ou_seasons_verified.csv",
     )
-    parser.add_argument("--out", type=Path, default=Path("../../data/heisman-ledger/pulled"))
+    parser.add_argument("--out", type=Path, default=REPO_ROOT / "data/heisman-ledger/pulled")
     parser.add_argument("--start", type=int, default=FIRST_SEASON)
     parser.add_argument("--end", type=int, default=2025)
     parser.add_argument(

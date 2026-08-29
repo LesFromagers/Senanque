@@ -19,6 +19,15 @@ import json
 import re
 from pathlib import Path
 
+# This file lives at scripts/heisman_ledger/csv_to_json.py -- three parents
+# up is the repo root. Anchoring --src/--out's defaults here, rather than
+# to a plain relative "../../data/...", means they resolve correctly no
+# matter what directory this script is invoked from -- a relative default
+# silently resolves against the process's cwd, not the script's own
+# location, and writes outside the repo when run from somewhere other than
+# scripts/heisman_ledger.
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 INT_FIELDS = (
     "year",
     "data_tier",
@@ -81,8 +90,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--src", type=Path, default=Path("../../data/heisman-ledger/master/master_seasons.csv"))
-    parser.add_argument("--out", type=Path, default=Path("../../data/heisman-ledger/master/master_seasons.json"))
+    parser.add_argument("--src", type=Path, default=REPO_ROOT / "data/heisman-ledger/master/master_seasons.csv")
+    parser.add_argument("--out", type=Path, default=REPO_ROOT / "data/heisman-ledger/master/master_seasons.json")
     args = parser.parse_args()
 
     count = convert(args.src, args.out)

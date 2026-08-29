@@ -13,6 +13,15 @@ import argparse
 import csv
 from pathlib import Path
 
+# This file lives at scripts/heisman_ledger/generate_seed_sql.py -- three
+# parents up is the repo root. Anchoring --master/--out's defaults here,
+# rather than to a plain relative "../../...", means they resolve correctly
+# no matter what directory this script is invoked from -- a relative
+# default silently resolves against the process's cwd, not the script's
+# own location, and writes outside the repo when run from somewhere other
+# than scripts/heisman_ledger.
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 
 def sql_str(value: str | None) -> str:
     if value is None or value == "":
@@ -149,8 +158,8 @@ def generate_games_sql(games_csv: Path) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--master", type=Path, default=Path("../../data/heisman-ledger/master"))
-    parser.add_argument("--out", type=Path, default=Path("../../supabase/heisman-ledger/seed.sql"))
+    parser.add_argument("--master", type=Path, default=REPO_ROOT / "data/heisman-ledger/master")
+    parser.add_argument("--out", type=Path, default=REPO_ROOT / "supabase/heisman-ledger/seed.sql")
     args = parser.parse_args()
 
     lines = generate_seasons_sql(args.master / "master_seasons.csv")

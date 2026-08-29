@@ -35,6 +35,15 @@ from typing import Optional
 
 import requests
 
+# This file lives at scripts/heisman_ledger/pull_cfbd.py -- three parents up
+# is the repo root. Anchoring --out's default here, rather than to a plain
+# relative "../../data/...", means it resolves correctly no matter what
+# directory this script is invoked from (repo root, scripts/heisman_ledger,
+# or anywhere else) -- a relative default silently resolves against the
+# process's cwd, not the script's own location, and writes outside the repo
+# when run from somewhere other than this directory.
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 API_BASE = "https://api.collegefootballdata.com"
 TEAM = "Oklahoma"
 FIRST_TIER1_YEAR = 2005
@@ -139,7 +148,7 @@ def pull_year(session: requests.Session, year: int) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out", type=Path, default=Path("../../data/heisman-ledger/pulled"))
+    parser.add_argument("--out", type=Path, default=REPO_ROOT / "data/heisman-ledger/pulled")
     parser.add_argument("--start", type=int, default=FIRST_TIER1_YEAR)
     parser.add_argument("--end", type=int, default=2025)
     parser.add_argument("--sleep", type=float, default=0.5)

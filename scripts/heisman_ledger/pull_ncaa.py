@@ -57,6 +57,15 @@ from pathlib import Path
 
 import requests
 
+# This file lives at scripts/heisman_ledger/pull_ncaa.py -- three parents up
+# is the repo root. Anchoring --out's default here, rather than to a plain
+# relative "../../data/...", means it resolves correctly no matter what
+# directory this script is invoked from -- a relative default silently
+# resolves against the process's cwd, not the script's own location, and
+# writes outside the repo when run from somewhere other than
+# scripts/heisman_ledger.
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 SOURCE_URL = "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf"
 USER_AGENT = "SenanqueHeismanLedgerBot/1.0 (https://senanque.dev; https://github.com/LesFromagers/Senanque)"
 
@@ -151,7 +160,7 @@ def parse_trends_table(text: str) -> dict[int, dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--out", type=Path, default=Path("../../data/heisman-ledger/national_baseline.json"))
+    parser.add_argument("--out", type=Path, default=REPO_ROOT / "data/heisman-ledger/national_baseline.json")
     parser.add_argument(
         "--pdf-cache",
         type=Path,
