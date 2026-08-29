@@ -30,7 +30,29 @@ Primary audience: hiring managers and recruiters for BI Analyst / Data Analyst r
    - Oklahoma coincident economic index (`OKPHCI`, monthly)
 
    Time range: 2008–present, to capture the financial crisis through today. The two daily-cadence series (S&P 500, yield spread) carry ~17 years of points — default to a monthly-aggregate view with drill-to-daily rather than rendering every trading day. First to ship — ties directly to a live application.
-2. **The Heisman Park Ledger** (analytics wing, route: `/analytics/heisman-park-ledger`) — every OU football season, 1895–present, ranked by a normalized Power Index (Performance 50% / Accomplishment 35% / Talent 15%; see `scripts/heisman_ledger/` and `lib/heisman-ledger/power-index.ts`). Wikipedia API for the historical record (never Sports-Reference or similar ToS-restricted sites, and never automated — those need a manual, human-paced check), collegefootballdata.com for 2005+ efficiency data. Tagline "Coronation at the Palace on the Prairie." Ships with the 27 hand-verified marquee seasons live; the other ~104 seasons fill in once `pull_wikipedia.py` runs somewhere with network access to en.wikipedia.org — tracked on the dashboard's own manual-review worklist (`/analytics/heisman-park-ledger/gaps`), not hidden. Second to ship.
+
+2. **The Heisman Park Ledger** (analytics wing, route: `/analytics/heisman-park-ledger`) — every OU football season, 1895–present, ranked by a normalized Power Index. Tagline "Coronation at the Palace on the Prairie." Ships with the 27 hand-verified marquee seasons live; the other ~104 seasons fill in via the pull scripts below, tracked on the dashboard's own manual-review worklist (`/analytics/heisman-park-ledger/gaps`), not hidden. Second to ship.
+
+   **Power Index formula** (`lib/heisman-ledger/power-index.ts`):
+   ```
+   Power Index = (0.50 × Performance) + (0.35 × Accomplishment) + (0.15 × Talent)
+   ```
+   - **Performance (50%):** point differential z-score vs. national average that season (50% of this layer) + SRS-style strength-of-schedule margin (30%) + offense/defense efficiency z-scores (10% each), each efficiency number tagged with a `data_tier` (1 = SP+/advanced ~2005+, 2 = yards/play ~1950s+, 3 = yards/game vs. national rank pre-1950s, 4 = points-only for the thinnest seasons). See `scripts/heisman_ledger/` for the tier waterfall logic.
+   - **Accomplishment (35%):** national title, conference title, final AP rank, bowl result — point table in `lib/heisman-ledger/accomplishment-scoring.ts`.
+   - **Talent (15%):** Heisman winner/finalists, All-Americans, draft picks by round — point table in `lib/heisman-ledger/talent-scoring.ts`.
+   - **Tiebreaker (not part of the weighted score):** if two seasons land within 1.0 point of each other on the final 0–100 scale, `beat_texas` ranks higher; if tied on that, `beat_osu`; if still tied, raw point-differential z-score. Both booleans are stored per season for this purpose and for UI badges — never folded into the composite weights themselves.
+
+   **Data sources — three, each with one job:**
+   - **Wikipedia REST API** — primary source for OU's own season-by-season record, coach, opponents, scores, honors, 1895–present. Public, CC-licensed, built for reuse — safe for automated/bulk pulls. Set a real `User-Agent` header, throttle to ~1–2 req/sec.
+   - **collegefootballdata.com API** — Tier 1 advanced efficiency data, 2005–present. Free API key required (stored per the secrets pattern below).
+   - **NCAA.com / NCAA.org archived stats** — national per-season scoring/yardage averages, used as the era-normalization baseline for the Performance layer's z-scores. Coverage begins 1937 (NCAA's own official stat-keeping start — no reliable national baseline exists before this, which is a real historical limit, not a research gap). Check the specific archive page's terms before building an automated pull, same as any new source.
+   - **Sports-Reference / SoonerStats** — cross-reference only, **never automated**. Their ToS prohibits bot/automated access regardless of which tool drives it (script, skill, Claude Code, or Cowork). Use only for manual, human-paced lookups to resolve a specific flagged gap.
+
+   **Tool division of labor for this project** (this is the part that's caused confusion — keep it explicit):
+   - **Claude Code (web)** runs the actual pull scripts against Wikipedia, CFBD, and NCAA archives. This requires the cloud session's network access to explicitly allowlist `en.wikipedia.org`, `api.collegefootballdata.com`, and the relevant NCAA domain(s) — by default, Code's cloud sandbox only trusts GitHub and the Anthropic API, so pulls will silently fail until this is configured in the environment's network settings. Configure this once per environment, not per session.
+   - **Cowork / manual browsing** handles the human-paced Sports-Reference/SoonerStats cross-checks for flagged gaps, and drafts first-pass "iconic moment" season summaries (~15–25 marquee seasons) for a later voice-editing pass — it is not the tool for running automated data pulls.
+   - **This planning thread (claude.ai)** is where formula, data-sourcing, and design decisions get made — CLAUDE.md is the durable record that carries those decisions into Code/Cowork sessions, so decisions don't need to be re-explained each time a new session starts.
+
 3. **Coffee Consumption** — needs a full rebuild before it's shown publicly. The earlier version used fabricated data, which directly undercuts the "I make people trust the numbers" pitch this whole site makes. Do not reuse the old dataset — rebuild from a real source (personal log or a public dataset like ICO/USDA).
 4. **Chess app** — a secondary "I can build things" demo, not a headline project.
 5. **Agentics wing** (theology comparator, film/music theme analyzers) — later, as its own dedicated sprint once the analytics wing is solid.
@@ -57,6 +79,7 @@ This list of keys will grow — don't treat it as fixed, treat the *pattern* as 
 - Static/historical data that won't change (e.g. a pulled snapshot of OU rankings history) can live as committed JSON/CSV rather than round-tripping through the database.
 - When a new project needs a new key: add it to `.env.local`, add a placeholder line (no real value) to `.env.example` so the pattern stays visible in the repo, and note the new source in the roadmap section above.
 - Cloud sessions (Claude Code on the web) should only ever create `.env.example` with placeholders — `.env.local` is gitignored, so it never survives a push/pull anyway. Real key values go directly into Vercel's Environment Variables for the live app, and into a locally-created `.env.local` for testing on your own machine after a `git pull`. Code should never be asked to hold or paste a real key value during a cloud session.
+- **Network access for cloud sessions:** any project that pulls from an external API (Heisman Park Ledger's Wikipedia/CFBD/NCAA pulls, or any future project's live data source) needs its cloud environment's network allowlist configured with the specific domains required — this is a one-time setup per environment, done in Claude Code's cloud environment settings, not something to rediscover per session when a pull script "just fails."
 
 ## Security checklist — apply every session
 - Never hardcode a secret; never suggest committing `.env*`.
