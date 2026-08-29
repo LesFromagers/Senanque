@@ -16,20 +16,48 @@ import baselineJson from "@/data/heisman-ledger/national_baseline.json";
  * a valid identity regardless of how teams pair up, so it only needs each
  * side's national average, not a full paired distribution).
  *
- * `stdDevMarginPerGame` is only ever populated when the NCAA source
- * actually supports computing a real cross-team spread for that season
- * (i.e. every major-college team's own per-game scoring figures were
- * pulled for that year, not just the national average). NCAA's archived
- * pages mostly publish the average alone, not a full team-by-team table
- * for every historical season — when the spread isn't available,
- * power-index.ts centers on this file's real national mean but scales by
- * OU's own historical spread instead of fabricating a national one. See
- * that file's header comment for the full fallback chain.
+ * `meanMarginPerGame` is always 0.0 wherever it's populated, and that's
+ * not a placeholder — it's the actual value, for a real reason. The
+ * NCAA's own record book publishes one national "Pts." column, not
+ * separate national scoring-offense and scoring-defense averages,
+ * because in a (near-)closed system every point one counted team scores
+ * is a point some counted opponent allows — so the national average
+ * points *scored* per team and *allowed* per team are essentially
+ * identical, every season, by construction. The national average margin
+ * genuinely is ~0; there's no per-season number to extract for it. What
+ * this DOES change from the pre-this-file behavior: power-index.ts used
+ * to center OU's point-diff z-score on OU's *own* historical average
+ * margin; now it centers on a true neutral baseline (0 = an average
+ * team), which is a real, defensible reading of CLAUDE.md's "vs. the
+ * national average" — just simpler than it might look.
+ *
+ * `stdDevMarginPerGame` is always null. No accessible NCAA source
+ * publishes a cross-team standard deviation of scoring margin — every
+ * record-book edition gives the national average only. A real one would
+ * need every counted team's own per-game figures for the season, a full
+ * team-by-team pull this project doesn't attempt (same class of
+ * second-order pull as the SOS/SRS gap already flagged elsewhere in this
+ * pipeline). power-index.ts already handles this: it centers on this
+ * file's real national mean but scales by OU's own historical spread
+ * instead of fabricating a national one. See that file's header comment
+ * for the full fallback chain.
+ *
+ * The remaining fields are supplementary national context pulled from
+ * the same table (national average points/game, total-offense
+ * yards/game, yards/play, plays/game) — not consumed by the Power Index
+ * today, kept here because scripts/heisman_ledger/pull_ncaa.py already
+ * has them from the same source, and a future yards-based efficiency
+ * tier (see power-index.ts's header comment on tiers 2/3) would want
+ * them without a second pull.
  */
 export interface NationalBaseline {
   year: number;
   meanMarginPerGame: number | null;
   stdDevMarginPerGame: number | null;
+  nationalAvgPointsPerGame: number | null;
+  nationalAvgTotalOffenseYardsPerGame: number | null;
+  nationalAvgTotalOffenseYardsPerPlay: number | null;
+  nationalAvgTotalOffensePlaysPerGame: number | null;
   /** Where this row came from — an NCAA.com/NCAA.org URL, ideally. */
   source: string;
 }

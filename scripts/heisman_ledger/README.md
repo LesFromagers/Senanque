@@ -1,6 +1,6 @@
 # Heisman Park Ledger — data pipeline
 
-Five scripts, run in order, that turn the 27 hand-verified rows in
+Six scripts, run in order, that turn the 27 hand-verified rows in
 `data/heisman-ledger/ou_seasons_verified.csv` plus a Wikipedia bulk pull into
 the merged dataset the dashboard and the Supabase schema consume.
 
@@ -8,6 +8,13 @@ the merged dataset the dashboard and the Supabase schema consume.
 pull_wikipedia.py     # Step 1 — the ~105 remaining seasons, Wikipedia only
 pull_cfbd.py          # Step 2 — SP+/efficiency + raw yardage/turnovers,
                        #          2005-present, CFBD API
+pull_ncaa.py           # Step 2b — national per-season scoring/yardage averages,
+                       #          1937-present, NCAA's own records book. Feeds
+                       #          lib/heisman-ledger/national-baseline.ts, not
+                       #          the season merge below — writes straight to
+                       #          data/heisman-ledger/national_baseline.json.
+                       #          Independent of the other steps; run it any
+                       #          order relative to them.
 merge_dataset.py      # Step 3 — merge verified + pulled + CFBD, assign data_tier,
                        #          emit the master season/game CSVs + a gap report
 csv_to_json.py        # Step 4 — master_seasons.csv -> the JSON the Next.js app imports
@@ -44,6 +51,10 @@ python pull_wikipedia.py --out ../../data/heisman-ledger/pulled
 # Step 2 — CFBD (needs CFBD_API_KEY in the environment; never paste the key
 # into a file or commit — export it in your shell for this one run)
 CFBD_API_KEY=... python pull_cfbd.py --out ../../data/heisman-ledger/pulled
+
+# Step 2b — NCAA national baseline (no key needed; requires `pdftotext`
+# on PATH — apt-get install poppler-utils, or brew install poppler)
+python pull_ncaa.py --out ../../data/heisman-ledger/national_baseline.json
 
 # Step 3 — merge everything
 python merge_dataset.py \

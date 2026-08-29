@@ -1,1 +1,803 @@
-{}
+{
+  "1937": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 10.1,
+    "nationalAvgTotalOffensePlaysPerGame": null,
+    "nationalAvgTotalOffenseYardsPerGame": 198.4,
+    "nationalAvgTotalOffenseYardsPerPlay": null,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1938": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 11.8,
+    "nationalAvgTotalOffensePlaysPerGame": 54.8,
+    "nationalAvgTotalOffenseYardsPerGame": 210.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 3.85,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1939": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 11.4,
+    "nationalAvgTotalOffensePlaysPerGame": 54.6,
+    "nationalAvgTotalOffenseYardsPerGame": 202.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 3.7,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1940": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 13.3,
+    "nationalAvgTotalOffensePlaysPerGame": 56.7,
+    "nationalAvgTotalOffenseYardsPerGame": 218.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 3.85,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1941": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 13.8,
+    "nationalAvgTotalOffensePlaysPerGame": 57.2,
+    "nationalAvgTotalOffenseYardsPerGame": 221.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 3.88,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1942": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.7,
+    "nationalAvgTotalOffensePlaysPerGame": null,
+    "nationalAvgTotalOffenseYardsPerGame": null,
+    "nationalAvgTotalOffenseYardsPerPlay": null,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf (wartime-seasons footnote, points-only)",
+    "stdDevMarginPerGame": null
+  },
+  "1943": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.7,
+    "nationalAvgTotalOffensePlaysPerGame": null,
+    "nationalAvgTotalOffenseYardsPerGame": null,
+    "nationalAvgTotalOffenseYardsPerPlay": null,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf (wartime-seasons footnote, points-only)",
+    "stdDevMarginPerGame": null
+  },
+  "1944": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.3,
+    "nationalAvgTotalOffensePlaysPerGame": null,
+    "nationalAvgTotalOffenseYardsPerGame": null,
+    "nationalAvgTotalOffenseYardsPerPlay": null,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf (wartime-seasons footnote, points-only)",
+    "stdDevMarginPerGame": null
+  },
+  "1945": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.1,
+    "nationalAvgTotalOffensePlaysPerGame": null,
+    "nationalAvgTotalOffenseYardsPerGame": null,
+    "nationalAvgTotalOffenseYardsPerPlay": null,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf (wartime-seasons footnote, points-only)",
+    "stdDevMarginPerGame": null
+  },
+  "1946": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.1,
+    "nationalAvgTotalOffensePlaysPerGame": 57.8,
+    "nationalAvgTotalOffenseYardsPerGame": 240.7,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.16,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1947": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.9,
+    "nationalAvgTotalOffensePlaysPerGame": 57.6,
+    "nationalAvgTotalOffenseYardsPerGame": 248.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.32,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1948": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 17.1,
+    "nationalAvgTotalOffensePlaysPerGame": 59.5,
+    "nationalAvgTotalOffenseYardsPerGame": 256.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.31,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1949": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 19.4,
+    "nationalAvgTotalOffensePlaysPerGame": 64.9,
+    "nationalAvgTotalOffenseYardsPerGame": 290.7,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.48,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1950": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 18.9,
+    "nationalAvgTotalOffensePlaysPerGame": 64.5,
+    "nationalAvgTotalOffenseYardsPerGame": 288.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.47,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1951": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 19.4,
+    "nationalAvgTotalOffensePlaysPerGame": 67.5,
+    "nationalAvgTotalOffenseYardsPerGame": 296.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.39,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1952": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 18.4,
+    "nationalAvgTotalOffensePlaysPerGame": 66.7,
+    "nationalAvgTotalOffenseYardsPerGame": 288.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.32,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1953": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 17.1,
+    "nationalAvgTotalOffensePlaysPerGame": 60.3,
+    "nationalAvgTotalOffenseYardsPerGame": 268.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.45,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1954": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 17.4,
+    "nationalAvgTotalOffensePlaysPerGame": 60.3,
+    "nationalAvgTotalOffenseYardsPerGame": 225.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.56,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1955": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.1,
+    "nationalAvgTotalOffensePlaysPerGame": 59.6,
+    "nationalAvgTotalOffenseYardsPerGame": 261.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.38,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1956": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.5,
+    "nationalAvgTotalOffensePlaysPerGame": 63.3,
+    "nationalAvgTotalOffenseYardsPerGame": 279.0,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.41,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1957": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.6,
+    "nationalAvgTotalOffensePlaysPerGame": 63.6,
+    "nationalAvgTotalOffenseYardsPerGame": 263.0,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.14,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1958": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.0,
+    "nationalAvgTotalOffensePlaysPerGame": 63.2,
+    "nationalAvgTotalOffenseYardsPerGame": 268.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.24,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1959": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.9,
+    "nationalAvgTotalOffensePlaysPerGame": 62.7,
+    "nationalAvgTotalOffenseYardsPerGame": 264.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.21,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1960": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.6,
+    "nationalAvgTotalOffensePlaysPerGame": 61.1,
+    "nationalAvgTotalOffenseYardsPerGame": 263.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.31,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1961": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.0,
+    "nationalAvgTotalOffensePlaysPerGame": 61.5,
+    "nationalAvgTotalOffenseYardsPerGame": 261.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.25,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1962": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.4,
+    "nationalAvgTotalOffensePlaysPerGame": 62.5,
+    "nationalAvgTotalOffenseYardsPerGame": 269.0,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.31,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1963": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.8,
+    "nationalAvgTotalOffensePlaysPerGame": 61.7,
+    "nationalAvgTotalOffenseYardsPerGame": 265.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.3,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1964": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 15.1,
+    "nationalAvgTotalOffensePlaysPerGame": 61.6,
+    "nationalAvgTotalOffenseYardsPerGame": 259.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.21,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1965": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 16.7,
+    "nationalAvgTotalOffensePlaysPerGame": 65.9,
+    "nationalAvgTotalOffenseYardsPerGame": 272.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.14,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1966": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 17.5,
+    "nationalAvgTotalOffensePlaysPerGame": 66.2,
+    "nationalAvgTotalOffenseYardsPerGame": 281.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.26,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1967": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 18.4,
+    "nationalAvgTotalOffensePlaysPerGame": 70.2,
+    "nationalAvgTotalOffenseYardsPerGame": 294.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.19,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1968": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 21.2,
+    "nationalAvgTotalOffensePlaysPerGame": 75.1,
+    "nationalAvgTotalOffenseYardsPerGame": 328.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.38,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1969": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 21.6,
+    "nationalAvgTotalOffensePlaysPerGame": 74.9,
+    "nationalAvgTotalOffenseYardsPerGame": 328.9,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.39,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1970": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 21.3,
+    "nationalAvgTotalOffensePlaysPerGame": 74.2,
+    "nationalAvgTotalOffenseYardsPerGame": 328.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.42,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1971": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.2,
+    "nationalAvgTotalOffensePlaysPerGame": 71.3,
+    "nationalAvgTotalOffenseYardsPerGame": 314.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.41,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1972": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.6,
+    "nationalAvgTotalOffensePlaysPerGame": 71.8,
+    "nationalAvgTotalOffenseYardsPerGame": 321.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.48,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1973": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 21.0,
+    "nationalAvgTotalOffensePlaysPerGame": 70.5,
+    "nationalAvgTotalOffenseYardsPerGame": 323.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.59,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1974": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.2,
+    "nationalAvgTotalOffensePlaysPerGame": 70.7,
+    "nationalAvgTotalOffenseYardsPerGame": 324.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.59,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1975": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.1,
+    "nationalAvgTotalOffensePlaysPerGame": 70.3,
+    "nationalAvgTotalOffenseYardsPerGame": 324.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.61,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1976": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.0,
+    "nationalAvgTotalOffensePlaysPerGame": 70.4,
+    "nationalAvgTotalOffenseYardsPerGame": 322.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.58,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1977": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.8,
+    "nationalAvgTotalOffensePlaysPerGame": 71.5,
+    "nationalAvgTotalOffenseYardsPerGame": 329.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.61,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1978": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.6,
+    "nationalAvgTotalOffensePlaysPerGame": 72.1,
+    "nationalAvgTotalOffenseYardsPerGame": 331.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.6,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1979": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.0,
+    "nationalAvgTotalOffensePlaysPerGame": 70.6,
+    "nationalAvgTotalOffenseYardsPerGame": 327.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.63,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1980": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.5,
+    "nationalAvgTotalOffensePlaysPerGame": 71.0,
+    "nationalAvgTotalOffenseYardsPerGame": 330.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.65,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1981": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 20.5,
+    "nationalAvgTotalOffensePlaysPerGame": 71.6,
+    "nationalAvgTotalOffenseYardsPerGame": 334.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.67,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1982": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 21.9,
+    "nationalAvgTotalOffensePlaysPerGame": 72.7,
+    "nationalAvgTotalOffenseYardsPerGame": 351.7,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.84,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1983": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 22.1,
+    "nationalAvgTotalOffensePlaysPerGame": 71.6,
+    "nationalAvgTotalOffenseYardsPerGame": 352.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.92,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1984": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 22.1,
+    "nationalAvgTotalOffensePlaysPerGame": 71.5,
+    "nationalAvgTotalOffenseYardsPerGame": 349.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.89,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1985": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 22.4,
+    "nationalAvgTotalOffensePlaysPerGame": 71.8,
+    "nationalAvgTotalOffenseYardsPerGame": 355.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.95,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1986": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 22.7,
+    "nationalAvgTotalOffensePlaysPerGame": 71.4,
+    "nationalAvgTotalOffenseYardsPerGame": 353.0,
+    "nationalAvgTotalOffenseYardsPerPlay": 4.95,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1987": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 23.1,
+    "nationalAvgTotalOffensePlaysPerGame": 71.5,
+    "nationalAvgTotalOffenseYardsPerGame": 357.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.01,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1988": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 23.8,
+    "nationalAvgTotalOffensePlaysPerGame": 71.1,
+    "nationalAvgTotalOffenseYardsPerGame": 360.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.07,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1989": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 24.1,
+    "nationalAvgTotalOffensePlaysPerGame": 71.2,
+    "nationalAvgTotalOffenseYardsPerGame": 367.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.16,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1990": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 24.4,
+    "nationalAvgTotalOffensePlaysPerGame": 71.4,
+    "nationalAvgTotalOffenseYardsPerGame": 364.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.11,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1991": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 23.1,
+    "nationalAvgTotalOffensePlaysPerGame": 70.5,
+    "nationalAvgTotalOffenseYardsPerGame": 359.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.1,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1992": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 22.9,
+    "nationalAvgTotalOffensePlaysPerGame": 70.8,
+    "nationalAvgTotalOffenseYardsPerGame": 356.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.03,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1993": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 24.4,
+    "nationalAvgTotalOffensePlaysPerGame": 70.5,
+    "nationalAvgTotalOffenseYardsPerGame": 371.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.27,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1994": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 24.6,
+    "nationalAvgTotalOffensePlaysPerGame": 70.3,
+    "nationalAvgTotalOffenseYardsPerGame": 365.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.19,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1995": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 25.1,
+    "nationalAvgTotalOffensePlaysPerGame": 71.2,
+    "nationalAvgTotalOffenseYardsPerGame": 372.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.24,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1996": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 25.5,
+    "nationalAvgTotalOffensePlaysPerGame": 70.4,
+    "nationalAvgTotalOffenseYardsPerGame": 366.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.21,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1997": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 25.5,
+    "nationalAvgTotalOffensePlaysPerGame": 69.4,
+    "nationalAvgTotalOffenseYardsPerGame": 366.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.28,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1998": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 25.5,
+    "nationalAvgTotalOffensePlaysPerGame": 69.9,
+    "nationalAvgTotalOffenseYardsPerGame": 368.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.27,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "1999": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 25.6,
+    "nationalAvgTotalOffensePlaysPerGame": 70.4,
+    "nationalAvgTotalOffenseYardsPerGame": 365.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.18,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2000": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 26.2,
+    "nationalAvgTotalOffensePlaysPerGame": 71.0,
+    "nationalAvgTotalOffenseYardsPerGame": 370.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.22,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2001": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 27.2,
+    "nationalAvgTotalOffensePlaysPerGame": 71.4,
+    "nationalAvgTotalOffenseYardsPerGame": 381.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.34,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2002": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 27.3,
+    "nationalAvgTotalOffensePlaysPerGame": 70.6,
+    "nationalAvgTotalOffenseYardsPerGame": 375.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.32,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2003": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 26.9,
+    "nationalAvgTotalOffensePlaysPerGame": 71.0,
+    "nationalAvgTotalOffenseYardsPerGame": 382.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.39,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2004": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 26.6,
+    "nationalAvgTotalOffensePlaysPerGame": 70.2,
+    "nationalAvgTotalOffenseYardsPerGame": 376.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.36,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2005": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 26.8,
+    "nationalAvgTotalOffensePlaysPerGame": 70.6,
+    "nationalAvgTotalOffenseYardsPerGame": 379.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.39,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2006": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 24.4,
+    "nationalAvgTotalOffensePlaysPerGame": 64.0,
+    "nationalAvgTotalOffenseYardsPerGame": 346.9,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.42,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2007": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.4,
+    "nationalAvgTotalOffensePlaysPerGame": 71.9,
+    "nationalAvgTotalOffenseYardsPerGame": 392.8,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.46,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2008": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 27.2,
+    "nationalAvgTotalOffensePlaysPerGame": 67.7,
+    "nationalAvgTotalOffenseYardsPerGame": 371.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.49,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2009": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 27.0,
+    "nationalAvgTotalOffensePlaysPerGame": 67.7,
+    "nationalAvgTotalOffenseYardsPerGame": 377.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.58,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2010": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.0,
+    "nationalAvgTotalOffensePlaysPerGame": 68.4,
+    "nationalAvgTotalOffenseYardsPerGame": 384.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.62,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2011": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.3,
+    "nationalAvgTotalOffensePlaysPerGame": 69.8,
+    "nationalAvgTotalOffenseYardsPerGame": 392.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.62,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2012": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 29.5,
+    "nationalAvgTotalOffensePlaysPerGame": 71.5,
+    "nationalAvgTotalOffenseYardsPerGame": 409.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.73,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2013": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 29.4,
+    "nationalAvgTotalOffensePlaysPerGame": 71.9,
+    "nationalAvgTotalOffenseYardsPerGame": 411.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.73,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2014": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 29.3,
+    "nationalAvgTotalOffensePlaysPerGame": 72.0,
+    "nationalAvgTotalOffenseYardsPerGame": 409.4,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.69,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2015": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 29.7,
+    "nationalAvgTotalOffensePlaysPerGame": 71.5,
+    "nationalAvgTotalOffenseYardsPerGame": 411.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.76,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2016": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 30.0,
+    "nationalAvgTotalOffensePlaysPerGame": 71.5,
+    "nationalAvgTotalOffenseYardsPerGame": 417.1,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.83,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2017": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.8,
+    "nationalAvgTotalOffensePlaysPerGame": 70.0,
+    "nationalAvgTotalOffenseYardsPerGame": 403.6,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.76,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2018": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 29.6,
+    "nationalAvgTotalOffensePlaysPerGame": 70.3,
+    "nationalAvgTotalOffenseYardsPerGame": 406.7,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.79,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2019": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.9,
+    "nationalAvgTotalOffensePlaysPerGame": 69.3,
+    "nationalAvgTotalOffenseYardsPerGame": 404.2,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.83,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2020": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 29.2,
+    "nationalAvgTotalOffensePlaysPerGame": 69.8,
+    "nationalAvgTotalOffenseYardsPerGame": 403.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.78,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2021": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.5,
+    "nationalAvgTotalOffensePlaysPerGame": 68.7,
+    "nationalAvgTotalOffenseYardsPerGame": 398.0,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.8,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2022": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.3,
+    "nationalAvgTotalOffensePlaysPerGame": 68.6,
+    "nationalAvgTotalOffenseYardsPerGame": 393.3,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.73,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2023": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 27.8,
+    "nationalAvgTotalOffensePlaysPerGame": 66.9,
+    "nationalAvgTotalOffenseYardsPerGame": 385.7,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.77,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2024": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 28.0,
+    "nationalAvgTotalOffensePlaysPerGame": 66.8,
+    "nationalAvgTotalOffenseYardsPerGame": 386.7,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.79,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  },
+  "2025": {
+    "meanMarginPerGame": 0.0,
+    "nationalAvgPointsPerGame": 27.5,
+    "nationalAvgTotalOffensePlaysPerGame": 67.0,
+    "nationalAvgTotalOffenseYardsPerGame": 383.5,
+    "nationalAvgTotalOffenseYardsPerPlay": 5.73,
+    "source": "http://fs.ncaa.org/Docs/stats/football_records/FBS.pdf",
+    "stdDevMarginPerGame": null
+  }
+}
