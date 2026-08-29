@@ -97,10 +97,37 @@ def clean(text: str) -> str:
     return mwph.parse(text).strip_code().strip()
 
 
+def clean_multiline(text: str) -> list[str]:
+    """
+    Like clean(), but for an infobox field that packs multiple facts into
+    one param separated by literal <br> tags (the 'champion' field below is
+    the reason this exists: a title season's infobox lists "Consensus
+    national champion<br>Big 12 champion<br>..." as one string). strip_code()
+    on its own discards <br> without inserting anything in its place, which
+    mashes the segments into one unreadable run-on -- this normalizes <br>
+    to a newline first so each fact survives as its own list entry.
+    """
+    normalized = re.sub(r"<br\s*/?>", "\n", str(text))
+    cleaned = mwph.parse(normalized).strip_code()
+    return [seg.strip() for seg in cleaned.splitlines() if seg.strip()]
+
+
 def find_infobox(wikicode: mwph.wikicode.Wikicode):
+    """
+    Every OU season article checked while building this pull (1896 through
+    2020, old and new) uses the same standardized template regardless of
+    era: {{Infobox college sports team season}} -- not the football-
+    specific name this function originally looked for (that assumption was
+    never checked against a live page; see this script's README note on
+    the offline-fixture-only validation this was originally shipped with).
+    Kept "football" as an alternate match too, in case a stray page still
+    uses an older/different infobox template.
+    """
     for template in wikicode.filter_templates():
         name = template.name.strip().lower()
-        if "infobox" in name and "football" in name:
+        if "infobox" not in name:
+            continue
+        if "football" in name or "college sports team" in name:
             return template
     return None
 
@@ -136,9 +163,37 @@ def parse_infobox(wikicode: mwph.wikicode.Wikicode, season: SeasonRow) -> None:
         season.final_record = re.sub(r"\s*[-–—]\s*", "-", record)
     season.final_ap_rank = get("apfinalrank", "ap_rank", "rank", "apfinal")
 
-    bcs_champ = get("bcs_natl_champion", "national_champion", "natl_champion")
-    if bcs_champ:
-        season.national_title_claim = bcs_champ
+    # The real infobox packs every title claim into one 'champion' field —
+    # e.g. "Consensus national champion<br>Big 12 champion<br>Big 12 South
+    # Division champion" for a title season — rather than a dedicated
+    # national-title param. Split it (see clean_multiline()) and keep only
+    # the segment(s) that actually claim a *national* title for
+    # national_title_claim; the rest (conference/division titles) still
+    # matter to the Accomplishment layer's conference-champion heuristic,
+    # so they're preserved in source_notes rather than dropped.
+    champion_raw = by_key.get("champion")
+    note_parts: list[str] = []
+    if champion_raw is not None:
+        segments = clean_multiline(str(champion_raw))
+        national_segments = [s for s in segments if "national champion" in s.lower()]
+        other_segments = [s for s in segments if s not in national_segments]
+        if national_segments:
+            season.national_title_claim = "; ".join(national_segments)
+        if other_segments:
+            note_parts.append(f"infobox 'champion' field also lists: {'; '.join(other_segments)}")
+
+    bowl = get("bowl")
+    bowl_result_raw = by_key.get("bowlresult")
+    if bowl_result_raw is not None:
+        bowl_result = " ".join(clean_multiline(str(bowl_result_raw)))
+        if bowl_result:
+            note_parts.append(f"bowl result: {bowl_result}" + (f" ({bowl})" if bowl else ""))
+    elif bowl:
+        note_parts.append(f"bowl: {bowl}")
+
+    if note_parts:
+        note = "; ".join(note_parts)
+        season.source_notes = f"{season.source_notes} {note}".strip() if season.source_notes else note
 
     # Points for/against are rarely a direct infobox param on CFB season
     # pages — usually only recoverable by summing the schedule table, which
@@ -172,10 +227,29 @@ RESULT_SCORE_RE = re.compile(
 
 
 def _parse_result_cell(text: str) -> tuple[Optional[str], Optional[int], Optional[int]]:
+    """For a raw-wikitable schedule with one combined result cell, e.g. 'W 28-11'."""
     match = RESULT_SCORE_RE.match(text.strip())
     if not match:
         return None, None, None
     return match.group("result").upper(), int(match.group("team")), int(match.group("opp"))
+
+
+SCORE_RE = re.compile(r"(\d+)\s*[-–—]\s*(\d+)")
+
+
+def _parse_wl_score(w_l: str, score: str) -> tuple[Optional[str], Optional[int], Optional[int]]:
+    """
+    For {{CFB schedule entry}}, which — unlike the raw-wikitable format
+    above — keeps the outcome and the score as two separate params ('w/l':
+    'w'/'l'/'t', 'score': '34–0') rather than one combined cell.
+    """
+    result = w_l.strip().upper()[:1] if w_l.strip() else None
+    if result not in ("W", "L", "T"):
+        result = None
+    match = SCORE_RE.search(score.strip())
+    if not match:
+        return result, None, None
+    return result, int(match.group(1)), int(match.group(2))
 
 
 def _guess_home_away(site_text: str, opponent_text: str = "") -> str:
@@ -244,9 +318,21 @@ def parse_schedule_table(
 
             opponent = gp("opponent") or gp("opp")
             date = gp("date")
-            site_text = gp("site") or gp("location") or ""
-            result_text = gp("result") or ""
-            result, team_score, opp_score = _parse_result_cell(result_text)
+            # 'site_stadium'/'site_cityst' are the real {{CFB schedule entry}}
+            # params (checked against live pages spanning 1896-2020) — 'site'/
+            # 'location' kept as fallbacks in case an outlier page differs.
+            site_text = gp("site_stadium") or gp("site_cityst") or gp("site") or gp("location") or ""
+            # The real template keeps outcome ('w/l': w/l/t) and score
+            # ('score': '34–0') as two separate params, not one combined
+            # 'result' cell — gp("result") always returned None against every
+            # live page checked, silently discarding every game's score.
+            w_l = gp("w/l") or gp("wl") or ""
+            score = gp("score") or ""
+            result, team_score, opp_score = _parse_wl_score(w_l, score)
+            if result is None and team_score is None:
+                # Fall back to the older combined-cell format on the off
+                # chance a page still uses it under one of these param names.
+                result, team_score, opp_score = _parse_result_cell(gp("result") or "")
             games.append(
                 GameRow(
                     year=year,
@@ -258,7 +344,7 @@ def parse_schedule_table(
                     result=result,
                     team_score=team_score,
                     opp_score=opp_score,
-                    notes="" if result else "result/score did not parse from schedule-entry template",
+                    notes="" if result else f"result/score did not parse from schedule-entry template (w/l={w_l!r}, score={score!r})",
                 )
             )
         return games
@@ -330,8 +416,27 @@ def compute_points_from_games(games: list[GameRow], season: SeasonRow) -> None:
     season.points_against = sum(g.opp_score for g in scored)
 
 
-def beat_flag(games: list[GameRow], opponent_substring: str) -> str:
-    matches = [g for g in games if g.opponent and opponent_substring.lower() in g.opponent.lower()]
+RANK_PREFIX_RE = re.compile(r"^(?:no\.?\s*\d+|#\d+)\s+", re.IGNORECASE)
+
+
+def _opponent_matches(opponent: str, exact_name: str) -> bool:
+    """
+    True only if `opponent` refers to `exact_name` and nothing else — a
+    plain substring check (the original approach here) false-positives
+    "Texas Tech" and "Texas A&M" as matches for "Texas" (confirmed against
+    a real page: 2013's opponents include both "Texas" and "Texas Tech",
+    which made the old substring check report a Texas-rivalry SPLIT for a
+    season OU actually just lost to Texas outright). Wikipedia sometimes
+    prefixes a ranked opponent's name ("No. 19 Texas", confirmed on OU's
+    2018 page) — that prefix is stripped before comparing, but nothing
+    after the name is, so "Texas Tech" still correctly fails to match.
+    """
+    stripped = RANK_PREFIX_RE.sub("", opponent.strip())
+    return stripped.strip().lower() == exact_name.lower()
+
+
+def beat_flag(games: list[GameRow], exact_opponent_name: str) -> str:
+    matches = [g for g in games if g.opponent and _opponent_matches(g.opponent, exact_opponent_name)]
     if not matches:
         return "N/A (not on schedule)"
     results = {g.result for g in matches if g.result}
@@ -385,8 +490,8 @@ def pull_season(session: requests.Session, year: int) -> SeasonRow:
     parse_infobox(wikicode, season)
     games = parse_schedule_table(wikicode, year, season)
     compute_points_from_games(games, season)
-    season.beat_texas = beat_flag(games, "texas")
-    season.beat_osu = beat_flag(games, "oklahoma state")
+    season.beat_texas = beat_flag(games, "Texas")
+    season.beat_osu = beat_flag(games, "Oklahoma State")
     parse_awards(wikicode, season)
     season.data_tier = data_tier_for(year, season)
     season._games = games  # type: ignore[attr-defined]  (picked up by caller, not part of the CSV schema)
@@ -428,11 +533,24 @@ def main() -> None:
         default=0.75,
         help="Seconds between requests (brief asks for ~1-2 req/sec, i.e. 0.5-1.0s).",
     )
+    parser.add_argument(
+        "--include-verified",
+        action="store_true",
+        help=(
+            "Also pull years already in --verified, instead of skipping them. Used to "
+            "fill gaps in the 27 hand-verified rows' supplementary fields (offense/"
+            "defense info the verified CSV doesn't carry, e.g.) -- safe to do at any "
+            "time, since merge_dataset.py's verified-wins rule means a Wikipedia value "
+            "can never overwrite a verified one, only fill a blank."
+        ),
+    )
     args = parser.parse_args()
 
     args.out.mkdir(parents=True, exist_ok=True)
     verified_years = load_verified_years(args.verified)
-    years_to_pull = [y for y in range(args.start, args.end + 1) if y not in verified_years]
+    years_to_pull = [
+        y for y in range(args.start, args.end + 1) if args.include_verified or y not in verified_years
+    ]
 
     session = requests.Session()
     session.headers["User-Agent"] = USER_AGENT
@@ -441,7 +559,16 @@ def main() -> None:
     all_games: list[GameRow] = []
     for i, year in enumerate(years_to_pull):
         print(f"[{i + 1}/{len(years_to_pull)}] pulling {year}...")
-        season = pull_season(session, year)
+        try:
+            season = pull_season(session, year)
+        except Exception as exc:  # noqa: BLE001 -- a 130-year batch pull; one page's unexpected
+            # markup must not crash the run and lose every other season already pulled.
+            # fetch-level failures are already caught per-title inside pull_season() --
+            # this only catches a genuine parsing surprise downstream of a successful fetch.
+            print(f"  ERROR parsing {year}: {exc!r}")
+            season = SeasonRow(year=year)
+            season.gaps.append(f"unhandled parser error: {exc!r} — needs a manual look, not silently dropped")
+            season.data_tier = 4
         seasons.append(season)
         all_games.extend(getattr(season, "_games", []))
         time.sleep(args.sleep)
