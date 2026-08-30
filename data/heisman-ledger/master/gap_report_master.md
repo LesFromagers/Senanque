@@ -2,15 +2,16 @@
 
 Merge of the 27 hand-verified seasons + the Wikipedia bulk pull + the CFBD efficiency pull. Verified rows always win a conflict; this report only lists what's still missing after that merge.
 
-- **1953**: missing final_record, points_for, points_against
-- **1956**: missing points_for, points_against
-- **1958**: missing final_record, points_for, points_against
-- **1980**: missing points_for, points_against
-- **2008**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.
-- **2015**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.
-- **2016**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.
-- **2017**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.
-- **2018**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.
+- **1938**: missing conference
 
-## Known structural gap: no game-level data for the 27 verified seasons
-The hand-verified batch is season-level only (no per-game opponent/score list was captured for those 27 seasons). The SRS/strength-of-schedule layer of the Power Index can't compute an opponent-adjusted margin for these seasons until that game log is added — same gap flagged in `gap_report_verified_batch.md`'s "Not started at all" section. The Power Index module falls back to the unadjusted point-differential z-score alone for any season with no game log, and flags it, rather than guessing an SOS adjustment.
+## Verified-season fields filled from the Wikipedia re-pull
+Only fields the verified CSV left genuinely blank were filled below — every field the verified batch already had a value for was left untouched, no exceptions.
+- **1953**: final_record, final_ap_rank, points_for, points_against
+- **1956**: points_for, points_against, beat_osu
+- **1958**: final_record, points_for, points_against, beat_texas, beat_osu
+- **1978**: national_title_claim
+- **1980**: points_for, points_against
+- **2003**: national_title_claim
+
+## Game-level data now exists for 27 of the 27 verified seasons
+A prior version of this report claimed no per-game opponent/score list existed for any of the 27 verified seasons — true before a Wikipedia re-pull (--include-verified) was run against them, not true anymore. This only gives OU's own schedule and scores, though, not each opponent's own season game log — the SRS/strength-of-schedule layer of the Power Index still can't compute an opponent-adjusted margin without that second-order pull (see `gap_report_verified_batch.md`'s "Not started at all" section and power-index.ts's header comment). The Power Index module falls back to the unadjusted point-differential z-score alone for every season, verified or not, until that's built, and flags it rather than guessing an SOS adjustment.

@@ -72,16 +72,33 @@ def main() -> None:
     verified_years = {int(r["year"]) for r in verified_rows}
     cfbd_by_year = {int(r["year"]): r for r in cfbd_rows}
 
-    # Verified rows win outright; pulled rows fill every year the verified
-    # file doesn't cover. Neither source is ever blended field-by-field —
-    # that would risk silently mixing a checked value with a scraped guess.
+    # Verified rows win outright for every field they actually have a
+    # value for; pulled rows fill every year the verified file doesn't
+    # cover at all. For a year the verified file *does* cover, the pulled
+    # row is still consulted field-by-field — but only to fill a field the
+    # verified row left blank, never to replace one it already populated.
+    # (An earlier version of this script discarded the pulled row entirely
+    # whenever the year was already verified, which silently dropped every
+    # gap-filling field a supplemental Wikipedia pull found for the 27
+    # verified seasons — not what "fill their existing gaps, never
+    # overwrite verified data" means.)
     merged: dict[int, dict] = {}
     for row in verified_rows:
         merged[int(row["year"])] = dict(row)
+
+    filled_fields: dict[int, list[str]] = {}
     for row in pulled_rows:
         year = int(row["year"])
         if year not in verified_years:
             merged[year] = dict(row)
+            continue
+        target = merged[year]
+        for field in SEASON_FIELDS:
+            if field == "year":
+                continue
+            if target.get(field) in (None, "") and row.get(field) not in (None, ""):
+                target[field] = row[field]
+                filled_fields.setdefault(year, []).append(field)
 
     gap_lines: list[str] = [
         "# Heisman Park Ledger — Master Gap Report",
@@ -136,7 +153,41 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(games_rows)
 
-    if verified_years:
+    if filled_fields:
+        gap_lines.append("")
+        gap_lines.append("## Verified-season fields filled from the Wikipedia re-pull")
+        gap_lines.append(
+            "Only fields the verified CSV left genuinely blank were filled below — every "
+            "field the verified batch already had a value for was left untouched, no exceptions."
+        )
+        for year in sorted(filled_fields):
+            gap_lines.append(f"- **{year}**: {', '.join(filled_fields[year])}")
+
+    verified_years_with_games = {int(g["year"]) for g in games_rows if int(g["year"]) in verified_years}
+    verified_years_without_games = sorted(verified_years - verified_years_with_games)
+    if verified_years_with_games:
+        gap_lines.append("")
+        gap_lines.append(
+            f"## Game-level data now exists for {len(verified_years_with_games)} of the "
+            f"{len(verified_years)} verified seasons"
+        )
+        gap_lines.append(
+            "A prior version of this report claimed no per-game opponent/score list existed "
+            "for any of the 27 verified seasons — true before a Wikipedia re-pull "
+            "(--include-verified) was run against them, not true anymore. This only gives OU's "
+            "own schedule and scores, though, not each opponent's own season game log — the "
+            "SRS/strength-of-schedule layer of the Power Index still can't compute an "
+            "opponent-adjusted margin without that second-order pull (see "
+            "`gap_report_verified_batch.md`'s \"Not started at all\" section and "
+            "power-index.ts's header comment). The Power Index module falls back to the "
+            "unadjusted point-differential z-score alone for every season, verified or not, "
+            "until that's built, and flags it rather than guessing an SOS adjustment."
+        )
+        if verified_years_without_games:
+            gap_lines.append(
+                f"Still missing a game log even after the re-pull: {', '.join(map(str, verified_years_without_games))}."
+            )
+    elif verified_years:
         gap_lines.append("")
         gap_lines.append(
             f"## Known structural gap: no game-level data for the {len(verified_years)} "
