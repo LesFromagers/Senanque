@@ -45,15 +45,6 @@ export interface SeasonRecord {
   offenseRushingYards: number | null;
   offensePassingYards: number | null;
   offenseTurnovers: number | null;
-  /**
-   * Iterative-SRS opponent-adjusted point margin. Not populated by anything
-   * in this codebase yet — computing it needs each opponent's own
-   * season-long game log (a second-order pull explicitly out of scope for
-   * the first data batch; see gap_report_verified_batch.md). Left
-   * undefined/null on every season today; power-index.ts degrades
-   * gracefully and flags it rather than substituting a guess.
-   */
-  sosAdjustedMargin?: number | null;
 }
 
 export interface PowerIndexResult {

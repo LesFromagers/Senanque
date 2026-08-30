@@ -67,8 +67,6 @@ interface RawSeasonJson {
   offense_rushing_yards?: number | null;
   offense_passing_yards?: number | null;
   offense_turnovers?: number | null;
-  /** Only present on a Supabase row today (see schema.sql) — absent from the static JSON until the SOS pull exists. */
-  sos_adjusted_margin?: number | null;
 }
 
 function fromJson(row: RawSeasonJson): SeasonRecord {
@@ -103,6 +101,5 @@ function fromJson(row: RawSeasonJson): SeasonRecord {
     offenseRushingYards: row.offense_rushing_yards ?? null,
     offensePassingYards: row.offense_passing_yards ?? null,
     offenseTurnovers: row.offense_turnovers ?? null,
-    sosAdjustedMargin: row.sos_adjusted_margin ?? null,
   };
 }

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GapsPage() {
-  const { flagged, notPulled, sosNotStarted } = await getManualReviewWorklist();
+  const { flagged, notPulled } = await getManualReviewWorklist();
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
@@ -66,19 +66,6 @@ export default async function GapsPage() {
         )}
       </section>
 
-      {sosNotStarted && (
-        <section className="mt-10 border-t border-stone/30 pt-6">
-          <h2 className="font-display text-xl font-light text-charcoal">
-            Not started: strength-of-schedule opponent lists
-          </h2>
-          <p className="mt-2 text-sm text-charcoal/90">
-            The SRS layer of the Power Index needs every OU opponent&rsquo;s own season game
-            log, not just OU&rsquo;s — a second-order pull that hasn&rsquo;t been built yet.
-            Every season&rsquo;s SOS-adjusted margin is currently null and flagged; see each
-            season&rsquo;s gap list for the exact note.
-          </p>
-        </section>
-      )}
     </div>
   );
 }

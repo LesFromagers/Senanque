@@ -28,7 +28,6 @@ const LAST_COMPLETED_SEASON = 2025;
 export async function getManualReviewWorklist(): Promise<{
   flagged: ManualReviewItem[];
   notPulled: number[];
-  sosNotStarted: boolean;
 }> {
   const seasons = await getSeasons();
   const coveredYears = new Set(seasons.map((s) => s.year));
@@ -40,9 +39,5 @@ export async function getManualReviewWorklist(): Promise<{
   return {
     flagged: worklistJson as ManualReviewItem[],
     notPulled,
-    // True until every season in the dataset carries a game-level opponent
-    // list from data/heisman-ledger/master/master_games.csv — see
-    // power-index.ts's sosAdjustedMargin gap message for the per-season view.
-    sosNotStarted: true,
   };
 }

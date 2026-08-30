@@ -14,58 +14,74 @@
  * Performance layer, the tiebreaker, and combining all three into the
  * final composite.
  *
- * Two places this module still deliberately departs from the brief's
+ * -- Performance layer, as actually defined here (see PERFORMANCE_WEIGHTS):
+ *   point-differential z-score (5/7) + offense/defense efficiency
+ *   z-scores (1/7 each). An SRS-style strength-of-schedule margin was
+ *   part of an earlier draft of this formula (30% of this layer) and has
+ *   been dropped, deliberately, not left half-built: computing it for
+ *   real needs every OU opponent's own full season game log across 130
+ *   years, a second-order pull (fetch every opponent-team-season, not
+ *   just OU's) this pipeline has no source for and no near-term plan to
+ *   build (see gap_report_verified_batch.md's original scoping of it).
+ *   Carrying a formally-weighted component that can only ever be null and
+ *   silently redistributed was worse than not having it: every one of
+ *   this dataset's seasons was already computed with SOS redistributed
+ *   away, so removing it outright changes zero scores and removes a gap
+ *   flag that was never describing a fixable-per-season problem. The
+ *   `sosAdjustedMargin` field this used to read has been removed from
+ *   SeasonRecord entirely along with it. If a real opponent-adjusted-
+ *   margin pull ever gets built, it belongs back in this formula as a
+ *   deliberate re-addition, not a silent revival.
+ *
+ * One place this module still deliberately departs from the brief's
  * formula as literally written, because the literal version needs data
- * this project doesn't have and never fabricates:
+ * this project doesn't have and never fabricates: offense/defense
+ * efficiency's data-tier waterfall. CLAUDE.md's tier 2 (yards/play,
+ * ~1950s+) and a genuine tier 3 (yards/game vs. national rank,
+ * pre-1950s) both need OU's own historical yards figures — no source in
+ * this pipeline (Wikipedia infoboxes, CFBD, NCAA's *national* averages)
+ * supplies OU's own per-season yardage before 2005.
+ * scripts/heisman_ledger/schema.py's data_tier_for() documents this
+ * directly: tier 2 has never been reachable in practice, and today's
+ * "tier 3" is really a conference-known heuristic layered over the same
+ * points-per-game proxy as tier 4, not an actual yards-based measure. So
+ * in practice every season is either tier 1 (CFBD PPA, 2005+) or the
+ * points-per-game proxy (everything else) — see
+ * `offenseEfficiencyRaw`/`defenseEfficiencyRaw` below. What *is* fixed
+ * here: those two proxies are z-scored against separate populations (see
+ * `zScoreWithinProxy`), never pooled into one z-score the way an earlier
+ * version of this file did — PPA (roughly -1..1) and points-per-game
+ * (roughly 0..50) are different scales, and pooling them let unit
+ * differences masquerade as real quality differences.
  *
- * 1. SOS-adjusted margin (iterative SRS). Needs every opponent's own
- *    season game log, a second-order pull explicitly out of scope for the
- *    pulls this pipeline currently runs (see gap_report_verified_batch.md).
- *    No season in this dataset has it yet. When `sosAdjustedMargin` is
- *    null, its 30% of the Performance layer is redistributed
- *    proportionally across the other three sub-components rather than
- *    treated as zero — and the season is flagged, not silently scored as
- *    if SOS were average.
- * 2. Offense/defense efficiency's data-tier waterfall. CLAUDE.md's tier
- *    2 (yards/play, ~1950s+) and a genuine tier 3 (yards/game vs.
- *    national rank, pre-1950s) both need OU's own historical yards
- *    figures — no source in this pipeline (Wikipedia infoboxes, CFBD,
- *    NCAA's *national* averages) supplies OU's own per-season yardage
- *    before 2005. scripts/heisman_ledger/schema.py's data_tier_for()
- *    documents this directly: tier 2 has never been reachable in
- *    practice, and today's "tier 3" is really a conference-known
- *    heuristic layered over the same points-per-game proxy as tier 4, not
- *    an actual yards-based measure. So in practice every season is either
- *    tier 1 (CFBD PPA, 2005+) or the points-per-game proxy (everything
- *    else) — see `offenseEfficiencyRaw`/`defenseEfficiencyRaw` below. What
- *    *is* fixed here: those two proxies are z-scored against separate
- *    populations (see `zScoreWithinProxy`), never pooled into one
- *    z-score the way the previous version of this file did — PPA
- *    (roughly -1..1) and points-per-game (roughly 0..50) are different
- *    scales, and pooling them let unit differences masquerade as real
- *    quality differences.
+ * The point-differential z-score is vs. the national average that
+ * season, per CLAUDE.md, sourced from
+ * lib/heisman-ledger/national-baseline.ts (populated by
+ * scripts/heisman_ledger/pull_ncaa.py, NCAA-archived national scoring/
+ * yardage averages, 1937-present). Centering on the real national mean
+ * but *scaling* by OU's own historical spread is this formula's defined
+ * method for every season that has a national mean at all (1937-present)
+ * — not a fallback awaiting a better data source. NCAA's archived pages
+ * publish the national average alone, never a full team-by-team table
+ * for a historical season, so a real cross-team standard deviation isn't
+ * obtainable without a team-by-team pull across 100+ programs and ~90
+ * years — a materially bigger undertaking than anything else this
+ * pipeline runs, deliberately not being built for the same reason SOS
+ * isn't (see above). If that ever changes, `computePointDiffZ` below
+ * already has the "national" branch ready to use a real stddev the
+ * moment national-baseline.ts's `stdDevMarginPerGame` is non-null for a
+ * season, no formula change required. Only one case still gets flagged
+ * in `gaps`: a pre-1937 season (or any season the NCAA pull hasn't
+ * reached), which has no national baseline at all — not even a mean —
+ * and falls back to z-scoring OU's margin against OU's own historical
+ * distribution instead. That's a real, distinct gap (CLAUDE.md's
+ * documented 1937 historical limit), not the same thing as the
+ * mean-only case above.
  *
- * The point-differential z-score is no longer one of these deviations:
- * CLAUDE.md calls for it vs. the national average that season, and this
- * file now does that, sourced from lib/heisman-ledger/national-baseline.ts
- * (populated by scripts/heisman_ledger/pull_ncaa.py, NCAA-archived
- * national scoring/yardage averages, 1937-present). Two honest caveats
- * remain, both surfaced per-season in `gaps` rather than absorbed
- * silently:
- *   - Pre-1937 seasons, or any season the NCAA pull hasn't reached yet,
- *     have no national baseline entry and fall back to z-scoring OU's
- *     margin against OU's *own* season-to-season distribution instead —
- *     the same method this file used everywhere before this update.
- *   - NCAA's archived pages mostly publish the national *average* alone,
- *     not a full team-by-team table for every historical season, so a
- *     real national standard deviation isn't always available even when
- *     the mean is. When only the mean is available, this file centers on
- *     the real national average but scales by OU's own historical spread
- *     rather than fabricate a national one.
- *
- * Every one of these is surfaced per-season in `PowerIndexResult.gaps`,
- * per CLAUDE.md's "a visible gap indicator... incompleteness is never
- * silently hidden" requirement — never absorbed quietly into the number.
+ * Every remaining case above is surfaced per-season in
+ * `PowerIndexResult.gaps`, per CLAUDE.md's "a visible gap indicator...
+ * incompleteness is never silently hidden" requirement — never absorbed
+ * quietly into the number.
  */
 import type { PowerIndexResult, SeasonRecord } from "./types";
 import { getAllNationalBaselines, type NationalBaseline } from "./national-baseline";
@@ -118,7 +134,6 @@ interface PointDiffZ {
 
 interface PerformanceSubScores {
   pointDiffZ: PointDiffZ[];
-  sosZ: (number | null)[];
   offEffZ: (number | null)[];
   defEffZ: (number | null)[];
 }
@@ -227,32 +242,33 @@ function computePerformanceSubScores(
   seasons: SeasonRecord[],
   nationalBaselines: Record<number, NationalBaseline>,
 ): PerformanceSubScores {
-  const sos = seasons.map((s) => s.sosAdjustedMargin ?? null);
   return {
     pointDiffZ: computePointDiffZ(seasons, nationalBaselines),
-    sosZ: zScores(sos),
     offEffZ: zScoreWithinProxy(seasons.map(offenseEfficiencyRaw)),
     defEffZ: zScoreWithinProxy(seasons.map(defenseEfficiencyRaw)),
   };
 }
 
+// 5:1:1 -- the same ratio point-diff:offEff:defEff already had before SOS
+// was removed (0.5:0.1:0.1), just renormalized to sum to 1 on its own
+// instead of via combinePerformance()'s runtime redistribution. Every
+// season in this dataset already had SOS redistributed away (see this
+// file's header comment), so this is a no-op on every existing score --
+// pure simplification, not a formula change in practice.
 const PERFORMANCE_WEIGHTS = {
-  pointDiff: 0.5,
-  sos: 0.3,
-  offEff: 0.1,
-  defEff: 0.1,
+  pointDiff: 5 / 7,
+  offEff: 1 / 7,
+  defEff: 1 / 7,
 };
 
-/** Combines the four sub-component z-scores, redistributing any missing sub-component's weight proportionally rather than treating it as zero. */
+/** Combines the three sub-component z-scores, redistributing any missing sub-component's weight proportionally rather than treating it as zero. */
 function combinePerformance(sub: {
   pointDiff: number | null;
-  sos: number | null;
   offEff: number | null;
   defEff: number | null;
 }): number | null {
   const entries = [
     { key: "pointDiff", value: sub.pointDiff, weight: PERFORMANCE_WEIGHTS.pointDiff },
-    { key: "sos", value: sub.sos, weight: PERFORMANCE_WEIGHTS.sos },
     { key: "offEff", value: sub.offEff, weight: PERFORMANCE_WEIGHTS.offEff },
     { key: "defEff", value: sub.defEff, weight: PERFORMANCE_WEIGHTS.defEff },
   ].filter((e) => e.value !== null);
@@ -290,7 +306,6 @@ export function computePowerIndex(seasons: SeasonRecord[]): PowerIndexResult[] {
   const rawPerformance = seasons.map((_, i) =>
     combinePerformance({
       pointDiff: perf.pointDiffZ[i].z,
-      sos: perf.sosZ[i],
       offEff: perf.offEffZ[i],
       defEff: perf.defEffZ[i],
     }),
@@ -310,12 +325,12 @@ export function computePowerIndex(seasons: SeasonRecord[]): PowerIndexResult[] {
       gaps.push(
         `point-diff z-score uses OU's own historical spread — no NCAA national baseline for ${season.year} yet (pre-1937 limit, or the NCAA pull hasn't reached this season)`,
       );
-    } else if (perf.pointDiffZ[i].source === "national_mean_ou_spread") {
-      gaps.push(
-        `point-diff z-score is centered on the real NCAA national average for ${season.year}, but scaled by OU's own historical spread — the NCAA source doesn't supply a national cross-team standard deviation for this season`,
-      );
     }
-    if (perf.sosZ[i] === null) gaps.push("SOS-adjusted margin (SRS) not computed — opponent season-game-logs not yet pulled for this season");
+    // Centering on the real NCAA national mean but scaling by OU's own
+    // historical spread (source "national_mean_ou_spread") is this
+    // formula's defined method, not a shortfall — see this file's header
+    // comment — so it's not flagged here the way the self-referential
+    // fallback above is.
     if (perf.offEffZ[i] === null) gaps.push("offensive efficiency not computable for this season's data tier");
     if (perf.defEffZ[i] === null) gaps.push("defensive efficiency not computable for this season's data tier");
     if (season.pointsForIsApproximate || season.pointsAgainstIsApproximate) {

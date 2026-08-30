@@ -45,9 +45,14 @@ create table if not exists heisman_ledger_seasons (
   offense_rushing_yards integer,
   offense_passing_yards integer,
   offense_turnovers integer,
-  -- Iterative-SRS opponent-adjusted margin. NULL until the second-order
-  -- opponent-season pull exists — see gap_report_verified_batch.md's "Not
-  -- started at all" section. Never fabricated in its place.
+  -- Retired, not just unpopulated: the Power Index formula dropped its
+  -- SRS-style strength-of-schedule component outright (see
+  -- lib/heisman-ledger/power-index.ts's header comment) rather than leave
+  -- it permanently null and flagged. Column left in place rather than
+  -- migrated out in this pass -- always NULL, no application code reads
+  -- it anymore (lib/heisman-ledger/types.ts no longer has a matching
+  -- field). Safe to drop in a future migration if this table is ever
+  -- touched for another reason.
   sos_adjusted_margin double precision,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

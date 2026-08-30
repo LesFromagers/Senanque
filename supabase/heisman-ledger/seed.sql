@@ -526,7 +526,7 @@ values (2025, 'Brent Venables', 'Southeastern Conference', '10-3', '13', NULL, 3
 on conflict (year) do update set head_coach = excluded.head_coach, conference = excluded.conference, final_record = excluded.final_record, final_ap_rank = excluded.final_ap_rank, national_title_claim = excluded.national_title_claim, points_for = excluded.points_for, points_for_is_approximate = excluded.points_for_is_approximate, points_against = excluded.points_against, points_against_is_approximate = excluded.points_against_is_approximate, beat_texas = excluded.beat_texas, beat_osu = excluded.beat_osu, heisman_winner = excluded.heisman_winner, notable_all_americans = excluded.notable_all_americans, data_tier = excluded.data_tier, source_notes = excluded.source_notes, offense_ppa = excluded.offense_ppa, defense_ppa = excluded.defense_ppa, offense_success_rate = excluded.offense_success_rate, defense_success_rate = excluded.defense_success_rate, sp_overall = excluded.sp_overall, sp_offense = excluded.sp_offense, sp_defense = excluded.sp_defense, offense_total_yards = excluded.offense_total_yards, offense_rushing_yards = excluded.offense_rushing_yards, offense_passing_yards = excluded.offense_passing_yards, offense_turnovers = excluded.offense_turnovers;
 
 
--- Games (opponent lists, for SOS math) --
+-- Games (schedule display, beat_texas/beat_osu) --
 
 insert into heisman_ledger_games (year, game_order, date, opponent, site_text, home_away_guess, result, team_score, opp_score, notes)
 values (1895, 1, 'December 14', 'Oklahoma City team', 'University campus', 'unknown', 'L', 0, 34, NULL)

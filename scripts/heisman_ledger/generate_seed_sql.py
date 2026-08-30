@@ -163,7 +163,7 @@ def main() -> None:
     args = parser.parse_args()
 
     lines = generate_seasons_sql(args.master / "master_seasons.csv")
-    lines.append("\n-- Games (opponent lists, for SOS math) --\n")
+    lines.append("\n-- Games (schedule display, beat_texas/beat_osu) --\n")
     lines.extend(generate_games_sql(args.master / "master_games.csv"))
 
     args.out.write_text("\n".join(lines) + "\n", encoding="utf-8")

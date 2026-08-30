@@ -163,45 +163,39 @@ def main() -> None:
         for year in sorted(filled_fields):
             gap_lines.append(f"- **{year}**: {', '.join(filled_fields[year])}")
 
+    # This used to frame game-level coverage against the SRS/strength-of-
+    # schedule layer specifically ("still can't compute an opponent-
+    # adjusted margin without it"). That framing no longer applies: SOS was
+    # dropped from the Power Index formula outright (see power-index.ts's
+    # header comment) rather than left waiting on this pull, so game-level
+    # data's remaining value here is schedule display and beat_texas/
+    # beat_osu, not a still-pending scoring input.
     verified_years_with_games = {int(g["year"]) for g in games_rows if int(g["year"]) in verified_years}
     verified_years_without_games = sorted(verified_years - verified_years_with_games)
     if verified_years_with_games:
         gap_lines.append("")
         gap_lines.append(
-            f"## Game-level data now exists for {len(verified_years_with_games)} of the "
+            f"## Game-level data exists for {len(verified_years_with_games)} of the "
             f"{len(verified_years)} verified seasons"
         )
         gap_lines.append(
-            "A prior version of this report claimed no per-game opponent/score list existed "
-            "for any of the 27 verified seasons — true before a Wikipedia re-pull "
-            "(--include-verified) was run against them, not true anymore. This only gives OU's "
-            "own schedule and scores, though, not each opponent's own season game log — the "
-            "SRS/strength-of-schedule layer of the Power Index still can't compute an "
-            "opponent-adjusted margin without that second-order pull (see "
-            "`gap_report_verified_batch.md`'s \"Not started at all\" section and "
-            "power-index.ts's header comment). The Power Index module falls back to the "
-            "unadjusted point-differential z-score alone for every season, verified or not, "
-            "until that's built, and flags it rather than guessing an SOS adjustment."
+            "The hand-verified batch was originally season-level only; a Wikipedia re-pull "
+            "(--include-verified) fills in each verified season's own schedule/scores "
+            "alongside it, used for schedule display and the beat_texas/beat_osu flags."
         )
         if verified_years_without_games:
             gap_lines.append(
-                f"Still missing a game log even after the re-pull: {', '.join(map(str, verified_years_without_games))}."
+                f"Still missing a game log: {', '.join(map(str, verified_years_without_games))}."
             )
     elif verified_years:
         gap_lines.append("")
         gap_lines.append(
-            f"## Known structural gap: no game-level data for the {len(verified_years)} "
-            "verified seasons"
+            f"## Known gap: no game-level data for the {len(verified_years)} verified seasons"
         )
         gap_lines.append(
             "The hand-verified batch is season-level only (no per-game opponent/score "
-            "list was captured for those 27 seasons). The SRS/strength-of-schedule "
-            "layer of the Power Index can't compute an opponent-adjusted margin for "
-            "these seasons until that game log is added — same gap flagged in "
-            "`gap_report_verified_batch.md`'s \"Not started at all\" section. "
-            "The Power Index module falls back to the unadjusted point-differential "
-            "z-score alone for any season with no game log, and flags it, rather "
-            "than guessing an SOS adjustment."
+            "list was captured for those 27 seasons) — run pull_wikipedia.py with "
+            "--include-verified to fill it in."
         )
 
     (args.out / "gap_report_master.md").write_text("\n".join(gap_lines), encoding="utf-8")

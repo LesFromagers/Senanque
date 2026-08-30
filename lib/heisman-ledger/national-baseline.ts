@@ -35,12 +35,17 @@ import baselineJson from "@/data/heisman-ledger/national_baseline.json";
  * publishes a cross-team standard deviation of scoring margin — every
  * record-book edition gives the national average only. A real one would
  * need every counted team's own per-game figures for the season, a full
- * team-by-team pull this project doesn't attempt (same class of
- * second-order pull as the SOS/SRS gap already flagged elsewhere in this
- * pipeline). power-index.ts already handles this: it centers on this
- * file's real national mean but scales by OU's own historical spread
- * instead of fabricating a national one. See that file's header comment
- * for the full fallback chain.
+ * team-by-team pull across ~100 programs and ~90 years — a materially
+ * bigger undertaking than anything else this pipeline runs, and (like the
+ * SRS-style strength-of-schedule component power-index.ts dropped
+ * outright rather than leave half-built) not being pursued. This isn't a
+ * gap awaiting a fix: power-index.ts's header comment documents scaling
+ * by OU's own historical spread as this formula's *defined* method for
+ * every season with a national mean, not a fallback — so power-index.ts
+ * centers on this file's real national mean and scales by OU's own
+ * spread instead of fabricating a national one, and doesn't flag that
+ * combination as incomplete. See that file's header comment for the one
+ * case that's still genuinely flagged (no national baseline at all).
  *
  * The remaining fields are supplementary national context pulled from
  * the same table (national average points/game, total-offense

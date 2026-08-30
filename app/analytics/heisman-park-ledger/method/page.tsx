@@ -46,32 +46,37 @@ export default function MethodPage() {
           <h2 className="font-display text-lg font-light text-charcoal">Power Index</h2>
           <p className="mt-2">
             <code className="font-mono text-xs">0.50 × Performance + 0.35 × Accomplishment + 0.15 × Talent</code>,
-            each layer normalized 0-100. Performance weighs point-differential z-score (50%),
-            an opponent-adjusted SRS-style margin (30%), and offensive/defensive efficiency
-            z-scores (10% each). Accomplishment is a capped point table for national titles,
-            conference titles, final ranking, and bowl outcomes. Talent weighs Heisman winners
-            and All-Americans, normalized against OU&rsquo;s highest-ever talent season.
+            each layer normalized 0-100. Performance weighs point-differential z-score (5/7,
+            &asymp;71%) and offensive/defensive efficiency z-scores (1/7, &asymp;14% each).
+            Accomplishment is a capped point table for national titles, conference titles,
+            final ranking, and bowl outcomes. Talent weighs Heisman winners and All-Americans,
+            normalized against OU&rsquo;s highest-ever talent season.
+          </p>
+          <p className="mt-2">
+            The point-differential z-score is centered on the real NCAA national average
+            scoring margin for that season (1937&ndash;present, from the NCAA&rsquo;s own
+            published team-statistics trends) &mdash; not OU&rsquo;s own history. Scale still
+            comes from OU&rsquo;s own season-to-season spread, by design, not as a placeholder:
+            see &ldquo;Where this departs from the ideal formula&rdquo; below.
           </p>
         </section>
 
         <section>
           <h2 className="font-display text-lg font-light text-charcoal">Where this departs from the ideal formula</h2>
           <p className="mt-2">
-            Three adjustments, made because the literal formula needs data this project
+            Two adjustments, made because the literal formula needs data this project
             doesn&rsquo;t have and won&rsquo;t fabricate to get:
           </p>
           <ul className="mt-2 list-disc space-y-2 pl-5">
             <li>
-              Point differential is z-scored against OU&rsquo;s own season-to-season history,
-              not a national per-season average — no source here provides 130 years of
-              national point-differential data.
-            </li>
-            <li>
-              The SRS-style strength-of-schedule margin needs every opponent&rsquo;s own
-              season game log. That second-order pull hasn&rsquo;t been built yet, so it&rsquo;s
-              null for every season today — its 30% weight is redistributed across the other
-              Performance sub-components instead of scored as zero, and every affected season
-              is flagged.
+              Point differential is centered on the real NCAA national average for that
+              season, but scaled by OU&rsquo;s own historical spread rather than a national
+              one. The NCAA&rsquo;s own published stats give a national average, never a
+              cross-team standard deviation for a historical season &mdash; getting a real one
+              would mean pulling every FBS team&rsquo;s own season figures across ~90 years,
+              a pull this project doesn&rsquo;t attempt. This is the formula&rsquo;s defined
+              method, not a fallback awaiting better data, so it isn&rsquo;t flagged
+              per-season.
             </li>
             <li>
               Draft-pick counts in the Talent layer aren&rsquo;t scored at all — no draft-record
@@ -79,6 +84,14 @@ export default function MethodPage() {
               silently treated as zero picks.
             </li>
           </ul>
+          <p className="mt-2">
+            An earlier draft of this formula also weighed an opponent-adjusted,
+            SRS-style strength-of-schedule margin (30% of the Performance layer). It&rsquo;s
+            been dropped outright, not left half-built: computing it for real needs every OU
+            opponent&rsquo;s own full season game log across 130 years, a pull this project has
+            no near-term plan to build. Every season had already been scored with that
+            component redistributed away, so removing it changed no scores.
+          </p>
           <p className="mt-2">
             See <code className="font-mono text-xs">lib/heisman-ledger/power-index.ts</code>{" "}
             for the full reasoning, and any season&rsquo;s detail page for exactly which gaps

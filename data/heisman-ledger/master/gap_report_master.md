@@ -13,5 +13,5 @@ Only fields the verified CSV left genuinely blank were filled below — every fi
 - **1980**: points_for, points_against
 - **2003**: national_title_claim
 
-## Game-level data now exists for 27 of the 27 verified seasons
-A prior version of this report claimed no per-game opponent/score list existed for any of the 27 verified seasons — true before a Wikipedia re-pull (--include-verified) was run against them, not true anymore. This only gives OU's own schedule and scores, though, not each opponent's own season game log — the SRS/strength-of-schedule layer of the Power Index still can't compute an opponent-adjusted margin without that second-order pull (see `gap_report_verified_batch.md`'s "Not started at all" section and power-index.ts's header comment). The Power Index module falls back to the unadjusted point-differential z-score alone for every season, verified or not, until that's built, and flags it rather than guessing an SOS adjustment.
+## Game-level data exists for 27 of the 27 verified seasons
+The hand-verified batch was originally season-level only; a Wikipedia re-pull (--include-verified) fills in each verified season's own schedule/scores alongside it, used for schedule display and the beat_texas/beat_osu flags.
