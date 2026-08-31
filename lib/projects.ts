@@ -63,7 +63,7 @@ export const projects: ProjectMeta[] = [
     category: "Games",
     description: "A chess coach with a Count of Monte Cristo twist.",
     dataSource: "None — local engine, session-only",
-    status: "planned",
+    status: "live",
   },
 ];
 
