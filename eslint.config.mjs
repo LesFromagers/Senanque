@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static assets served as-is — vendored third-party code (see
+    // public/stockfish/README.md), never our own source to lint.
+    "public/**",
   ]),
 ]);
 

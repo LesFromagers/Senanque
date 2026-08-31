@@ -58,11 +58,11 @@ export const projects: ProjectMeta[] = [
   },
   {
     slug: "chess",
-    title: "Chess",
-    wing: "analytics",
+    title: "The Dantès Gambit",
+    wing: "agentics",
     category: "Games",
-    description: "A secondary build-things demo, not a headline project.",
-    dataSource: "TBD",
+    description: "A chess coach with a Count of Monte Cristo twist.",
+    dataSource: "None — local engine, session-only",
     status: "planned",
   },
 ];
