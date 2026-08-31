@@ -19,6 +19,14 @@
      elsewhere; never enters SERIES_COLOR_ORDER. See DESIGN.md's
      "Sub-project palette extensions" for the pattern this follows. */
   --color-garnet: #6e2e34;
+  /* Scoped to The Dantès Gambit (chess) only — its wordmark, the Château
+     d'If hero motif, board interaction chrome (legal-move dots, selected
+     ring, last-move wash), Faria's panel rule and attribution, and the
+     checkmate band. Never the board surface itself (that's limestone/
+     walnut — see lib/chess/board-tones.ts). Never used elsewhere; never
+     enters SERIES_COLOR_ORDER. See DESIGN.md's "Sub-project palette
+     extensions" for the pattern this follows. */
+  --color-marseille: #35565a;
 
   --font-display: var(--font-literata);
   --font-sans: var(--font-inter);
