@@ -39,6 +39,11 @@ function buildPieces(): PieceRenderObject {
       return (
         <span
           style={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
             fontFamily: "var(--font-display, Literata, Georgia, serif)",
             // Container-query unit, not a viewport unit: scales with the
             // board's own rendered width (1 square = 12.5% of it) so the
