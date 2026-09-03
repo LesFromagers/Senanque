@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ExternalLinkIcon } from "@/components/icons/ExternalLinkIcon";
 import { SERIES_COLOR_ORDER } from "@/lib/chart-colors";
-import { BOARD_TONES, LIGHT_PIECE_CONTOUR, DARK_PIECE_HALO } from "@/lib/chess/board-tones";
+import { BOARD_TONES } from "@/lib/chess/board-tones";
 import type { ProjectMeta } from "@/lib/projects";
 
 const BAR_HEIGHTS = [40, 60, 30, 75, 50, 65, 45];
@@ -84,47 +84,78 @@ function TableThumbnail() {
   );
 }
 
-// A decorative back-rank strip, not a real position — same glyphs, board
-// tones, and light/dark contrast treatment (LIGHT_PIECE_CONTOUR /
-// DARK_PIECE_HALO) as the real board in components/chess/ChessBoard.tsx,
-// so the preview reads as "this is the chess app" rather than a chart.
-// Alternates sides purely for visual rhythm across the strip.
-const CHESS_STRIP = [
-  { glyph: "♖", light: true },
-  { glyph: "♞", light: false },
-  { glyph: "♗", light: true },
-  { glyph: "♛", light: false },
-  { glyph: "♔", light: true },
-  { glyph: "♝", light: false },
-  { glyph: "♘", light: true },
-  { glyph: "♜", light: false },
+// A cropped slice of a live middlegame, not a real position — same board
+// tones, glyphs, and light/dark contrast treatment as the real board in
+// components/chess/ChessBoard.tsx, so the preview reads as "this is the
+// chess app" rather than a chart. Three ranks, sparse and asymmetric
+// (about half the squares empty), with light and dark pieces interleaved
+// and sitting close to each other — a couple of pawns face off in the
+// center, a rook and knight sit near an opposing bishop — so it reads as
+// action in progress rather than a mirrored, decorative back rank.
+// Square SVG cells via preserveAspectRatio="meet" (letterboxed rather
+// than stretched), since a stretched checkerboard reads as rectangles.
+const COLS = 8;
+const ROWS = 3;
+const CELL = 40;
+
+const CHESS_CELLS: { row: number; col: number; glyph: string; light: boolean }[] = [
+  { row: 0, col: 1, glyph: "♞", light: false },
+  { row: 0, col: 3, glyph: "♙", light: true },
+  { row: 0, col: 4, glyph: "♟", light: false },
+  { row: 0, col: 6, glyph: "♗", light: true },
+  { row: 1, col: 0, glyph: "♖", light: true },
+  { row: 1, col: 2, glyph: "♝", light: false },
+  { row: 1, col: 5, glyph: "♛", light: false },
+  { row: 1, col: 7, glyph: "♘", light: true },
+  { row: 2, col: 1, glyph: "♙", light: true },
+  { row: 2, col: 3, glyph: "♜", light: false },
+  { row: 2, col: 4, glyph: "♙", light: true },
+  { row: 2, col: 6, glyph: "♞", light: false },
 ];
 
 function ChessThumbnail() {
   return (
-    <div className="flex h-28 border-b border-stone/40">
-      {CHESS_STRIP.map((piece, i) => {
-        const onLimestone = i % 2 === 0;
-        return (
-          <div
-            key={i}
-            className="flex flex-1 items-center justify-center"
-            style={{ backgroundColor: onLimestone ? BOARD_TONES.limestone : BOARD_TONES.walnut }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "2.5rem",
-                lineHeight: 1,
-                color: piece.light ? BOARD_TONES.lightPiece : BOARD_TONES.darkPiece,
-                textShadow: piece.light ? LIGHT_PIECE_CONTOUR : onLimestone ? "none" : DARK_PIECE_HALO,
-              }}
+    <div className="h-28 border-b border-stone/40" style={{ backgroundColor: BOARD_TONES.walnut }}>
+      <svg
+        viewBox={`0 0 ${COLS * CELL} ${ROWS * CELL}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+      >
+        {Array.from({ length: ROWS }).flatMap((_, row) =>
+          Array.from({ length: COLS }).map((_, col) => (
+            <rect
+              key={`${row}-${col}`}
+              x={col * CELL}
+              y={row * CELL}
+              width={CELL}
+              height={CELL}
+              fill={(row + col) % 2 === 0 ? BOARD_TONES.limestone : BOARD_TONES.walnut}
+            />
+          )),
+        )}
+        {CHESS_CELLS.map(({ row, col, glyph, light }) => {
+          const onWalnut = (row + col) % 2 !== 0;
+          return (
+            <text
+              key={`${row}-${col}`}
+              x={col * CELL + CELL / 2}
+              y={row * CELL + CELL / 2}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontFamily="var(--font-display)"
+              fontSize={CELL * 0.72}
+              fill={light ? BOARD_TONES.lightPiece : BOARD_TONES.darkPiece}
+              stroke={light ? BOARD_TONES.pieceContour : onWalnut ? "rgba(246,241,228,0.5)" : "none"}
+              strokeWidth={light ? 1.1 : onWalnut ? 0.8 : 0}
+              paintOrder="stroke"
             >
-              {piece.glyph}
-            </span>
-          </div>
-        );
-      })}
+              {glyph}
+            </text>
+          );
+        })}
+      </svg>
     </div>
   );
 }
