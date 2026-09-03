@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ExternalLinkIcon } from "@/components/icons/ExternalLinkIcon";
 import { SERIES_COLOR_ORDER } from "@/lib/chart-colors";
+import { BOARD_TONES, LIGHT_PIECE_CONTOUR, DARK_PIECE_HALO } from "@/lib/chess/board-tones";
 import type { ProjectMeta } from "@/lib/projects";
 
 const BAR_HEIGHTS = [40, 60, 30, 75, 50, 65, 45];
@@ -83,6 +84,51 @@ function TableThumbnail() {
   );
 }
 
+// A decorative back-rank strip, not a real position — same glyphs, board
+// tones, and light/dark contrast treatment (LIGHT_PIECE_CONTOUR /
+// DARK_PIECE_HALO) as the real board in components/chess/ChessBoard.tsx,
+// so the preview reads as "this is the chess app" rather than a chart.
+// Alternates sides purely for visual rhythm across the strip.
+const CHESS_STRIP = [
+  { glyph: "♖", light: true },
+  { glyph: "♞", light: false },
+  { glyph: "♗", light: true },
+  { glyph: "♛", light: false },
+  { glyph: "♔", light: true },
+  { glyph: "♝", light: false },
+  { glyph: "♘", light: true },
+  { glyph: "♜", light: false },
+];
+
+function ChessThumbnail() {
+  return (
+    <div className="flex h-28 border-b border-stone/40">
+      {CHESS_STRIP.map((piece, i) => {
+        const onLimestone = i % 2 === 0;
+        return (
+          <div
+            key={i}
+            className="flex flex-1 items-center justify-center"
+            style={{ backgroundColor: onLimestone ? BOARD_TONES.limestone : BOARD_TONES.walnut }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "2.5rem",
+                lineHeight: 1,
+                color: piece.light ? BOARD_TONES.lightPiece : BOARD_TONES.darkPiece,
+                textShadow: piece.light ? LIGHT_PIECE_CONTOUR : onLimestone ? "none" : DARK_PIECE_HALO,
+              }}
+            >
+              {piece.glyph}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Thumbnail({ project }: { project: ProjectMeta }) {
   if (project.status !== "live") {
     return (
@@ -94,6 +140,7 @@ function Thumbnail({ project }: { project: ProjectMeta }) {
     );
   }
   if (project.preview === "table") return <TableThumbnail />;
+  if (project.preview === "chess") return <ChessThumbnail />;
   return <BarsThumbnail trend={project.preview === "bars-trend"} />;
 }
 
