@@ -113,9 +113,11 @@ const CHESS_CELLS: { row: number; col: number; glyph: string; light: boolean }[]
   { row: 2, col: 6, glyph: "♞", light: false },
 ];
 
+const FRAME_WIDTH = 3;
+
 function ChessThumbnail() {
   return (
-    <div className="h-28 border-b border-stone/40" style={{ backgroundColor: BOARD_TONES.walnut }}>
+    <div className="h-28 border-b border-stone/40 bg-oat">
       <svg
         viewBox={`0 0 ${COLS * CELL} ${ROWS * CELL}`}
         width="100%"
@@ -135,6 +137,20 @@ function ChessThumbnail() {
             />
           )),
         )}
+        {/* A thin walnut frame around the board's true edge — drawn in the
+            same coordinate space as the squares so it hugs them exactly
+            regardless of the letterbox scale, rather than a CSS border on
+            the outer well (which would sit at the well's edge, not the
+            board's, wherever letterboxing leaves oat showing through). */}
+        <rect
+          x={FRAME_WIDTH / 2}
+          y={FRAME_WIDTH / 2}
+          width={COLS * CELL - FRAME_WIDTH}
+          height={ROWS * CELL - FRAME_WIDTH}
+          fill="none"
+          stroke={BOARD_TONES.walnut}
+          strokeWidth={FRAME_WIDTH}
+        />
         {CHESS_CELLS.map(({ row, col, glyph, light }) => {
           const onWalnut = (row + col) % 2 !== 0;
           return (
