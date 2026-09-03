@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ExternalLinkIcon } from "@/components/icons/ExternalLinkIcon";
 import { SERIES_COLOR_ORDER } from "@/lib/chart-colors";
+import { BOARD_TONES } from "@/lib/chess/board-tones";
 import type { ProjectMeta } from "@/lib/projects";
 
 const BAR_HEIGHTS = [40, 60, 30, 75, 50, 65, 45];
@@ -83,6 +84,98 @@ function TableThumbnail() {
   );
 }
 
+// A cropped slice of a live middlegame, not a real position — same board
+// tones, glyphs, and light/dark contrast treatment as the real board in
+// components/chess/ChessBoard.tsx, so the preview reads as "this is the
+// chess app" rather than a chart. Three ranks, sparse and asymmetric
+// (about half the squares empty), with light and dark pieces interleaved
+// and sitting close to each other — a couple of pawns face off in the
+// center, a rook and knight sit near an opposing bishop — so it reads as
+// action in progress rather than a mirrored, decorative back rank.
+// Square SVG cells via preserveAspectRatio="meet" (letterboxed rather
+// than stretched), since a stretched checkerboard reads as rectangles.
+const COLS = 8;
+const ROWS = 3;
+const CELL = 40;
+
+const CHESS_CELLS: { row: number; col: number; glyph: string; light: boolean }[] = [
+  { row: 0, col: 1, glyph: "♞", light: false },
+  { row: 0, col: 3, glyph: "♙", light: true },
+  { row: 0, col: 4, glyph: "♟", light: false },
+  { row: 0, col: 6, glyph: "♗", light: true },
+  { row: 1, col: 0, glyph: "♖", light: true },
+  { row: 1, col: 2, glyph: "♝", light: false },
+  { row: 1, col: 5, glyph: "♛", light: false },
+  { row: 1, col: 7, glyph: "♘", light: true },
+  { row: 2, col: 1, glyph: "♙", light: true },
+  { row: 2, col: 3, glyph: "♜", light: false },
+  { row: 2, col: 4, glyph: "♙", light: true },
+  { row: 2, col: 6, glyph: "♞", light: false },
+];
+
+const FRAME_WIDTH = 3;
+
+function ChessThumbnail() {
+  return (
+    <div className="h-28 border-b border-stone/40 bg-oat">
+      <svg
+        viewBox={`0 0 ${COLS * CELL} ${ROWS * CELL}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+      >
+        {Array.from({ length: ROWS }).flatMap((_, row) =>
+          Array.from({ length: COLS }).map((_, col) => (
+            <rect
+              key={`${row}-${col}`}
+              x={col * CELL}
+              y={row * CELL}
+              width={CELL}
+              height={CELL}
+              fill={(row + col) % 2 === 0 ? BOARD_TONES.limestone : BOARD_TONES.walnut}
+            />
+          )),
+        )}
+        {/* A thin walnut frame around the board's true edge — drawn in the
+            same coordinate space as the squares so it hugs them exactly
+            regardless of the letterbox scale, rather than a CSS border on
+            the outer well (which would sit at the well's edge, not the
+            board's, wherever letterboxing leaves oat showing through). */}
+        <rect
+          x={FRAME_WIDTH / 2}
+          y={FRAME_WIDTH / 2}
+          width={COLS * CELL - FRAME_WIDTH}
+          height={ROWS * CELL - FRAME_WIDTH}
+          fill="none"
+          stroke={BOARD_TONES.walnut}
+          strokeWidth={FRAME_WIDTH}
+        />
+        {CHESS_CELLS.map(({ row, col, glyph, light }) => {
+          const onWalnut = (row + col) % 2 !== 0;
+          return (
+            <text
+              key={`${row}-${col}`}
+              x={col * CELL + CELL / 2}
+              y={row * CELL + CELL / 2}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontFamily="var(--font-display)"
+              fontSize={CELL * 0.72}
+              fill={light ? BOARD_TONES.lightPiece : BOARD_TONES.darkPiece}
+              stroke={light ? BOARD_TONES.pieceContour : onWalnut ? "rgba(246,241,228,0.5)" : "none"}
+              strokeWidth={light ? 1.1 : onWalnut ? 0.8 : 0}
+              paintOrder="stroke"
+            >
+              {glyph}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 function Thumbnail({ project }: { project: ProjectMeta }) {
   if (project.status !== "live") {
     return (
@@ -94,6 +187,7 @@ function Thumbnail({ project }: { project: ProjectMeta }) {
     );
   }
   if (project.preview === "table") return <TableThumbnail />;
+  if (project.preview === "chess") return <ChessThumbnail />;
   return <BarsThumbnail trend={project.preview === "bars-trend"} />;
 }
 

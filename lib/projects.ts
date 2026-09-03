@@ -10,7 +10,7 @@ export type ProjectStatus = "live" | "planned" | "rebuild";
  * "bars" is the generic fallback for a live project that hasn't earned its
  * own preview yet; it carries no specific claim about the real dashboard's
  * layout, unlike "bars-trend" and "table" which are meant to echo one. */
-export type PreviewStyle = "bars" | "bars-trend" | "table";
+export type PreviewStyle = "bars" | "bars-trend" | "table" | "chess";
 
 export interface ProjectMeta {
   slug: string;
@@ -64,6 +64,7 @@ export const projects: ProjectMeta[] = [
     description: "A chess coach with a Count of Monte Cristo twist.",
     dataSource: "None — local engine, session-only",
     status: "live",
+    preview: "chess",
   },
 ];
 
