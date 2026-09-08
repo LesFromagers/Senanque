@@ -1,6 +1,6 @@
 # Heisman Park Ledger — Gap Report (bulk Wikipedia pull)
 
-**Status:** 83 of 131 seasons pulled clean; 48 flagged below. Same pattern as the hand-verified batch's gap report — nothing here was invented, every blank is a real gap in what the Wikipedia page returned.
+**Status:** 84 of 131 seasons pulled clean; 47 flagged below. Same pattern as the hand-verified batch's gap report — nothing here was invented, every blank is a real gap in what the Wikipedia page returned.
 
 ## 1913
 - page mentions All-Americans — names not auto-extracted (too unreliable from prose); review manually
@@ -43,9 +43,6 @@
 
 ## 1927
 - page mentions All-Americans — names not auto-extracted (too unreliable from prose); review manually
-
-## 1938
-- conference not found in infobox
 
 ## 1946
 - page mentions All-Americans — names not auto-extracted (too unreliable from prose); review manually

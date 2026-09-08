@@ -2,7 +2,6 @@
 
 Merge of the 27 hand-verified seasons + the Wikipedia bulk pull + the CFBD efficiency pull. Verified rows always win a conflict; this report only lists what's still missing after that merge.
 
-- **1938**: missing conference
 
 ## Verified-season fields filled from the Wikipedia re-pull
 Only fields the verified CSV left genuinely blank were filled below — every field the verified batch already had a value for was left untouched, no exceptions.

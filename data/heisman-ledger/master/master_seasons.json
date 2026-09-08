@@ -1378,7 +1378,7 @@
   {
     "year": 1938,
     "head_coach": "Tom Stidham",
-    "conference": null,
+    "conference": "Big 6",
     "final_record": "10-1",
     "final_ap_rank": "4",
     "national_title_claim": null,
@@ -1393,7 +1393,7 @@
     "beat_osu": "N/A (not on schedule)",
     "heisman_winner": null,
     "notable_all_americans": null,
-    "data_tier": 4,
+    "data_tier": 3,
     "source_notes": "Wikipedia: 1938 Oklahoma Sooners football team bowl result: L 0\u201317 vs. Tennessee (Orange Bowl)",
     "offense_ppa": null,
     "defense_ppa": null,
