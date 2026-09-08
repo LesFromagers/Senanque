@@ -33,7 +33,21 @@ export function computeAccomplishmentScore(season: SeasonRecord): Accomplishment
   const flags: string[] = [];
   const haystack = `${season.conference ?? ""} ${season.nationalTitleClaim ?? ""} ${season.sourceNotes}`.toLowerCase();
 
-  if (season.nationalTitleClaim && /consensus/.test(season.nationalTitleClaim.toLowerCase())) {
+  const titleClaim = season.nationalTitleClaim?.toLowerCase() ?? null;
+  if (titleClaim && /not a national title/.test(titleClaim)) {
+    // The claim text itself disclaims a national title (e.g. "Orange Bowl
+    // Champion (not a national title year)") -- confirmed against 1986,
+    // which was being scored as a real, if disputed, national-title claim
+    // purely because the field was non-empty. Any bowl-win credit for that
+    // season is still picked up by the bowl-result check below.
+  } else if (titleClaim && (/consensus/.test(titleClaim) || /bcs national champion/.test(titleClaim))) {
+    // "BCS National Champion" is treated as the modern equivalent of
+    // "consensus" (1998-2013): the BCS system existed specifically to
+    // produce one human-and-computer-poll-combined #1, and confirmed
+    // against 2000 specifically -- undisputed, unanimous #1 that year --
+    // this was scoring as split/disputed (25pts) purely because the
+    // stored text says "BCS National Champion" rather than the literal
+    // word "consensus".
     points += ACCOMPLISHMENT_POINTS.nationalTitle.consensus;
   } else if (season.nationalTitleClaim) {
     points += ACCOMPLISHMENT_POINTS.nationalTitle.splitOrDisputed;
@@ -64,14 +78,16 @@ export function computeAccomplishmentScore(season: SeasonRecord): Accomplishment
     else if (apRank <= 25) points += ACCOMPLISHMENT_POINTS.finalApRank.top25;
   }
 
+  // pull_wikipedia.py writes bowl outcomes as "bowl result: L 19–55 vs. ..."
+  // / "bowl result: W 45–31 vs. ...", not the words "loss"/"lost" — the
+  // word-based check alone missed every "L "-prefixed loss (confirmed
+  // against 19 seasons in the live dataset, 2004's BCS Championship Game
+  // loss to USC among them), scoring each as a bowl *win* instead.
+  const isBowlLoss = /loss|lost/.test(haystack) || /bowl result:\s*l\b/.test(haystack);
   if (/major bowl|orange bowl|sugar bowl|rose bowl|cotton bowl|cfp|bcs championship/.test(haystack)) {
-    points += /loss|lost/.test(haystack)
-      ? ACCOMPLISHMENT_POINTS.bowlResult.majorLoss
-      : ACCOMPLISHMENT_POINTS.bowlResult.majorWin;
+    points += isBowlLoss ? ACCOMPLISHMENT_POINTS.bowlResult.majorLoss : ACCOMPLISHMENT_POINTS.bowlResult.majorWin;
   } else if (/bowl/.test(haystack)) {
-    points += /loss|lost/.test(haystack)
-      ? ACCOMPLISHMENT_POINTS.bowlResult.otherLoss
-      : ACCOMPLISHMENT_POINTS.bowlResult.otherWin;
+    points += isBowlLoss ? ACCOMPLISHMENT_POINTS.bowlResult.otherLoss : ACCOMPLISHMENT_POINTS.bowlResult.otherWin;
   }
 
   return { points: Math.min(points, 100), flags };
