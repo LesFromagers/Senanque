@@ -218,7 +218,16 @@ def parse_infobox(wikicode: mwph.wikicode.Wikicode, season: SeasonRow) -> None:
         return None
 
     season.head_coach = get("headcoach", "head_coach", "coach", "hccoach")
-    season.conference = get("conference", "shortconference")
+    # get()'s candidates are normalized the same way as by_key's keys
+    # (underscores stripped) before lookup, so "short_conf" -> "shortconf"
+    # -- the literal param name Wikipedia uses. The candidate here used to
+    # be the wrong string, "shortconference" (never normalizes to
+    # "shortconf"), so it silently never matched: any season whose infobox
+    # has short_conf but no full conference param (confirmed on 1938 -- Big
+    # Six champion that year, per its own infobox's 'champion' field, which
+    # parsed fine since it's a separate param) came back with conference
+    # unset, even though the data was right there.
+    season.conference = get("conference", "short_conf")
     record = get("record")
     if record:
         # Normalize "10-1-1" / "10–1–1" / "10 - 1 - 1" to a single dash form.
