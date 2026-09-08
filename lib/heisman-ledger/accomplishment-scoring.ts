@@ -3,16 +3,20 @@
  * 100). Point table per CLAUDE.md: national title, conference title,
  * final AP rank, bowl result.
  *
- * The verified/pulled dataset doesn't carry clean booleans for "conference
- * champion" or "bowl result" — those live embedded in free-text fields
- * (conference, national_title_claim, source_notes). These heuristics are
- * conservative on purpose: an ambiguous case scores as *not* earned rather
- * than guessed as earned, and gets flagged so a human can confirm it
- * during the manual-review pass. A future data-schema change (explicit
- * conference_champion / bowl_result columns, populated by the pull
- * scripts) would let this file read real fields instead of pattern-
- * matching prose — noted here, not attempted in this pass, since it's a
- * data-collection change, not a scoring-formula one.
+ * Conference championship and bowl result read real structured fields
+ * (SeasonRecord.conferenceChampion / bowlName / bowlResult) populated
+ * directly by scripts/heisman_ledger/pull_wikipedia.py's infobox
+ * extraction — not, as an earlier version of this file did, pattern-
+ * matched out of free text at scoring time. That approach had real bugs:
+ * a bowl loss recorded as "L 19–55" (not the literal word "loss") scored
+ * as a win on 19 seasons in the live dataset, and a title claim that
+ * explicitly said "not a national title year" still scored national-title
+ * points because the field was merely non-empty. Reading a field the pull
+ * already classified, rather than re-deriving the classification from
+ * prose on every render, removes that whole bug class. National title
+ * claim is the one exception still read as free text (nationalTitleClaim)
+ * — that field's own wording (does it say "consensus"?) *is* the real
+ * signal there, not a proxy for one.
  */
 import type { SeasonRecord } from "./types";
 
@@ -23,6 +27,14 @@ export const ACCOMPLISHMENT_POINTS = {
   bowlResult: { majorWin: 15, majorLoss: 3, otherWin: 8, otherLoss: 3 },
 } as const;
 
+/**
+ * Applied only to the (now narrow, structured) bowlName field — not a
+ * whole-season haystack of concatenated prose the way the old bowl-result
+ * check was, which risked a false match from unrelated text elsewhere in
+ * source_notes.
+ */
+const MAJOR_BOWL_RE = /orange bowl|sugar bowl|rose bowl|cotton bowl|cfp|bcs (championship|national championship)/i;
+
 export interface AccomplishmentScore {
   points: number;
   flags: string[];
@@ -31,7 +43,6 @@ export interface AccomplishmentScore {
 export function computeAccomplishmentScore(season: SeasonRecord): AccomplishmentScore {
   let points = 0;
   const flags: string[] = [];
-  const haystack = `${season.conference ?? ""} ${season.nationalTitleClaim ?? ""} ${season.sourceNotes}`.toLowerCase();
 
   const titleClaim = season.nationalTitleClaim?.toLowerCase() ?? null;
   if (titleClaim && /not a national title/.test(titleClaim)) {
@@ -54,21 +65,15 @@ export function computeAccomplishmentScore(season: SeasonRecord): Accomplishment
     flags.push("national title claim present but not marked consensus — scored as split/disputed (25 pts)");
   }
 
-  const mentionsConferenceChamp =
-    /champion|co-champ/.test(haystack) && !/national/.test(haystack.match(/champion|co-champ/)?.[0] ?? "");
-  if (mentionsConferenceChamp) {
+  if (season.conferenceChampion === "TRUE" || season.conferenceChampion === "CO-CHAMP") {
     points += ACCOMPLISHMENT_POINTS.conferenceChampion;
-  } else {
-    const losses = gamesLost(season.finalRecord);
-    if (losses !== null && losses <= 1) {
-      // A near-perfect record with no championship language found is the
-      // one genuinely ambiguous case — worth a human glance, not a
-      // blanket flag on every season that simply wasn't a conference
-      // champion.
-      flags.push(
-        "near-perfect record but no conference-championship language found in free text — verify manually rather than trust the absence",
-      );
-    }
+  } else if (season.conferenceChampion === null) {
+    // Only a genuinely unknown case flags here now — pull_wikipedia.py
+    // sets "FALSE" (not null) whenever it found a real infobox that
+    // simply didn't claim a conference title, which is a confirmed
+    // negative, not an absence of evidence; null only happens when no
+    // infobox was found for the season at all.
+    flags.push("conference championship status unknown — no infobox found for this season to confirm either way");
   }
 
   const apRank = parseApRank(season.finalApRank);
@@ -78,25 +83,24 @@ export function computeAccomplishmentScore(season: SeasonRecord): Accomplishment
     else if (apRank <= 25) points += ACCOMPLISHMENT_POINTS.finalApRank.top25;
   }
 
-  // pull_wikipedia.py writes bowl outcomes as "bowl result: L 19–55 vs. ..."
-  // / "bowl result: W 45–31 vs. ...", not the words "loss"/"lost" — the
-  // word-based check alone missed every "L "-prefixed loss (confirmed
-  // against 19 seasons in the live dataset, 2004's BCS Championship Game
-  // loss to USC among them), scoring each as a bowl *win* instead.
-  const isBowlLoss = /loss|lost/.test(haystack) || /bowl result:\s*l\b/.test(haystack);
-  if (/major bowl|orange bowl|sugar bowl|rose bowl|cotton bowl|cfp|bcs championship/.test(haystack)) {
-    points += isBowlLoss ? ACCOMPLISHMENT_POINTS.bowlResult.majorLoss : ACCOMPLISHMENT_POINTS.bowlResult.majorWin;
-  } else if (/bowl/.test(haystack)) {
-    points += isBowlLoss ? ACCOMPLISHMENT_POINTS.bowlResult.otherLoss : ACCOMPLISHMENT_POINTS.bowlResult.otherWin;
+  if (season.bowlResult !== null) {
+    // A tie is rare (pre-modern-era bowls only) and scores on the loss
+    // tier — the point table has no separate tie tier, and "not a win" is
+    // the more honest reading of a tie than "not a loss."
+    const isWin = season.bowlResult === "W";
+    const isMajor = season.bowlName !== null && MAJOR_BOWL_RE.test(season.bowlName);
+    points += isMajor
+      ? isWin
+        ? ACCOMPLISHMENT_POINTS.bowlResult.majorWin
+        : ACCOMPLISHMENT_POINTS.bowlResult.majorLoss
+      : isWin
+        ? ACCOMPLISHMENT_POINTS.bowlResult.otherWin
+        : ACCOMPLISHMENT_POINTS.bowlResult.otherLoss;
   }
+  // bowlResult === null means no bowl game that season -- a real, common
+  // outcome, not a gap, so nothing is flagged.
 
   return { points: Math.min(points, 100), flags };
-}
-
-function gamesLost(record: string | null): number | null {
-  if (!record) return null;
-  const match = record.match(/^\d+-(\d+)/);
-  return match ? Number(match[1]) : null;
 }
 
 function parseApRank(raw: string | null): number | null {

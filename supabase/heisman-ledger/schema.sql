@@ -14,6 +14,16 @@ create table if not exists heisman_ledger_seasons (
   final_record text,
   final_ap_rank text,
   national_title_claim text,
+  -- 'TRUE' (outright) | 'CO-CHAMP' (shared) | 'FALSE' | NULL (genuinely
+  -- unknown — no infobox found for the season at all). Populated by
+  -- scripts/heisman_ledger/pull_wikipedia.py's infobox extraction, not a
+  -- scoring-time text-match — see lib/heisman-ledger/accomplishment-scoring.ts.
+  conference_champion text,
+  -- e.g. 'Orange Bowl', 'CFP First Round'. NULL means no bowl game that
+  -- season (a real, common outcome), not a gap.
+  bowl_name text,
+  -- 'W' | 'L' | 'T'. NULL alongside a NULL bowl_name means no bowl played.
+  bowl_result text,
   points_for integer,
   points_for_is_approximate boolean not null default false,
   points_against integer,

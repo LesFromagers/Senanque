@@ -45,6 +45,10 @@ interface RawSeasonJson {
   final_record: string | null;
   final_ap_rank: string | null;
   national_title_claim: string | null;
+  /** Absent from the committed JSON until the next Wikipedia pull regenerates it — see fromJson's ?? null. */
+  conference_champion?: SeasonRecord["conferenceChampion"];
+  bowl_name?: string | null;
+  bowl_result?: SeasonRecord["bowlResult"];
   points_for: number | null;
   points_for_is_approximate: boolean;
   points_against: number | null;
@@ -77,6 +81,9 @@ function fromJson(row: RawSeasonJson): SeasonRecord {
     finalRecord: row.final_record,
     finalApRank: row.final_ap_rank,
     nationalTitleClaim: row.national_title_claim,
+    conferenceChampion: row.conference_champion ?? null,
+    bowlName: row.bowl_name ?? null,
+    bowlResult: row.bowl_result ?? null,
     pointsFor: row.points_for,
     pointsForIsApproximate: row.points_for_is_approximate,
     pointsAgainst: row.points_against,

@@ -59,6 +59,9 @@ def generate_seasons_sql(seasons_csv: Path) -> list[str]:
                     sql_str(row["final_record"]),
                     sql_str(row["final_ap_rank"]),
                     sql_str(row["national_title_claim"]),
+                    sql_str(row.get("conference_champion")),
+                    sql_str(row.get("bowl_name")),
+                    sql_str(row.get("bowl_result")),
                     sql_num(_approx_int(row["points_for"])[0]),
                     sql_bool(_approx_int(row["points_for"])[1]),
                     sql_num(_approx_int(row["points_against"])[0]),
@@ -84,7 +87,8 @@ def generate_seasons_sql(seasons_csv: Path) -> list[str]:
             )
             lines.append(
                 "insert into heisman_ledger_seasons (year, head_coach, conference, "
-                "final_record, final_ap_rank, national_title_claim, points_for, "
+                "final_record, final_ap_rank, national_title_claim, conference_champion, "
+                "bowl_name, bowl_result, points_for, "
                 "points_for_is_approximate, points_against, points_against_is_approximate, "
                 "beat_texas, beat_osu, heisman_winner, notable_all_americans, data_tier, "
                 "source_notes, offense_ppa, defense_ppa, offense_success_rate, "
@@ -98,7 +102,8 @@ def generate_seasons_sql(seasons_csv: Path) -> list[str]:
                     f"{col} = excluded.{col}"
                     for col in (
                         "head_coach", "conference", "final_record", "final_ap_rank",
-                        "national_title_claim", "points_for", "points_for_is_approximate",
+                        "national_title_claim", "conference_champion", "bowl_name", "bowl_result",
+                        "points_for", "points_for_is_approximate",
                         "points_against", "points_against_is_approximate", "beat_texas",
                         "beat_osu", "heisman_winner", "notable_all_americans", "data_tier",
                         "source_notes", "offense_ppa", "defense_ppa", "offense_success_rate",

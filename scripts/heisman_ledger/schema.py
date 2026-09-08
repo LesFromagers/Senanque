@@ -17,6 +17,9 @@ SEASON_FIELDS = [
     "final_record",
     "final_ap_rank",
     "national_title_claim",
+    "conference_champion",
+    "bowl_name",
+    "bowl_result",
     "points_for",
     "points_against",
     "beat_texas",
@@ -49,6 +52,9 @@ class SeasonRow:
     final_record: Optional[str] = None
     final_ap_rank: Optional[str] = None
     national_title_claim: Optional[str] = None
+    conference_champion: Optional[str] = None  # "TRUE" | "CO-CHAMP" | "FALSE"
+    bowl_name: Optional[str] = None  # e.g. "Orange Bowl", "CFP First Round" -- None means no bowl played
+    bowl_result: Optional[str] = None  # "W" | "L" | "T"
     points_for: Optional[int] = None
     points_against: Optional[int] = None
     beat_texas: Optional[str] = None  # "TRUE" | "FALSE" | "SPLIT" | "N/A (not on schedule)"

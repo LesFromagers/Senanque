@@ -13,6 +13,11 @@ export interface SeasonRecord {
   finalRecord: string | null;
   finalApRank: string | null;
   nationalTitleClaim: string | null;
+  /** "TRUE" (outright) | "CO-CHAMP" (shared) | "FALSE" | null (genuinely unknown — no infobox found at all). */
+  conferenceChampion: "TRUE" | "CO-CHAMP" | "FALSE" | null;
+  /** e.g. "Orange Bowl", "CFP First Round" — null means no bowl game that season, not a gap. */
+  bowlName: string | null;
+  bowlResult: "W" | "L" | "T" | null;
   pointsFor: number | null;
   pointsForIsApproximate: boolean;
   pointsAgainst: number | null;

@@ -133,6 +133,42 @@ def clean_multiline(text: str) -> list[str]:
     return [seg.strip() for seg in cleaned.splitlines() if seg.strip()]
 
 
+BOWL_NAME_HINT_RE = re.compile(r"\bbowl\b|\bcfp\b", re.IGNORECASE)
+
+
+def classify_champion_segments(segments: list[str]) -> tuple[Optional[str], list[str]]:
+    """
+    Classifies the non-national segments of an infobox 'champion' field
+    (see clean_multiline()) into a real conference-championship result vs.
+    everything else -- a division-only title ("Big 12 South Division
+    champion") or a bowl-name title ("Orange Bowl champion", confirmed on
+    1986's page, which is a bowl-win designation, not a conference one)
+    aren't the same claim as winning the conference outright, so neither
+    counts here; they're preserved in source_notes instead.
+
+    Returns (conference_champion, other_notes) where conference_champion
+    is "TRUE" (outright), "CO-CHAMP" (shared), or None (no segment
+    qualified as a real conference title).
+    """
+    conference_champion: Optional[str] = None
+    other_notes: list[str] = []
+    for seg in segments:
+        lowered = seg.lower()
+        if "division" in lowered or BOWL_NAME_HINT_RE.search(lowered):
+            other_notes.append(seg)
+            continue
+        if "co-champ" in lowered:
+            conference_champion = "CO-CHAMP"
+        elif "champion" in lowered:
+            conference_champion = "TRUE"
+        else:
+            other_notes.append(seg)
+    return conference_champion, other_notes
+
+
+BOWL_RESULT_WLT_RE = re.compile(r"^([WLT])\b", re.IGNORECASE)
+
+
 def find_infobox(wikicode: mwph.wikicode.Wikicode):
     """
     OU season articles don't use one consistent infobox template name --
@@ -191,12 +227,14 @@ def parse_infobox(wikicode: mwph.wikicode.Wikicode, season: SeasonRow) -> None:
 
     # The real infobox packs every title claim into one 'champion' field —
     # e.g. "Consensus national champion<br>Big 12 champion<br>Big 12 South
-    # Division champion" for a title season — rather than a dedicated
-    # national-title param. Split it (see clean_multiline()) and keep only
-    # the segment(s) that actually claim a *national* title for
-    # national_title_claim; the rest (conference/division titles) still
-    # matter to the Accomplishment layer's conference-champion heuristic,
-    # so they're preserved in source_notes rather than dropped.
+    # Division champion" for a title season — rather than separate
+    # national-title/conference-title params. Split it (see
+    # clean_multiline()) into national_title_claim (any "national
+    # champion" segment) and conference_champion (classify_champion_
+    # segments() above) as real structured fields, not free text a scoring
+    # heuristic has to pattern-match later. Leftover segments (division-
+    # only or bowl-name titles) are preserved in source_notes so nothing's
+    # dropped, just not asserted as a conference title.
     champion_raw = by_key.get("champion")
     note_parts: list[str] = []
     if champion_raw is not None:
@@ -205,17 +243,42 @@ def parse_infobox(wikicode: mwph.wikicode.Wikicode, season: SeasonRow) -> None:
         other_segments = [s for s in segments if s not in national_segments]
         if national_segments:
             season.national_title_claim = "; ".join(national_segments)
-        if other_segments:
-            note_parts.append(f"infobox 'champion' field also lists: {'; '.join(other_segments)}")
+        conf_champ, leftover_notes = classify_champion_segments(other_segments)
+        # The infobox's 'champion' field exists and Wikipedia's own editing
+        # convention is to list every title a season actually won there --
+        # a real field with no qualifying segment is treated as a
+        # confirmed "no", not an unknown, the same way an infobox that's
+        # missing entirely (below) is the only case this pull treats as a
+        # real gap rather than a negative answer.
+        season.conference_champion = conf_champ if conf_champ is not None else "FALSE"
+        if leftover_notes:
+            note_parts.append(f"infobox 'champion' field also lists: {'; '.join(leftover_notes)}")
+    else:
+        # No 'champion' param at all -- same reasoning as above: a page
+        # this pull actually found and parsed, just with nothing to claim.
+        season.conference_champion = "FALSE"
 
     bowl = get("bowl")
     bowl_result_raw = by_key.get("bowlresult")
     if bowl_result_raw is not None:
-        bowl_result = " ".join(clean_multiline(str(bowl_result_raw)))
-        if bowl_result:
-            note_parts.append(f"bowl result: {bowl_result}" + (f" ({bowl})" if bowl else ""))
+        bowl_result_text = " ".join(clean_multiline(str(bowl_result_raw)))
+        if bowl_result_text:
+            season.bowl_name = bowl
+            wlt_match = BOWL_RESULT_WLT_RE.match(bowl_result_text.strip())
+            if wlt_match:
+                season.bowl_result = wlt_match.group(1).upper()
+            else:
+                season.gaps.append(
+                    f"bowl_result text didn't start with W/L/T, left unparsed: {bowl_result_text!r}"
+                )
+            note_parts.append(f"bowl result: {bowl_result_text}" + (f" ({bowl})" if bowl else ""))
     elif bowl:
+        season.bowl_name = bowl
         note_parts.append(f"bowl: {bowl}")
+    # No 'bowl' param at all is a real, common outcome (no bowl game that
+    # season) -- left as None, not flagged, same as conference_champion's
+    # "FALSE" default above but without needing an explicit tri-state
+    # since "didn't play a bowl" has no separate "won/lost" to distinguish.
 
     if note_parts:
         note = "; ".join(note_parts)
