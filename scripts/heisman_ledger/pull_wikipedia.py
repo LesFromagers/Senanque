@@ -556,11 +556,16 @@ def parse_awards(wikicode: mwph.wikicode.Wikicode, season: SeasonRow) -> None:
             "page mentions the Heisman Trophy — confirm manually whether an "
             "OU player won or was a finalist before filling heisman_winner"
         )
-    if re.search(r"all-american", text, re.IGNORECASE):
-        season.gaps.append(
-            "page mentions All-Americans — names not auto-extracted "
-            "(too unreliable from prose); review manually"
-        )
+    # No longer flags an "All-Americans mentioned, not auto-extracted"
+    # gap here: that concern is now fully handled by the dedicated
+    # pull_all_americans.py pipeline (consensus_all_americans /
+    # consensus_all_american_count, sourced from Wikipedia's per-season
+    # Consensus All-Americans navbox template), which resolved all 131 OU
+    # seasons — see gap_report_all_americans.md, the real, current gap
+    # report for this concern. This check used to duplicate that as a
+    # stale, no-longer-true flag in gap_report_bulk.md (confirmed: it was
+    # still firing for 1915 and 46 other seasons long after
+    # pull_all_americans.py had already resolved every one of them).
 
 
 def pull_season(session: requests.Session, year: int) -> SeasonRow:
