@@ -57,6 +57,9 @@ interface RawSeasonJson {
   beat_osu: SeasonRecord["beatOsu"];
   heisman_winner: string | null;
   notable_all_americans: string | null;
+  /** Absent from the committed JSON until the next consensus-All-Americans pull regenerates it — see fromJson's ?? null. */
+  consensus_all_americans?: string | null;
+  consensus_all_american_count?: number | null;
   data_tier: 1 | 2 | 3 | 4;
   source_notes: string;
   offense_ppa: number | null;
@@ -92,6 +95,11 @@ function fromJson(row: RawSeasonJson): SeasonRecord {
     beatOsu: row.beat_osu,
     heismanWinner: row.heisman_winner,
     notableAllAmericans: row.notable_all_americans,
+    // ?? null, not a plain pass-through — same reasoning as the CFBD
+    // counting-stat fields above: the committed JSON predates these
+    // columns until the next consensus-All-Americans pull regenerates it.
+    consensusAllAmericans: row.consensus_all_americans ?? null,
+    consensusAllAmericanCount: row.consensus_all_american_count ?? null,
     dataTier: row.data_tier,
     sourceNotes: row.source_notes ?? "",
     offensePpa: row.offense_ppa,

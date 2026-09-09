@@ -55,6 +55,16 @@ create table if not exists heisman_ledger_seasons (
   offense_rushing_yards integer,
   offense_passing_yards integer,
   offense_turnovers integer,
+  -- NCAA-consensus Oklahoma All-Americans, from
+  -- scripts/heisman_ledger/pull_all_americans.py reading each season's
+  -- own "{year} College Football All-America Team" Wikipedia page --
+  -- separate from (and more rigorous than) notable_all_americans above,
+  -- which is free text and was found to overcount relative to true
+  -- consensus status (e.g. 1950). NULL means unresolved (no page found,
+  -- or an unrecognized page format) -- a real, checked "0 that season" is
+  -- an empty string, not NULL. See lib/heisman-ledger/talent-scoring.ts.
+  consensus_all_americans text,
+  consensus_all_american_count smallint,
   -- Retired, not just unpopulated: the Power Index formula dropped its
   -- SRS-style strength-of-schedule component outright (see
   -- lib/heisman-ledger/power-index.ts's header comment) rather than leave

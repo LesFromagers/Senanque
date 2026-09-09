@@ -25,7 +25,17 @@ export interface SeasonRecord {
   beatTexas: TriBool;
   beatOsu: TriBool;
   heismanWinner: string | null;
+  /** Free-text, hand-entered honors mention — not consensus-filtered. Kept for display; see consensusAllAmericans for the Talent layer's actual scoring input. */
   notableAllAmericans: string | null;
+  /**
+   * NCAA-consensus Oklahoma All-Americans, "Name (Position); Name (Position)"
+   * — from pull_all_americans.py reading each season's own Wikipedia
+   * "College Football All-America Team" page. null means unresolved (no
+   * page found, or an unrecognized page format); "" is a real, checked
+   * zero for that season, not a gap. See talent-scoring.ts.
+   */
+  consensusAllAmericans: string | null;
+  consensusAllAmericanCount: number | null;
   /** 1 = 2005+ CFBD efficiency, 2 = yards/play, 3 = yards/game vs. rank proxy, 4 = points/game only. */
   dataTier: 1 | 2 | 3 | 4;
   sourceNotes: string;

@@ -38,7 +38,18 @@ CFBD_COUNTING_FIELDS = [
     "offense_turnovers",
 ]
 
-MASTER_FIELDS = SEASON_FIELDS + CFBD_EFFICIENCY_FIELDS + CFBD_COUNTING_FIELDS
+# Consensus All-Americans come from a wholly separate source
+# (pull_all_americans.py, reading Wikipedia's "{year} College Football
+# All-America Team" pages) than the free-text notable_all_americans
+# column above -- kept as its own field list, same pattern as the CFBD
+# lists, rather than folded into SEASON_FIELDS/the verified CSV, since no
+# hand-verified season carries this NCAA-consensus-filtered figure today.
+ALL_AMERICANS_FIELDS = [
+    "consensus_all_americans",
+    "consensus_all_american_count",
+]
+
+MASTER_FIELDS = SEASON_FIELDS + CFBD_EFFICIENCY_FIELDS + CFBD_COUNTING_FIELDS + ALL_AMERICANS_FIELDS
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -68,9 +79,11 @@ def main() -> None:
     pulled_rows = read_csv(args.pulled / "seasons_wikipedia.csv")
     games_rows = read_csv(args.pulled / "games_wikipedia.csv")
     cfbd_rows = read_csv(args.pulled / "efficiency_cfbd.csv")
+    all_americans_rows = read_csv(args.pulled / "consensus_all_americans_wikipedia.csv")
 
     verified_years = {int(r["year"]) for r in verified_rows}
     cfbd_by_year = {int(r["year"]): r for r in cfbd_rows}
+    all_americans_by_year = {int(r["year"]): r for r in all_americans_rows}
 
     # Verified rows win outright for every field they actually have a
     # value for; pulled rows fill every year the verified file doesn't
@@ -110,6 +123,7 @@ def main() -> None:
     ]
 
     master_rows = []
+    all_americans_gap_years: list[int] = []
     for year in sorted(merged):
         row = merged[year]
         cfbd = cfbd_by_year.get(year)
@@ -127,6 +141,17 @@ def main() -> None:
                 row[field] = cfbd.get(field)
         elif year >= 2005:
             gap_lines.append(f"- **{year}**: expected CFBD efficiency data (Tier 1) but none was returned — check the pull, don't assume Tier 3.")
+
+        aa = all_americans_by_year.get(year)
+        if aa:
+            # A resolved row with an empty consensus_all_americans string is
+            # a real, checked "zero OU consensus All-Americans that season"
+            # — not a gap. Only a year absent from the pull entirely
+            # (unresolved page/format, see pull_all_americans.py) is one.
+            row["consensus_all_americans"] = aa.get("consensus_all_americans") or ""
+            row["consensus_all_american_count"] = aa.get("consensus_all_american_count") or "0"
+        else:
+            all_americans_gap_years.append(year)
 
         missing = [
             f for f in ("head_coach", "conference", "final_record", "points_for", "points_against")
@@ -196,6 +221,26 @@ def main() -> None:
             "The hand-verified batch is season-level only (no per-game opponent/score "
             "list was captured for those 27 seasons) — run pull_wikipedia.py with "
             "--include-verified to fill it in."
+        )
+
+    resolved_all_americans = len(merged) - len(all_americans_gap_years)
+    gap_lines.append("")
+    gap_lines.append(
+        f"## Consensus All-Americans (Talent layer) — {resolved_all_americans} of "
+        f"{len(merged)} seasons resolved"
+    )
+    gap_lines.append(
+        "From pull_all_americans.py, reading each season's own \"{year} College "
+        "Football All-America Team\" page and filtering for NCAA-consensus Oklahoma "
+        "selections — see that script's docstring for the three page formats it "
+        "handles. A resolved season may legitimately show 0 (a real, checked outcome, "
+        "not a gap)."
+    )
+    if all_americans_gap_years:
+        gap_lines.append(
+            f"Unresolved (no page found, or a page whose format wasn't recognized — see "
+            f"gap_report_all_americans.md for the reason per year): "
+            f"{', '.join(map(str, all_americans_gap_years))}."
         )
 
     (args.out / "gap_report_master.md").write_text("\n".join(gap_lines), encoding="utf-8")

@@ -128,9 +128,16 @@ export default async function SeasonDetailPage({
         </div>
       )}
 
-      {season.notableAllAmericans && (
+      {season.consensusAllAmericans && (
         <p className="mt-6 text-sm text-charcoal/90">
-          <span className="text-xs tracking-label uppercase text-stone">All-Americans </span>
+          <span className="text-xs tracking-label uppercase text-stone">Consensus All-Americans </span>
+          {season.consensusAllAmericans}
+        </p>
+      )}
+
+      {season.notableAllAmericans && season.notableAllAmericans !== season.consensusAllAmericans && (
+        <p className="mt-2 text-sm text-charcoal/90">
+          <span className="text-xs tracking-label uppercase text-stone">Other honors mentioned </span>
           {season.notableAllAmericans}
         </p>
       )}
