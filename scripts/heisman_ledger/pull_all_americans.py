@@ -46,20 +46,37 @@ assumed from an offline fixture):
      via filter_tags(matches=... tag == "th") directly, independent of
      <tr> grouping; data rows are found via <tr> -> <td> only, which
      naturally excludes a <th>-only header row either way.
-  3. No Consensus All-Americans table or heading at all (2008) -- only
+  3. No Consensus All-Americans table or heading at all -- only
      per-position bulleted prose ("* '''[[Name]]''', School <small>
-     (selectors)</small>"), bold name = consensus. Only trusted when the
-     specific page's own intro text documents that convention (2008's
-     does, near-verbatim: "denoted '''bold'''... At least three of these
-     five major selector organizations must select a player") --
-     BOLD_LEGEND_RE below gates this fallback path so it's never assumed
-     silently for a page that doesn't state it. A page with neither a
-     table/heading match nor a documented bold convention is left
-     unresolved and logged as a gap, not guessed.
+     (selectors)</small>"), grouped under headings that vary by era
+     (some pages nest positions straight under the lead with no top-level
+     grouping at all, e.g. 1895; others group under "==Offense==="/
+     "==Defense==", or "==Offensive selections==="/"==Defensive
+     selections=="). extract_bulleted_all_americans() walks every heading
+     in the page rather than assuming one specific top-level name, and
+     skips a "==Key==" section's own selector-glossary bullets (which
+     look like player rows but aren't). Within this format, a player's
+     consensus status is signaled one of two confirmed ways:
+       a. Bold name = consensus, trusted only when the specific page's
+          own text documents that convention -- either in its intro
+          prose (2008: "...to determine consensus All-Americans (denoted
+          '''bold''')") or, more commonly, a dedicated "==Key==" section
+          in the opposite word order (1895/1968/1978/1992-era: "'''Bold'''
+          -- Consensus All-American"). BOLD_LEGEND_RE matches either
+          order so it isn't silently missed on pages using the second
+          phrasing, which the original single-direction version of this
+          regex was.
+       b. An explicit "-- CONSENSUS --"/"-- UNANIMOUS --" marker inside
+          the entry's own <small>...</small> selector detail (2010s-era
+          pages, e.g. 2010/2011/2013) -- self-documenting, no separate
+          legend needed; CONSENSUS_MARKER_RE catches this independently
+          of bold, so a page using only this convention still resolves.
+     A page with neither signal anywhere is left unresolved and logged as
+     a gap, not guessed.
 
-Every one of these was independently sanity-checked by hand against 5
-seasons (2003, 1985, 2008, 1950, 1956) before this script existed, per
-Matt's explicit request -- see the 2026-09-09 session notes / CLAUDE.md's
+Every one of these was independently sanity-checked by hand against
+several seasons per format before this script existed, per Matt's
+explicit request -- see the 2026-09-09 session notes / CLAUDE.md's
 Heisman Park Ledger sourcing section for the confirmed results, including
 the concrete case (1950) where the hand-verified batch's free-text
 notable_all_americans column turned out to overcount relative to true
@@ -235,7 +252,36 @@ def extract_school_players(section_text: str) -> list[dict]:
     return results
 
 
-BOLD_LEGEND_RE = re.compile(r"consensus[^.]*bold", re.IGNORECASE)
+
+# Two real, independently-confirmed ways a bulleted-format page (see
+# format 3 in this module's docstring) documents that bold = consensus.
+# Checked against live pages, not assumed to be the only phrasing after
+# just one page: 2008's page states the convention in its own intro
+# prose ("...to determine consensus All-Americans (denoted '''bold''')"
+# -- "consensus" before "bold"), while most other bulleted-format pages
+# instead carry a dedicated "==Key==" section phrased the opposite order
+# ("'''Bold''' -- Consensus All-American", confirmed on 1895/1968/1978/
+# 1992's live pages) or with an "=" instead of an en dash. An
+# order-locked regex (the original version of this check) matched the
+# first phrasing and silently missed the second on every page that uses
+# it -- this one matches either order, within a bounded window so it
+# doesn't false-positive on two unrelated "bold" and "consensus"
+# mentions that happen to land in the same article.
+BOLD_LEGEND_RE = re.compile(r"consensus.{0,80}bold|bold.{0,80}consensus", re.IGNORECASE | re.DOTALL)
+
+# A second, independent, self-documenting signal seen on many 2010s-era
+# pages (confirmed live on 2010/2011/2013): each consensus/unanimous
+# player's own <small>...</small> selector detail carries an explicit
+# "-- CONSENSUS --" or "-- UNANIMOUS --" marker inline, rather than (or
+# alongside) bold. This needs no separate legend text to trust -- the
+# page states the player's status directly, per player -- so a line
+# carrying this marker counts as consensus regardless of whether
+# BOLD_LEGEND_RE found a documented bold convention anywhere else on the
+# page. Every marked player observed on these pages was also bold, so
+# this doesn't change what gets extracted there; it's what lets a page
+# with markers but no bold legend (2010/2011) resolve at all instead of
+# being left unresolved.
+CONSENSUS_MARKER_RE = re.compile(r"--\s*(?:CONSENSUS|UNANIMOUS)\s*--", re.IGNORECASE)
 
 
 def parse_bullet_line(line: str) -> Optional[dict]:
@@ -245,12 +291,19 @@ def parse_bullet_line(line: str) -> Optional[dict]:
     trailing <small>...</small> selector detail is stripped before
     cleaning so it can't get folded into the name/school split; name and
     school are then just "everything before the first comma" / "after it."
+
+    is_consensus is true if the line carries the explicit CONSENSUS_MARKER_RE
+    marker (self-documenting, no page-level legend needed) or is simply
+    bold (trusted only when the caller has confirmed, via BOLD_LEGEND_RE
+    or a marker found elsewhere on the page, that this specific page
+    documents bold as meaning consensus -- see oklahoma_consensus_all_americans()).
     """
     stripped = line.strip()
     if not stripped.startswith("*"):
         return None
     content = stripped[1:].strip()
-    is_consensus = content.startswith("'''")
+    has_marker = bool(CONSENSUS_MARKER_RE.search(content))
+    is_bold = content.startswith("'''")
     before_small = re.split(r"<small>", content, maxsplit=1)[0]
     cleaned = clean(before_small).strip()
     if "," not in cleaned:
@@ -259,22 +312,83 @@ def parse_bullet_line(line: str) -> Optional[dict]:
     name, school = name.strip(), school.strip()
     if not name or not school:
         return None
-    return {"name": name, "school": school, "consensus": is_consensus}
+    return {"name": name, "school": school, "consensus": has_marker or is_bold}
 
 
-def extract_bulleted_all_americans(section_text: str) -> list[dict]:
+HEADING_RE = re.compile(r"^(={2,3})\s*(.+?)\s*\1\s*$")
+
+# Section headings that hold real player rosters vs. ones that just look
+# like them (a "==Key==" section's own bullets -- "'''Bold''' -- Consensus
+# All-American", "AFCA = American Football Coaches Association" -- follow
+# the same "* text" shape a player line does). Confirmed live: "Key" and
+# its child "Official/Unofficial/Other selectors" subsections are the
+# only non-roster bulleted content seen on any of these pages; every
+# other heading (Offense, Defense, Special teams, Quarterback, Ends, ...)
+# only ever contains real player entries.
+NON_ROSTER_HEADINGS = {"key", "official selectors", "unofficial selectors", "other selectors"}
+STOP_HEADINGS = {"see also", "references", "notes"}
+
+
+def extract_bulleted_all_americans(text: str) -> list[dict]:
+    """
+    Walks every heading in the page (not just a slice bounded by a
+    specific top-level heading string) so it survives real structural
+    variation across eras -- confirmed live: some pages group positions
+    under "==Offense==="/"==Defense==", others under "==Offensive
+    selections==="/"==Defensive selections==", others (1895) under no
+    grouping heading at all, position subsections straight under the
+    lead. Skips NON_ROSTER_HEADINGS' own bulleted content (the Key
+    section's legend/selector-glossary lines look like player rows but
+    aren't) and stops entirely at the first STOP_HEADINGS section.
+    """
     results: list[dict] = []
     current_position = None
-    for line in section_text.splitlines():
-        heading_match = re.match(r"^===\s*(.+?)\s*===\s*$", line.strip())
+    skip = False
+    lines = text.splitlines()
+    # Start at the first heading -- skips the lead paragraph/infobox,
+    # where a stray "* " line (if any) was never observed to be a player.
+    start = 0
+    for i, line in enumerate(lines):
+        if HEADING_RE.match(line.strip()):
+            start = i
+            break
+
+    for line in lines[start:]:
+        heading_match = HEADING_RE.match(line.strip())
         if heading_match:
-            current_position = heading_match.group(1)
+            level, title = heading_match.group(1), heading_match.group(2)
+            lowered = title.strip().lower()
+            if lowered in STOP_HEADINGS:
+                break
+            if lowered in NON_ROSTER_HEADINGS:
+                skip = True
+                continue
+            skip = False
+            if len(level) == 3:  # position-level heading, e.g. ===Quarterback===
+                current_position = title.strip()
+            continue
+        if skip:
             continue
         parsed = parse_bullet_line(line)
         if parsed:
             parsed["position"] = current_position
             results.append(parsed)
     return results
+
+
+SCHOOL_ANNOTATION_RE = re.compile(r"\s*\([^)]*\)\s*$")
+
+
+def normalize_school(school: str) -> str:
+    """
+    Strips a trailing parenthetical annotation -- confirmed on live pages:
+    "Miami  (CFHOF)" (a College Football Hall of Fame flag riding along in
+    the same cell/bullet as the school name). Without this, an OU player
+    who happens to be a Hall-of-Famer would read as school "Oklahoma
+    (CFHOF)" and silently fail the exact "Oklahoma" match below -- a real
+    player dropped, not a genuine zero.
+    """
+    return SCHOOL_ANNOTATION_RE.sub("", school).strip()
 
 
 def fetch_all_america_page(session: requests.Session, year: int) -> Optional[str]:
@@ -291,11 +405,11 @@ def oklahoma_consensus_all_americans(
 ) -> tuple[Optional[list[dict]], str]:
     """
     Returns (players, status). players is None only when the year is
-    genuinely unresolved (no page, or a page that matches none of the
-    three known formats) -- an empty list is a real, checked "zero OU
-    consensus All-Americans that season," not a failure to find data.
-    status is one of: "table", "bulleted", "no_page",
-    "no_bold_legend_found", "no_offense_section_found".
+    genuinely unresolved (no page, or a page whose bulleted format
+    carries no trustworthy consensus signal at all) -- an empty list is a
+    real, checked "zero OU consensus All-Americans that season," not a
+    failure to find data. status is one of: "table", "bulleted",
+    "no_page", "no_consensus_signal_found", "no_players_parsed".
     """
     text = fetch_all_america_page(session, year)
     if not text:
@@ -306,22 +420,27 @@ def oklahoma_consensus_all_americans(
         players = extract_school_players(section)
         # Exact match on "Oklahoma" -- "Oklahoma State" must never match
         # (both schools appear on the same page in most years).
-        oklahoma = [p for p in players if p["school"].strip() == "Oklahoma"]
+        oklahoma = [p for p in players if normalize_school(p["school"]) == "Oklahoma"]
         return oklahoma, "table"
 
     # No dedicated Consensus All-Americans table/heading at all -- only
-    # trust the bold-means-consensus fallback when this specific page's
-    # own text documents that convention. Never assumed for a page that
-    # doesn't state it.
-    if not BOLD_LEGEND_RE.search(text):
-        return None, "no_bold_legend_found"
-    offense_start = text.find("\n==Offense==")
-    if offense_start == -1:
-        return None, "no_offense_section_found"
-    end_candidates = [i for i in (text.find("\n==See also=="), text.find("\n==References==")) if i != -1]
-    end = min(end_candidates) if end_candidates else len(text)
-    all_players = extract_bulleted_all_americans(text[offense_start:end])
-    oklahoma = [p for p in all_players if p["consensus"] and p["school"] == "Oklahoma"]
+    # trust bold formatting as a consensus signal when this specific page
+    # gives real evidence for it: either its own text documents the
+    # bold-means-consensus convention (BOLD_LEGEND_RE), or individual
+    # entries carry an explicit "-- CONSENSUS --"/"-- UNANIMOUS --" marker
+    # that needs no separate documentation (CONSENSUS_MARKER_RE) -- see
+    # both regexes' docstrings for the live pages that confirmed each.
+    # Never assumed for a page with neither.
+    if not (BOLD_LEGEND_RE.search(text) or CONSENSUS_MARKER_RE.search(text)):
+        return None, "no_consensus_signal_found"
+    all_players = extract_bulleted_all_americans(text)
+    if not all_players:
+        # The page passed the consensus-signal gate but nothing parsed as
+        # a player row at all -- a real extraction failure (unrecognized
+        # sub-structure), not evidence of a genuine zero. Left unresolved
+        # rather than silently reported as "0 OU consensus All-Americans."
+        return None, "no_players_parsed"
+    oklahoma = [p for p in all_players if p["consensus"] and normalize_school(p["school"]) == "Oklahoma"]
     return oklahoma, "bulleted"
 
 
@@ -354,10 +473,11 @@ def main() -> None:
     gaps: list[str] = []
     STATUS_REASON = {
         "no_page": "no All-America team page found for this year under any known title pattern",
-        "no_bold_legend_found": "page found, but no Consensus All-Americans table/heading and no "
-        "documented bold-means-consensus convention -- format not recognized, left unresolved rather than guessed",
-        "no_offense_section_found": "page found and documents a bold-means-consensus convention, but its "
-        "expected ==Offense== section wasn't found -- left unresolved rather than guessed",
+        "no_consensus_signal_found": "page found, but no Consensus All-Americans table/heading, no "
+        "documented bold-means-consensus convention, and no explicit CONSENSUS/UNANIMOUS marker -- "
+        "format not recognized, left unresolved rather than guessed",
+        "no_players_parsed": "page found and documents a consensus signal, but no player rows parsed "
+        "from its bulleted sections -- an unrecognized sub-structure, left unresolved rather than guessed",
     }
 
     years = list(range(args.start, args.end + 1))
