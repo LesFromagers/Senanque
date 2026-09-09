@@ -20,21 +20,34 @@
  * resolved with a real count of 0 is scored as 0, no flag, same as any
  * other confirmed-negative field elsewhere in this pipeline.
  *
- * Two sub-components the brief calls for aren't scored here yet, because
- * no source wired into this pipeline supplies them:
- *  - Heisman finalists — the schema only captures the winner today
- *    (`heismanWinner`); adding finalists means a schema change plus new
- *    Wikipedia-pull extraction, not attempted in this pass.
+ * Heisman finalists (`heismanFinalists`/`heismanFinalistCount`) are scored
+ * additively and unconditionally alongside the winner — 10 points each,
+ * capped at 20 total, whether or not the season also has a winner (winner
+ * alone = 30, winner + 2 finalists = 50, two finalists with no winner =
+ * 20). The cap is set well below a win's own 30 points on purpose:
+ * finalist credit is real — it's genuine national recognition — but
+ * deliberately kept subordinate to actually winning, not a path to
+ * matching or exceeding it through volume. Sourced from a small hand-
+ * supplied list (`data/heisman-ledger/heisman_finalists.csv`), not an
+ * automated pull: direct investigation found no Wikipedia page (per-year
+ * or OU's own season page) or NCAA archive carries finalist/voting data
+ * across OU's history, and Sports-Reference is never automated per
+ * CLAUDE.md. A year absent from that list is a confirmed zero, not a gap
+ * — `heismanFinalistCount` is never null, unlike `consensusAllAmericanCount`.
+ *
+ * One sub-component the brief calls for isn't scored here yet, because no
+ * source wired into this pipeline supplies it:
  *  - Draft picks by round — no draft-record data source in this pipeline
  *    (Wikipedia/CFBD/NCAA don't carry it).
- * Both are surfaced as a standing gap on every season rather than
- * silently scored as zero, which would claim knowledge this project
- * doesn't have.
+ * Surfaced as a standing gap on every season rather than silently scored
+ * as zero, which would claim knowledge this project doesn't have.
  */
 import type { SeasonRecord } from "./types";
 
 export const TALENT_POINTS = {
   heismanWinner: 30,
+  heismanFinalist: 10,
+  heismanFinalistCap: 20,
   perAllAmerican: 8,
   allAmericanCap: 40,
   // Not scored yet (see module doc comment) — kept here as the target
@@ -54,6 +67,10 @@ export function computeTalentScore(season: SeasonRecord): TalentScore {
   const flags: string[] = [];
   if (season.heismanWinner) points += TALENT_POINTS.heismanWinner;
 
+  if (season.heismanFinalistCount > 0) {
+    points += Math.min(season.heismanFinalistCount * TALENT_POINTS.heismanFinalist, TALENT_POINTS.heismanFinalistCap);
+  }
+
   if (season.consensusAllAmericanCount !== null) {
     const count = season.consensusAllAmericanCount;
     points += Math.min(count * TALENT_POINTS.perAllAmerican, TALENT_POINTS.allAmericanCap);
@@ -66,7 +83,6 @@ export function computeTalentScore(season: SeasonRecord): TalentScore {
     );
   }
 
-  flags.push("Heisman finalists not scored — only the winner is captured in the current schema");
   flags.push(
     `draft-pick components (1st/2nd round +${TALENT_POINTS.draftRound1or2}, 3rd-7th round +${TALENT_POINTS.draftRound3to7}) not scored — no draft-record data source wired into this pipeline yet`,
   );

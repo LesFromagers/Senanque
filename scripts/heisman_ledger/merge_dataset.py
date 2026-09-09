@@ -17,6 +17,12 @@ from typing import Optional
 
 from schema import GAME_FIELDS, SEASON_FIELDS
 
+# This file lives at scripts/heisman_ledger/merge_dataset.py -- three
+# parents up is the repo root. Anchoring --heisman-finalists's default
+# here, rather than a plain relative "../../data/...", means it resolves
+# correctly no matter what directory this script is invoked from.
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 # SP+/PPA and the raw counting stats come from two different CFBD endpoints
 # that fail independently (see pull_cfbd.py) — kept as separate lists so a
 # year with season totals but no SP+ rating still keeps its yardage instead
@@ -49,7 +55,28 @@ ALL_AMERICANS_FIELDS = [
     "consensus_all_american_count",
 ]
 
-MASTER_FIELDS = SEASON_FIELDS + CFBD_EFFICIENCY_FIELDS + CFBD_COUNTING_FIELDS + ALL_AMERICANS_FIELDS
+# Heisman finalists have no automated source at all -- confirmed by direct
+# investigation before this field existed: no "{year} Heisman Trophy" page
+# exists on Wikipedia for any year, "List of Heisman Trophy winners" only
+# records the winner (not the field), and OU's own season pages don't
+# mention finalist/runner-up status even for well-known near-misses (e.g.
+# neither the 2000 nor 2016 season page mentions "Heisman" at all). Sports-
+# Reference likely has full voting tables but is never automated per
+# CLAUDE.md. data/heisman-ledger/heisman_finalists.csv is therefore a
+# small, hand-supplied, presumed-*complete* list (Matt's own knowledge of
+# OU's Heisman history, 2026-09-09) rather than a partial automated pull --
+# a year absent from it is scored as a confirmed zero finalists, not an
+# unresolved gap the way a partial Wikipedia pull would be. If a missed
+# season turns up later, add it directly to that CSV; there's no pull
+# script to re-run.
+HEISMAN_FINALIST_FIELDS = [
+    "heisman_finalists",
+    "heisman_finalist_count",
+]
+
+MASTER_FIELDS = (
+    SEASON_FIELDS + CFBD_EFFICIENCY_FIELDS + CFBD_COUNTING_FIELDS + ALL_AMERICANS_FIELDS + HEISMAN_FINALIST_FIELDS
+)
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -73,6 +100,12 @@ def main() -> None:
     parser.add_argument("--verified", type=Path, required=True)
     parser.add_argument("--pulled", type=Path, required=True, help="Directory with seasons_wikipedia.csv, games_wikipedia.csv, efficiency_cfbd.csv")
     parser.add_argument("--out", type=Path, required=True, help="Directory to write master_seasons.csv, master_games.csv, gap_report_master.md")
+    parser.add_argument(
+        "--heisman-finalists",
+        type=Path,
+        default=REPO_ROOT / "data/heisman-ledger/heisman_finalists.csv",
+        help="Hand-supplied year,player_name rows -- see this file's header comment above for why there's no automated pull.",
+    )
     args = parser.parse_args()
 
     verified_rows = read_csv(args.verified)
@@ -80,10 +113,15 @@ def main() -> None:
     games_rows = read_csv(args.pulled / "games_wikipedia.csv")
     cfbd_rows = read_csv(args.pulled / "efficiency_cfbd.csv")
     all_americans_rows = read_csv(args.pulled / "consensus_all_americans_wikipedia.csv")
+    finalist_rows = read_csv(args.heisman_finalists)
 
     verified_years = {int(r["year"]) for r in verified_rows}
     cfbd_by_year = {int(r["year"]): r for r in cfbd_rows}
     all_americans_by_year = {int(r["year"]): r for r in all_americans_rows}
+
+    finalists_by_year: dict[int, list[str]] = {}
+    for r in finalist_rows:
+        finalists_by_year.setdefault(int(r["year"]), []).append(r["player_name"])
 
     # Verified rows win outright for every field they actually have a
     # value for; pulled rows fill every year the verified file doesn't
@@ -152,6 +190,14 @@ def main() -> None:
             row["consensus_all_american_count"] = aa.get("consensus_all_american_count") or "0"
         else:
             all_americans_gap_years.append(year)
+
+        # No gap concept here (see HEISMAN_FINALIST_FIELDS's comment above)
+        # -- a year absent from the hand-supplied list is a confirmed zero,
+        # not unresolved, so every row gets a real value, never left blank
+        # for a later report to flag.
+        finalists = finalists_by_year.get(year, [])
+        row["heisman_finalists"] = "; ".join(finalists)
+        row["heisman_finalist_count"] = str(len(finalists))
 
         missing = [
             f for f in ("head_coach", "conference", "final_record", "points_for", "points_against")

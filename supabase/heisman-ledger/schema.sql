@@ -65,6 +65,18 @@ create table if not exists heisman_ledger_seasons (
   -- an empty string, not NULL. See lib/heisman-ledger/talent-scoring.ts.
   consensus_all_americans text,
   consensus_all_american_count smallint,
+  -- Heisman finalists (or, pre-1982, before the Heisman Trust named
+  -- official finalists, a qualifying top vote finish) who weren't that
+  -- season's winner -- from data/heisman-ledger/heisman_finalists.csv, a
+  -- small hand-supplied list, not an automated pull: no Wikipedia page
+  -- (per-year or OU's own season page) or NCAA archive carries this data,
+  -- confirmed by direct investigation, and Sports-Reference is never
+  -- automated per CLAUDE.md. A year absent from that CSV is a confirmed
+  -- zero, not an unresolved gap -- there's no partial-pull state here, so
+  -- both columns are always populated (0 / empty string), never NULL. See
+  -- lib/heisman-ledger/talent-scoring.ts.
+  heisman_finalists text not null default '',
+  heisman_finalist_count smallint not null default 0,
   -- Retired, not just unpopulated: the Power Index formula dropped its
   -- SRS-style strength-of-schedule component outright (see
   -- lib/heisman-ledger/power-index.ts's header comment) rather than leave

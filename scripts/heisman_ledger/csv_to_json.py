@@ -36,6 +36,7 @@ INT_FIELDS = (
     "offense_passing_yards",
     "offense_turnovers",
     "consensus_all_american_count",
+    "heisman_finalist_count",
 )
 APPROXIMATE_INT_FIELDS = ("points_for", "points_against")
 FLOAT_FIELDS = (

@@ -85,6 +85,8 @@ def generate_seasons_sql(seasons_csv: Path) -> list[str]:
                     sql_num(row.get("offense_turnovers")),
                     sql_str(row.get("consensus_all_americans")),
                     sql_num(row.get("consensus_all_american_count")),
+                    sql_str(row.get("heisman_finalists")),
+                    sql_num(row.get("heisman_finalist_count")),
                 ]
             )
             lines.append(
@@ -96,8 +98,8 @@ def generate_seasons_sql(seasons_csv: Path) -> list[str]:
                 "source_notes, offense_ppa, defense_ppa, offense_success_rate, "
                 "defense_success_rate, sp_overall, sp_offense, sp_defense, "
                 "offense_total_yards, offense_rushing_yards, offense_passing_yards, "
-                "offense_turnovers, consensus_all_americans, "
-                f"consensus_all_american_count)\nvalues ({values})"
+                "offense_turnovers, consensus_all_americans, consensus_all_american_count, "
+                "heisman_finalists, heisman_finalist_count)\nvalues ({values})".format(values=values)
             )
             lines.append(
                 "on conflict (year) do update set "
@@ -113,6 +115,7 @@ def generate_seasons_sql(seasons_csv: Path) -> list[str]:
                         "defense_success_rate", "sp_overall", "sp_offense", "sp_defense",
                         "offense_total_yards", "offense_rushing_yards", "offense_passing_yards",
                         "offense_turnovers", "consensus_all_americans", "consensus_all_american_count",
+                        "heisman_finalists", "heisman_finalist_count",
                     )
                 )
                 + ";\n"

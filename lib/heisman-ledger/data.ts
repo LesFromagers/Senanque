@@ -60,6 +60,9 @@ interface RawSeasonJson {
   /** Absent from the committed JSON until the next consensus-All-Americans pull regenerates it — see fromJson's ?? null. */
   consensus_all_americans?: string | null;
   consensus_all_american_count?: number | null;
+  /** Absent from the committed JSON until the next merge regenerates it — see fromJson's ?? fallback. */
+  heisman_finalists?: string | null;
+  heisman_finalist_count?: number | null;
   data_tier: 1 | 2 | 3 | 4;
   source_notes: string;
   offense_ppa: number | null;
@@ -94,6 +97,12 @@ function fromJson(row: RawSeasonJson): SeasonRecord {
     beatTexas: row.beat_texas,
     beatOsu: row.beat_osu,
     heismanWinner: row.heisman_winner,
+    // "" not null — a year with no finalists is a confirmed zero, not an
+    // unresolved gap (see the type's own doc comment). The committed JSON
+    // predates these columns until the next merge regenerates it, hence
+    // the fallback here rather than a plain pass-through.
+    heismanFinalists: row.heisman_finalists ?? "",
+    heismanFinalistCount: row.heisman_finalist_count ?? 0,
     notableAllAmericans: row.notable_all_americans,
     // ?? null, not a plain pass-through — same reasoning as the CFBD
     // counting-stat fields above: the committed JSON predates these

@@ -25,6 +25,16 @@ export interface SeasonRecord {
   beatTexas: TriBool;
   beatOsu: TriBool;
   heismanWinner: string | null;
+  /**
+   * Heisman finalists (or, pre-1982, a qualifying top vote finish) who
+   * weren't that season's winner — "Name; Name", from a small hand-
+   * supplied list (data/heisman-ledger/heisman_finalists.csv), not an
+   * automated pull; no Wikipedia page or NCAA archive carries this data.
+   * A year with none is a confirmed zero (empty string), never null —
+   * there's no unresolved/gap state here, unlike consensusAllAmericans.
+   */
+  heismanFinalists: string;
+  heismanFinalistCount: number;
   /** Free-text, hand-entered honors mention — not consensus-filtered. Kept for display; see consensusAllAmericans for the Talent layer's actual scoring input. */
   notableAllAmericans: string | null;
   /**
