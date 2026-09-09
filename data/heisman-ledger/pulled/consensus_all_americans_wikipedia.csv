@@ -42,7 +42,7 @@ year,consensus_all_americans,consensus_all_american_count
 1935,,0
 1936,,0
 1937,,0
-1938,Waddy Young (End),1
+1938,Waddy Young (E),1
 1939,,0
 1940,,0
 1941,,0
@@ -52,73 +52,81 @@ year,consensus_all_americans,consensus_all_american_count
 1945,,0
 1946,,0
 1947,,0
-1948,Buddy Burris (Guard),1
+1948,Buddy Burris (G),1
 1949,,0
-1950,Jim Weatherall (Tackle); Leon Heath (Fullback),2
-1951,Jim Weatherall (Tackle),1
-1952,"Billy Vessels (Halfback); Tom CatlinDespite being a first-team pick of five of the eight official selectors, Tom Catlin is not recognized by the NCAA as a consensus All-American. (Center)",2
-1953,J. D. Roberts (Guard),1
-1954,Kurt Burris (Center); Max Boydston (End),2
-1955,Bo Bolinger (Guard),1
-1956,Jerry Tubbs (Center); Tommy McDonald (Back),2
-1957,Bill Krisher (Guard); Clendon Thomas (Back),2
-1958,Bob Harrison (Center),1
+1950,Leon Heath (FB); Jim Weatherall (T),2
+1951,Jim Weatherall (T),1
+1952,Billy Vessels (HB),1
+1953,J. D. Roberts (G),1
+1954,Max Boydston (E); Kurt Burris (C),2
+1955,Bo Bolinger (G),1
+1956,Tommy McDonald (HB); Jerry Tubbs (C),2
+1957,Clendon Thomas (HB); Bill Krisher (G),2
+1958,Bob Harrison (C),1
 1959,,0
 1960,,0
 1961,,0
 1962,,0
-1963,Jim Grisham (Fullback),1
-1964,Ralph Neely (Tackle),1
-1965,Carl McAdams (Linebacker),1
+1963,Jim Grisham (FB),1
+1964,Ralph Neely (T),1
+1965,Carl McAdams (LB),1
 1966,,0
-1967,Granville Liggins (Middle guard),1
+1967,Granville Liggins (DL),1
 1968,,0
-1969,Steve Owens (Running backs),1
+1969,Steve Owens (B),1
 1970,,0
-1971,Greg Pruitt (Running back); Tom Brahaney (Center),2
-1972,Greg Pruitt (Running back); Tom Brahaney (Center),2
-1973,Lucious Selmon (Middle guard); Rod Shoate (Linebacker),2
-1974,Rod Shoate (Linebacker); Joe Washington (Running back); John Roush (Offensive guard),3
-1975,Lee Roy Selmon (Defensive tackle); Dewey Selmon (Middle guard); Jimbo Elrod (Defensive end),3
-1976,Mike Vaughan (Offensive tackle),1
-1977,Zac Henderson (Defensive back),1
-1978,Greg Roberts (Guards); Billy Sims (Running backs),2
-1979,Billy Sims (Running backs); George Cumby (Linebackers),2
-1980,Louis Oubre (Guards),1
-1981,Terry Crouch (Offensive tackle),1
-1982,Rick Bryan (Def. tackle),1
-1983,Rick Bryan (Def. tackle),1
-1984,Tony Casillas (Defensive tackle),1
-1985,Tony Casillas (Defensive tackle); Brian Bosworth (Linebacker),2
-1986,Keith Jackson (Tight end); Brian Bosworth (Linebacker),2
-1987,Mark Hutson (Offensive guard); Keith Jackson (Tight end); Rickey Dixon (Defensive back); Dante Jones (Linebacker),4
-1988,Anthony Phillips (Offensive guard),1
+1971,Greg Pruitt (RB); Tom Brahaney (C),2
+1972,Greg Pruitt (RB); Tom Brahaney (C),2
+1973,Lucious Selmon (DL); Rod Shoate (LB),2
+1974,Joe Washington (RB); John Roush (OT); Rod Shoate (LB),3
+1975,Jimbo Elrod (DL); Dewey Selmon (DL); Lee Roy Selmon (DL),3
+1976,Mike Vaughan (OT),1
+1977,Zac Henderson (DB),1
+1978,Billy Sims (RB); Greg Roberts (G),2
+1979,Billy Sims (RB); George Cumby (LB),2
+1980,Louis Oubre (OL),1
+1981,Terry Crouch (OT),1
+1982,Rick Bryan (DL),1
+1983,Rick Bryan (DL),1
+1984,Tony Casillas (DL),1
+1985,Tony Casillas (DL); Brian Bosworth (LB),2
+1986,Keith Jackson (TE); Brian Bosworth (LB),2
+1987,Keith Jackson (TE); Mark Hutson (OL); Dante Jones (LB); Rickey Dixon (DB),4
+1988,Anthony Phillips (OL),1
 1989,,0
 1990,,0
 1991,,0
 1992,,0
 1993,,0
-2002,Tommie Harris (Defensive line); Teddy Lehman (Linebacker),2
-2003,Jason White (Quarterback); Tommie Harris (Defensive line); Teddy Lehman (Linebacker); Derrick Strait (Defensive back); Antonio Perkins (Return specialist),5
-2004,Adrian Peterson (Running back); Jammal Brown (Offensive line),2
+1994,,0
+1995,,0
+1996,,0
+1997,,0
+1998,,0
+1999,,0
+2000,Josh Heupel (QB); Rocky Calmus (LB); J. T. Thatcher (DB),3
+2001,Rocky Calmus (LB); Roy Williams (DB),2
+2002,Tommie Harris (DL); Teddy Lehman (LB),2
+2003,Jason White (QB); Tommie Harris (DL); Teddy Lehman (LB); Derrick Strait (DB); Antonio Perkins (KR/AP),5
+2004,Adrian Peterson (RB); Jammal Brown (OL),2
 2005,,0
 2006,,0
-2007,Duke Robinson (Offensive lineman); Curtis Lofton (Linebacker),2
-2008,Sam Bradford (Quarterback); Duke Robinson (Guards),2
-2009,Trent Williams (Offensive tackle); Gerald McCoy (Defensive tackle),2
-2010,Ryan Broyles (Wide receiver); Quinton Carter (Safety),2
-2011,Ryan Broyles (Wide receiver),1
+2007,Duke Robinson (G); Curtis Lofton (LB),2
+2008,Sam Bradford (QB); Duke Robinson (G),2
+2009,Trent Williams (OT); Gerald McCoy (DT),2
+2010,Ryan Broyles (WR); Quinton Carter (S),2
+2011,Ryan Broyles (WR),1
 2012,,0
-2013,Gabe Ikard (Offensive line),1
+2013,Gabe Ikard (C),1
 2014,,0
 2015,,0
-2016,Dede Westbrook (Wide receiver),1
-2017,Baker Mayfield (Quarterback); Mark Andrews (Tight end); Orlando Brown Jr. (Offensive line),3
-2018,Ben Powers (Offensive Line),1
-2019,CeeDee Lamb (Wide receiver),1
+2016,Dede Westbrook (WR),1
+2017,Baker Mayfield (QB); Orlando Brown Jr. (OT); Mark Andrews (TE),3
+2018,Ben Powers (OG),1
+2019,CeeDee Lamb (WR),1
 2020,,0
 2021,,0
 2022,,0
 2023,,0
-2024,Danny Stutsman (Linebacker),1
+2024,Danny Stutsman (LB),1
 2025,,0

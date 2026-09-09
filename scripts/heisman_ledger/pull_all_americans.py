@@ -23,56 +23,59 @@ NCAA's own consensus designation directly, not a prose mention.
 Consensus, not every selection: CLAUDE.md's Talent layer wants NCAA-
 consensus All-Americans specifically -- a player recognized by enough of
 the season's major selector organizations to count as a true consensus
-pick, not merely named by any one outlet. Confirmed across three real,
-structurally different page eras by fetching live pages directly (never
-assumed from an offline fixture):
+pick, not merely named by any one outlet.
 
-  1. Flat table, captioned "Consensus All-Americans" (2003-era) -- no
-     "==Consensus All-Americans==" heading at all, just a wikitable with
-     that caption. Names are wrapped in {{sortname|First|Last|SortKey}}
-     templates, which mwparserfromhell's strip_code() can't expand -- it
-     silently discards the whole template, leaving only a stray "*"
-     (the unanimous-selection marker) as the cell's visible text.
-     extract_name() below special-cases the sortname template directly.
-     This era's table also uses rowspan to group multiple players under
-     one shared Position cell (confirmed: 2003's four-man defensive line
-     shares one rowspan="4" cell) -- a naive per-row cell lookup drops
-     every row after the first under a span; extract_school_players()
-     carries a spanned cell forward via an explicit active-spans state
-     machine instead.
-  2. "==Consensus All-Americans==" heading followed by a wikitable
-     (1950/1956/1985-era). Header <th> cells aren't always wrapped in a
-     <tr> (no leading "|-" before them on some pages) -- headers are read
-     via filter_tags(matches=... tag == "th") directly, independent of
-     <tr> grouping; data rows are found via <tr> -> <td> only, which
-     naturally excludes a <th>-only header row either way.
-  3. No Consensus All-Americans table or heading at all -- only
-     per-position bulleted prose ("* '''[[Name]]''', School <small>
-     (selectors)</small>"), grouped under headings that vary by era
-     (some pages nest positions straight under the lead with no top-level
-     grouping at all, e.g. 1895; others group under "==Offense==="/
-     "==Defense==", or "==Offensive selections==="/"==Defensive
-     selections=="). extract_bulleted_all_americans() walks every heading
-     in the page rather than assuming one specific top-level name, and
-     skips a "==Key==" section's own selector-glossary bullets (which
-     look like player rows but aren't). Within this format, a player's
-     consensus status is signaled one of two confirmed ways:
-       a. Bold name = consensus, trusted only when the specific page's
-          own text documents that convention -- either in its intro
-          prose (2008: "...to determine consensus All-Americans (denoted
-          '''bold''')") or, more commonly, a dedicated "==Key==" section
-          in the opposite word order (1895/1968/1978/1992-era: "'''Bold'''
-          -- Consensus All-American"). BOLD_LEGEND_RE matches either
-          order so it isn't silently missed on pages using the second
-          phrasing, which the original single-direction version of this
-          regex was.
-       b. An explicit "-- CONSENSUS --"/"-- UNANIMOUS --" marker inside
-          the entry's own <small>...</small> selector detail (2010s-era
-          pages, e.g. 2010/2011/2013) -- self-documenting, no separate
-          legend needed; CONSENSUS_MARKER_RE catches this independently
-          of bold, so a page using only this convention still resolves.
-     A page with neither signal anywhere is left unresolved and logged as
-     a gap, not guessed.
+PRIMARY METHOD -- the "Template:{year} ... Consensus All-Americans" navbox:
+Wikipedia maintains a dedicated, curated navbox template per season (e.g.
+Template:2003 NCAA Division I-A College Football Consensus All-Americans,
+transcluded at the bottom of that year's main "College Football All-
+America Team" article) whose sole job is listing exactly that season's
+real consensus roster -- no bold-detection heuristics, no per-page prose
+conventions to reverse-engineer, no ambiguity. Found by direct
+investigation after a Google AI Overview surfaced 1994-2001 OU names this
+script's earlier (bold/heading-only) version had missed entirely --
+checking the actual primary source confirmed several of those names
+(Rocky Calmus, Josh Heupel, J. T. Thatcher; 2000-2001) really are bold-
+marked consensus picks on their pages, which is what sent the
+investigation to this template in the first place. Confirmed present
+across the full historical range under three naming eras
+(TEMPLATE_TITLE_PATTERNS_BY_ERA): plain ("Template:1895/1937/1968 College
+Football Consensus All-Americans"), Division I-A (1978-2005-ish), and
+Division I FBS (2006-present, following the subdivision's real 2006
+rename). The template itself carries no school affiliation per player, so
+each entry is cross-referenced against the same year's main article body
+(extract_all_named_players() below, gathering every player mentioned
+anywhere in the roster -- any selector, any school -- regardless of bold
+status) to find that player's school, matched primarily by wikilink
+target (falls back to display name; NORMALIZE() strips periods/spacing so
+"E.J. Henderson" in the template matches "E. J. Henderson" in the body --
+confirmed live on 2001, a non-Oklahoma player, that this drift is real).
+Table-derived body entries are kept in preference to bulleted-prose ones
+on a duplicate key (see extract_all_named_players()'s docstring for why:
+a 1985-era page's own unrelated "notable individual award winners" trivia
+section can coincidentally match the same "Name, text-with-a-comma"
+shape and, unfixed, silently overwrote a correct school with garbage --
+confirmed live, this dropped both of 1985's real consensus picks to a
+false zero before the fix). A template entry that still can't be matched
+to any school gets one extra fetch of that player's own bio page,
+checked for an "Oklahoma" mention (VERIFY_UNMATCHED_AGAINST_BIO) rather
+than silently assumed to be some other school -- rare (one hit across
+this script's ~13-season hand-validation pass, a Maryland linebacker) but
+a real OU player hiding behind an unmatched entry would otherwise
+silently undercount that season.
+
+FALLBACK METHOD -- three structurally different eras of the main article's
+own body, used only when no template resolves for that year at all (in
+practice, not observed to happen across the full 1895-2025 range, but the
+possibility isn't assumed away): flat "Consensus All-Americans"-captioned
+table (2003-era, {{sortname}} templates + rowspan grouping), a
+"==Consensus All-Americans==" heading + wikitable (1950/1956/1985-era),
+or bulleted prose with bold = consensus, trusted only when the page's own
+text documents that convention (BOLD_LEGEND_RE) or entries carry an
+explicit "-- CONSENSUS --"/"-- UNANIMOUS --" marker (CONSENSUS_MARKER_RE,
+2010s-era). See find_consensus_section()/extract_bulleted_all_americans()
+for the format-by-format detail; kept as a safety net, not the primary
+path, now that the template exists for every year checked.
 
 Every one of these was independently sanity-checked by hand against
 several seasons per format before this script existed, per Matt's
@@ -82,12 +85,12 @@ the concrete case (1950) where the hand-verified batch's free-text
 notable_all_americans column turned out to overcount relative to true
 NCAA consensus status.
 
-Never fabricates: a year whose All-America team page doesn't resolve, or
-resolves but matches none of the three known formats, is left out of the
-output CSV entirely and logged to the gap report -- never assumed to be
-"zero All-Americans that year." A year that resolves and is genuinely
-parsed with zero Oklahoma players (a real, checked outcome) gets an
-explicit empty-string row instead, which is different from being absent.
+Never fabricates: a year whose All-America team page doesn't resolve
+under either method is left out of the output CSV entirely and logged to
+the gap report -- never assumed to be "zero All-Americans that year." A
+year that resolves and is genuinely parsed with zero Oklahoma players (a
+real, checked outcome) gets an explicit empty-string row instead, which
+is different from being absent.
 """
 from __future__ import annotations
 
@@ -400,48 +403,287 @@ def fetch_all_america_page(session: requests.Session, year: int) -> Optional[str
     return None
 
 
+# Tried in era order (cheapest-first, not exhaustive-first) since a
+# season's real template only ever matches one of these -- trying the
+# right one first halves the average request count per year. The
+# boundary years (1978, 2006) are real Wikipedia/NCAA naming changes
+# (Division I-A introduced 1978; renamed Division I FBS in 2006), not
+# guesses, but a season right at either boundary might still be filed
+# under the neighboring era's title on Wikipedia's own naming, so every
+# pattern is still tried, just reordered.
+TEMPLATE_TITLE_PATTERNS_BY_ERA = {
+    "fbs": "Template:{year} NCAA Division I FBS College Football Consensus All-Americans",
+    "ia": "Template:{year} NCAA Division I-A College Football Consensus All-Americans",
+    "plain": "Template:{year} College Football Consensus All-Americans",
+}
+
+
+def template_title_order(year: int) -> list[str]:
+    if year >= 2006:
+        order = ["fbs", "ia", "plain"]
+    elif year >= 1978:
+        order = ["ia", "plain", "fbs"]
+    else:
+        order = ["plain", "ia", "fbs"]
+    return [TEMPLATE_TITLE_PATTERNS_BY_ERA[k].format(year=year) for k in order]
+
+
+def fetch_consensus_template(session: requests.Session, year: int) -> Optional[str]:
+    for title in template_title_order(year):
+        text = fetch_wikitext(session, title)
+        if text:
+            return text
+    return None
+
+
+LIST_PARAM_RE = re.compile(r"^list\d+$")
+
+
+def parse_consensus_template(text: str) -> list[dict]:
+    """
+    Parses the {{Team roster navbox ...}} template call itself, walking
+    every |list1=/|list2=/... param (one per position group, e.g. Offense/
+    Defense/Special teams) and, within each, every "* POS [[Player]]" or
+    "* POS [[Target|Display]]" line. Returns [{"position","target",
+    "display"}, ...] for every player in the season's real consensus
+    roster -- school affiliation isn't in this template at all, so the
+    caller cross-references extract_all_named_players() for that.
+    """
+    wikicode = mwph.parse(text)
+    templates = wikicode.filter_templates(matches=lambda t: t.name.strip().lower() == "team roster navbox")
+    if not templates:
+        return []
+    players: list[dict] = []
+    for param in templates[0].params:
+        if not LIST_PARAM_RE.match(param.name.strip()):
+            continue
+        for line in str(param.value).splitlines():
+            line = line.strip()
+            if not line.startswith("*"):
+                continue
+            content = line[1:].strip()
+            wikilinks = mwph.parse(content).filter_wikilinks()
+            if not wikilinks:
+                continue
+            link = wikilinks[0]
+            target = str(link.title).strip()
+            display = str(link.text).strip() if link.text else target
+            # clean(), not a raw substring: a handful of lines carry a
+            # stray <br/> tag ahead of the position abbreviation (confirmed
+            # live, 1976: "* <br/>OT [[Mike Vaughan]]" -- an editor artifact,
+            # not meaningful markup) that a plain slice leaves in literally.
+            position = clean(content[: content.find("[[")]).strip()
+            players.append({"position": position, "target": target, "display": display})
+    return players
+
+
+NAME_NORMALIZE_RE = re.compile(r"[.\s]+")
+
+
+def normalize_name(name: str) -> str:
+    """
+    Strips periods and collapses whitespace so "E.J. Henderson" (as one
+    Wikipedia page links it) and "E. J. Henderson" (as another links the
+    same person) compare equal -- confirmed live on 2001's page, where the
+    template and the main article's body use the two different spacings
+    for the same non-Oklahoma player. Real editorial inconsistency, not a
+    parsing bug in either direction.
+    """
+    return NAME_NORMALIZE_RE.sub(" ", name).strip().lower()
+
+
+def extract_all_named_players(text: str) -> list[dict]:
+    """
+    Every player named anywhere in the main article's roster area -- any
+    selector, any school, regardless of bold/consensus status -- as
+    [{"target","display","school"}, ...], used only to look up a school
+    for a name the consensus template already told us is a real pick.
+    Pulls from both a wikitable (any table with Name/School columns,
+    reusing extract_school_players()'s rowspan/{{sortname}} handling) and
+    bulleted "* [[Name]], School <small>(...)</small>" lines.
+
+    Table entries are returned FIRST and the caller must prefer the first
+    match for a given key: confirmed live on 1985, whose page has a
+    wikitable with a clean "Oklahoma" school cell for Brian Bosworth and
+    Tony Casillas AND a separate, unrelated "notable individual award
+    winners" trivia bullet ("Brian Bosworth, Oklahoma linebacker who won
+    the 1985 Dick Butkus Award;") that happens to match the same
+    "[[Name]], text-with-a-comma" shape -- a naive dict-comprehension
+    build (last-value-wins) let that messier text silently overwrite the
+    clean table school, turning a real, already-correctly-resolved 2-
+    player season into a false zero. Scanning is bounded to the roster
+    area (first "==Offense==" through "See also"/"References"/"External
+    links") for the same reason -- the whole page is not a safe scope to
+    search for "Name, school-shaped text."
+    """
+    results: list[dict] = []
+    wikicode = mwph.parse(text)
+    tables = wikicode.filter_tags(matches=lambda n: n.tag == "table")
+    for table in tables:
+        header_cells = table.contents.filter_tags(matches=lambda n: n.tag == "th")
+        headers = [clean(str(c.contents)).strip().lower() for c in header_cells]
+        name_i = next((i for i, h in enumerate(headers) if h == "name"), None)
+        school_i = next((i for i, h in enumerate(headers) if h in ("school", "university")), None)
+        if name_i is None or school_i is None:
+            continue
+        ncols = len(headers)
+        rows = table.contents.filter_tags(matches=lambda n: n.tag == "tr")
+        active_spans: dict[int, tuple[int, object]] = {}
+        for row in rows:
+            cells = row.contents.filter_tags(matches=lambda n: n.tag == "td")
+            if not cells:
+                continue
+            full_row: list = [None] * ncols
+            consumed = set()
+            for col, (_remaining, cell) in active_spans.items():
+                full_row[col] = cell
+                consumed.add(col)
+            cell_iter = iter(cells)
+            new_spans: dict[int, int] = {}
+            for col in range(ncols):
+                if col in consumed:
+                    continue
+                try:
+                    cell = next(cell_iter)
+                except StopIteration:
+                    break
+                full_row[col] = cell
+                span = get_rowspan(cell)
+                if span > 1:
+                    new_spans[col] = span - 1
+            next_active_spans = {}
+            for col, (remaining, cell) in active_spans.items():
+                if remaining > 1:
+                    next_active_spans[col] = (remaining - 1, cell)
+            for col, remaining in new_spans.items():
+                next_active_spans[col] = (remaining, full_row[col])
+            active_spans = next_active_spans
+            if full_row[name_i] is None or full_row[school_i] is None:
+                continue
+            name, _unanimous = extract_name(full_row[name_i])
+            if not name:
+                continue
+            # extract_name() only returns display text; recover a wikilink
+            # target too, when the cell has one, for the primary match key.
+            wikilinks = full_row[name_i].contents.filter_wikilinks()
+            target = str(wikilinks[0].title).strip() if wikilinks else None
+            school = clean(str(full_row[school_i].contents)).strip()
+            results.append({"target": target, "display": name, "school": school})
+
+    offense_start = text.find("\n==Offense==")
+    scan_text = text
+    if offense_start != -1:
+        end_candidates = [
+            i for i in (text.find("\n==See also=="), text.find("\n==References=="), text.find("\n==External links=="))
+            if i != -1
+        ]
+        end = min(end_candidates) if end_candidates else len(text)
+        scan_text = text[offense_start:end]
+    for line in scan_text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("*"):
+            continue
+        content = stripped[1:].strip()
+        before_small = re.split(r"<small>", content, maxsplit=1)[0]
+        wikilinks = mwph.parse(before_small).filter_wikilinks()
+        cleaned = clean(before_small).strip()
+        if "," not in cleaned:
+            continue
+        name_part, school_part = cleaned.split(",", 1)
+        name_part, school_part = name_part.strip(), school_part.strip()
+        if not name_part or not school_part:
+            continue
+        target = str(wikilinks[0].title).strip() if wikilinks else None
+        results.append({"target": target, "display": name_part, "school": school_part})
+    return results
+
+
+BIO_OKLAHOMA_RE = re.compile(r"\boklahoma\b", re.IGNORECASE)
+
+
+def bio_mentions_oklahoma(session: requests.Session, page_title: str) -> bool:
+    """
+    Last-resort check for a consensus-template entry that couldn't be
+    matched to a school via the main article's own body at all: fetch that
+    player's own Wikipedia bio page and check whether "Oklahoma" appears
+    in it. Only called for the rare unmatched case (one hit across this
+    script's ~13-season hand-validation pass, a Maryland linebacker whose
+    body-text wikilink used different name spacing than the template) --
+    cheap enough to afford a real check instead of assuming "not OU."
+    A true positive here still isn't auto-included (school beyond "does
+    Oklahoma appear on the page" isn't confirmed), just flagged as a real
+    gap for manual review rather than silently dropped or guessed in.
+    """
+    text = fetch_wikitext(session, page_title)
+    return bool(text and BIO_OKLAHOMA_RE.search(text[:4000]))
+
+
 def oklahoma_consensus_all_americans(
     session: requests.Session, year: int
-) -> tuple[Optional[list[dict]], str]:
+) -> tuple[Optional[list[dict]], str, list[str]]:
     """
-    Returns (players, status). players is None only when the year is
-    genuinely unresolved (no page, or a page whose bulleted format
-    carries no trustworthy consensus signal at all) -- an empty list is a
-    real, checked "zero OU consensus All-Americans that season," not a
-    failure to find data. status is one of: "table", "bulleted",
-    "no_page", "no_consensus_signal_found", "no_players_parsed".
+    Returns (players, status, possible_misses). players is None only when
+    the year is genuinely unresolved under both the template and fallback
+    methods -- an empty list is a real, checked "zero OU consensus All-
+    Americans that season," not a failure to find data. status is one of:
+    "template", "table", "bulleted", "no_page", "no_consensus_signal_found",
+    "no_players_parsed". possible_misses lists any template entry that
+    couldn't be matched to a school AND whose own bio page mentions
+    Oklahoma -- worth a manual look, even though the season's own
+    `players` result is otherwise fully resolved.
     """
+    template_text = fetch_consensus_template(session, year)
+    if template_text:
+        template_players = parse_consensus_template(template_text)
+        main_text = fetch_all_america_page(session, year)
+        if not main_text:
+            return None, "template_found_no_main_page", []
+
+        body_players = extract_all_named_players(main_text)
+        by_target: dict[str, dict] = {}
+        by_display: dict[str, dict] = {}
+        for p in body_players:
+            if p["target"]:
+                key = normalize_name(p["target"])
+                by_target.setdefault(key, p)
+            if p["display"]:
+                key = normalize_name(p["display"])
+                by_display.setdefault(key, p)
+
+        oklahoma: list[dict] = []
+        possible_misses: list[str] = []
+        for tp in template_players:
+            body = by_target.get(normalize_name(tp["target"])) or by_display.get(normalize_name(tp["display"]))
+            if body is None:
+                if bio_mentions_oklahoma(session, tp["target"]):
+                    possible_misses.append(f"{tp['display']} ({tp['position']})")
+                time.sleep(0.5)  # the extra bio fetch above counts against etiquette too
+                continue
+            if normalize_school(body["school"]) == "Oklahoma":
+                oklahoma.append({"name": tp["display"], "position": tp["position"]})
+        return oklahoma, "template", possible_misses
+
+    # No template resolved for this year at all -- fall back to the
+    # original body-only detection (see module docstring's FALLBACK
+    # METHOD). Not observed to be needed across the full 1895-2025 range
+    # in practice, but never assumed away.
     text = fetch_all_america_page(session, year)
     if not text:
-        return None, "no_page"
+        return None, "no_page", []
 
     section = find_consensus_section(text)
     if section:
         players = extract_school_players(section)
-        # Exact match on "Oklahoma" -- "Oklahoma State" must never match
-        # (both schools appear on the same page in most years).
         oklahoma = [p for p in players if normalize_school(p["school"]) == "Oklahoma"]
-        return oklahoma, "table"
+        return oklahoma, "table", []
 
-    # No dedicated Consensus All-Americans table/heading at all -- only
-    # trust bold formatting as a consensus signal when this specific page
-    # gives real evidence for it: either its own text documents the
-    # bold-means-consensus convention (BOLD_LEGEND_RE), or individual
-    # entries carry an explicit "-- CONSENSUS --"/"-- UNANIMOUS --" marker
-    # that needs no separate documentation (CONSENSUS_MARKER_RE) -- see
-    # both regexes' docstrings for the live pages that confirmed each.
-    # Never assumed for a page with neither.
     if not (BOLD_LEGEND_RE.search(text) or CONSENSUS_MARKER_RE.search(text)):
-        return None, "no_consensus_signal_found"
+        return None, "no_consensus_signal_found", []
     all_players = extract_bulleted_all_americans(text)
     if not all_players:
-        # The page passed the consensus-signal gate but nothing parsed as
-        # a player row at all -- a real extraction failure (unrecognized
-        # sub-structure), not evidence of a genuine zero. Left unresolved
-        # rather than silently reported as "0 OU consensus All-Americans."
-        return None, "no_players_parsed"
+        return None, "no_players_parsed", []
     oklahoma = [p for p in all_players if p["consensus"] and normalize_school(p["school"]) == "Oklahoma"]
-    return oklahoma, "bulleted"
+    return oklahoma, "bulleted", []
 
 
 def format_players(players: list[dict]) -> str:
@@ -471,20 +713,25 @@ def main() -> None:
 
     rows: list[dict] = []
     gaps: list[str] = []
+    possible_miss_lines: list[str] = []
+    method_counts: dict[str, int] = {}
     STATUS_REASON = {
         "no_page": "no All-America team page found for this year under any known title pattern",
-        "no_consensus_signal_found": "page found, but no Consensus All-Americans table/heading, no "
-        "documented bold-means-consensus convention, and no explicit CONSENSUS/UNANIMOUS marker -- "
-        "format not recognized, left unresolved rather than guessed",
-        "no_players_parsed": "page found and documents a consensus signal, but no player rows parsed "
-        "from its bulleted sections -- an unrecognized sub-structure, left unresolved rather than guessed",
+        "template_found_no_main_page": "consensus template resolved, but the main All-America team page "
+        "(needed for school affiliation) didn't -- left unresolved rather than guessed",
+        "no_consensus_signal_found": "no consensus template found for this year, and its main page has no "
+        "Consensus All-Americans table/heading, no documented bold-means-consensus convention, and no "
+        "explicit CONSENSUS/UNANIMOUS marker -- format not recognized, left unresolved rather than guessed",
+        "no_players_parsed": "no consensus template found for this year; its main page documents a consensus "
+        "signal but no player rows parsed from its bulleted sections -- an unrecognized sub-structure, left "
+        "unresolved rather than guessed",
     }
 
     years = list(range(args.start, args.end + 1))
     for i, year in enumerate(years):
         print(f"[{i + 1}/{len(years)}] pulling {year} All-America team page...")
         try:
-            players, status = oklahoma_consensus_all_americans(session, year)
+            players, status, possible_misses = oklahoma_consensus_all_americans(session, year)
         except requests.RequestException as exc:
             gaps.append(f"- **{year}**: fetch error: {exc}")
             time.sleep(args.sleep)
@@ -497,6 +744,7 @@ def main() -> None:
         if players is None:
             gaps.append(f"- **{year}**: {STATUS_REASON[status]}")
         else:
+            method_counts[status] = method_counts.get(status, 0) + 1
             rows.append(
                 {
                     "year": year,
@@ -504,6 +752,12 @@ def main() -> None:
                     "consensus_all_american_count": len(players),
                 }
             )
+            if possible_misses:
+                possible_miss_lines.append(
+                    f"- **{year}**: consensus template lists {', '.join(possible_misses)}, whose bio page(s) "
+                    "mention Oklahoma but couldn't be matched to a school in the main article body -- "
+                    "verify by hand before counting; not included in this season's count above."
+                )
         time.sleep(args.sleep)
 
     out_csv = args.out / "consensus_all_americans_wikipedia.csv"
@@ -519,10 +773,21 @@ def main() -> None:
         f"**Status:** {len(rows)} of {len(years)} seasons resolved (a resolved season may "
         "legitimately have 0 OU consensus All-Americans -- that's a real checked outcome, "
         "not a gap); "
-        f"{len(gaps)} left unresolved below, never guessed.",
+        f"{len(gaps)} left unresolved below, never guessed. Resolved via: "
+        + ", ".join(f"{v} {k}" for k, v in sorted(method_counts.items())) + ".",
         "",
     ]
     lines.extend(gaps)
+    if possible_miss_lines:
+        lines.append("")
+        lines.append("## Possible misses worth a manual look")
+        lines.append(
+            "These seasons ARE resolved (their count above is real) -- but the consensus template also "
+            "named a player this pull couldn't tie to a school, and that player's own bio page mentions "
+            "Oklahoma. Almost certainly not actually OU (this check is deliberately loose), but not silently "
+            "assumed away either."
+        )
+        lines.extend(possible_miss_lines)
     gap_report.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"\nWrote {len(rows)} seasons -> {out_csv}")

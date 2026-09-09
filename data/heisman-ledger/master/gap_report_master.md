@@ -35,6 +35,5 @@ Only fields the verified CSV left genuinely blank were filled below — every fi
 ## Game-level data exists for 27 of the 27 verified seasons
 The hand-verified batch was originally season-level only; a Wikipedia re-pull (--include-verified) fills in each verified season's own schedule/scores alongside it, used for schedule display and the beat_texas/beat_osu flags.
 
-## Consensus All-Americans (Talent layer) — 123 of 131 seasons resolved
+## Consensus All-Americans (Talent layer) — 131 of 131 seasons resolved
 From pull_all_americans.py, reading each season's own "{year} College Football All-America Team" page and filtering for NCAA-consensus Oklahoma selections — see that script's docstring for the three page formats it handles. A resolved season may legitimately show 0 (a real, checked outcome, not a gap).
-Unresolved (no page found, or a page whose format wasn't recognized — see gap_report_all_americans.md for the reason per year): 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001.
