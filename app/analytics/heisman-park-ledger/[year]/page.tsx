@@ -128,8 +128,15 @@ export default async function SeasonDetailPage({
         </div>
       )}
 
-      {season.consensusAllAmericans && (
+      {season.heismanFinalists && (
         <p className="mt-6 text-sm text-charcoal/90">
+          <span className="text-xs tracking-label uppercase text-stone">Heisman finalist{season.heismanFinalistCount > 1 ? "s" : ""} </span>
+          {season.heismanFinalists}
+        </p>
+      )}
+
+      {season.consensusAllAmericans && (
+        <p className="mt-2 text-sm text-charcoal/90">
           <span className="text-xs tracking-label uppercase text-stone">Consensus All-Americans </span>
           {season.consensusAllAmericans}
         </p>
@@ -139,6 +146,13 @@ export default async function SeasonDetailPage({
         <p className="mt-2 text-sm text-charcoal/90">
           <span className="text-xs tracking-label uppercase text-stone">Other honors mentioned </span>
           {season.notableAllAmericans}
+        </p>
+      )}
+
+      {season.draftPicksDetail && (
+        <p className="mt-2 text-sm text-charcoal/90">
+          <span className="text-xs tracking-label uppercase text-stone">NFL draft picks </span>
+          {season.draftPicksDetail}
         </p>
       )}
 

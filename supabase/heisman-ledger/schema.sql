@@ -77,6 +77,23 @@ create table if not exists heisman_ledger_seasons (
   -- lib/heisman-ledger/talent-scoring.ts.
   heisman_finalists text not null default '',
   heisman_finalist_count smallint not null default 0,
+  -- NFL draft picks, from scripts/heisman_ledger/pull_draft_picks.py
+  -- reading Wikipedia's "List of Oklahoma Sooners in the NFL draft" and
+  -- mapping each pick to draft_year - 1 (a player can only enter the
+  -- draft after finishing the season that made them eligible -- true for
+  -- an early-declare junior or a one-season transfer-in same as a normal
+  -- senior, confirmed against several players' own bio-page college-year
+  -- infobox fields, not just assumed). draft_picks_r1_2/r3_7 are the
+  -- round-1/2 and round-3-7 pick counts CLAUDE.md's Talent point table
+  -- scores; draft_picks_detail is a human-readable "Name (RN); ..." list
+  -- for display. A player drafted twice (the AFL/NFL dual-draft era,
+  -- 1960-1969, plus a few 1940s re-entries) is credited once, to their
+  -- earlier selection -- the later entry is dropped entirely, never
+  -- double-counted. This is one fully-parsed page, not a per-year pull,
+  -- so every season is populated; 0/0/'' is a real, confirmed zero.
+  draft_picks_r1_2 smallint not null default 0,
+  draft_picks_r3_7 smallint not null default 0,
+  draft_picks_detail text not null default '',
   -- Retired, not just unpopulated: the Power Index formula dropped its
   -- SRS-style strength-of-schedule component outright (see
   -- lib/heisman-ledger/power-index.ts's header comment) rather than leave

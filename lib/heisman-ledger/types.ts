@@ -38,6 +38,16 @@ export interface SeasonRecord {
   /** Free-text, hand-entered honors mention — not consensus-filtered. Kept for display; see consensusAllAmericans for the Talent layer's actual scoring input. */
   notableAllAmericans: string | null;
   /**
+   * NFL draft picks mapped to this season (draft_year - 1) — from
+   * pull_draft_picks.py reading Wikipedia's "List of Oklahoma Sooners in
+   * the NFL draft". Round-1/2 and round-3-7 counts are the Talent layer's
+   * scoring inputs; draftPicksDetail ("Name (R1); Name (R3)") is display
+   * only. Every season is populated — a real, confirmed zero, never null.
+   */
+  draftPicksR1R2: number;
+  draftPicksR3To7: number;
+  draftPicksDetail: string;
+  /**
    * NCAA-consensus Oklahoma All-Americans, "Name (Position); Name (Position)"
    * — from pull_all_americans.py reading each season's own Wikipedia
    * "College Football All-America Team" page. null means unresolved (no

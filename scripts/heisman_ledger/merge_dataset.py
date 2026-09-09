@@ -74,8 +74,25 @@ HEISMAN_FINALIST_FIELDS = [
     "heisman_finalist_count",
 ]
 
+# NFL draft picks -- pull_draft_picks.py, reading Wikipedia's "List of
+# Oklahoma Sooners in the NFL draft" (one page, already organized by
+# draft class) and mapping each pick to draft_year - 1. Every season is
+# populated (0/0/"" is a real, confirmed zero -- this is one fully-parsed
+# page, not a per-year pull that can leave a year unresolved the way
+# consensus All-Americans can).
+DRAFT_PICKS_FIELDS = [
+    "draft_picks_r1_2",
+    "draft_picks_r3_7",
+    "draft_picks_detail",
+]
+
 MASTER_FIELDS = (
-    SEASON_FIELDS + CFBD_EFFICIENCY_FIELDS + CFBD_COUNTING_FIELDS + ALL_AMERICANS_FIELDS + HEISMAN_FINALIST_FIELDS
+    SEASON_FIELDS
+    + CFBD_EFFICIENCY_FIELDS
+    + CFBD_COUNTING_FIELDS
+    + ALL_AMERICANS_FIELDS
+    + HEISMAN_FINALIST_FIELDS
+    + DRAFT_PICKS_FIELDS
 )
 
 
@@ -114,10 +131,12 @@ def main() -> None:
     cfbd_rows = read_csv(args.pulled / "efficiency_cfbd.csv")
     all_americans_rows = read_csv(args.pulled / "consensus_all_americans_wikipedia.csv")
     finalist_rows = read_csv(args.heisman_finalists)
+    draft_picks_rows = read_csv(args.pulled / "draft_picks_wikipedia.csv")
 
     verified_years = {int(r["year"]) for r in verified_rows}
     cfbd_by_year = {int(r["year"]): r for r in cfbd_rows}
     all_americans_by_year = {int(r["year"]): r for r in all_americans_rows}
+    draft_picks_by_year = {int(r["year"]): r for r in draft_picks_rows}
 
     finalists_by_year: dict[int, list[str]] = {}
     for r in finalist_rows:
@@ -198,6 +217,15 @@ def main() -> None:
         finalists = finalists_by_year.get(year, [])
         row["heisman_finalists"] = "; ".join(finalists)
         row["heisman_finalist_count"] = str(len(finalists))
+
+        # Same no-gap reasoning as finalists above: draft_picks_wikipedia.csv
+        # comes from one fully-parsed page (see DRAFT_PICKS_FIELDS's
+        # comment) -- a season absent from it is a confirmed zero picks,
+        # not unresolved.
+        dp = draft_picks_by_year.get(year)
+        row["draft_picks_r1_2"] = dp.get("draft_picks_r1_2") if dp else "0"
+        row["draft_picks_r3_7"] = dp.get("draft_picks_r3_7") if dp else "0"
+        row["draft_picks_detail"] = dp.get("draft_picks_detail") if dp else ""
 
         missing = [
             f for f in ("head_coach", "conference", "final_record", "points_for", "points_against")

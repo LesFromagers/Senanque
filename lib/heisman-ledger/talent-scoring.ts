@@ -35,12 +35,19 @@
  * CLAUDE.md. A year absent from that list is a confirmed zero, not a gap
  * — `heismanFinalistCount` is never null, unlike `consensusAllAmericanCount`.
  *
- * One sub-component the brief calls for isn't scored here yet, because no
- * source wired into this pipeline supplies it:
- *  - Draft picks by round — no draft-record data source in this pipeline
- *    (Wikipedia/CFBD/NCAA don't carry it).
- * Surfaced as a standing gap on every season rather than silently scored
- * as zero, which would claim knowledge this project doesn't have.
+ * Draft picks (`draftPicksR1R2`/`draftPicksR3To7`) are scored from
+ * scripts/heisman_ledger/pull_draft_picks.py, reading Wikipedia's "List of
+ * Oklahoma Sooners in the NFL draft" and mapping each pick to
+ * draft_year - 1 (the season that made the player draft-eligible — true
+ * whether that was a normal senior year, an early-declare junior year, or
+ * a one-season transfer-in, confirmed against several players' own bio-
+ * page college-year infoboxes rather than assumed). Round 1-2 picks earn
+ * `draftRound1or2` each, round 3-7 earn `draftRound3to7` each — uncapped,
+ * unlike the All-American and finalist components: CLAUDE.md's Talent
+ * point table doesn't specify a cap for this component, so none is
+ * invented here. Every season has a real, confirmed pick count (never
+ * null) — this pull reads one fully-parsed page, not a per-year source
+ * that can leave a year unresolved.
  */
 import type { SeasonRecord } from "./types";
 
@@ -50,9 +57,6 @@ export const TALENT_POINTS = {
   heismanFinalistCap: 20,
   perAllAmerican: 8,
   allAmericanCap: 40,
-  // Not scored yet (see module doc comment) — kept here as the target
-  // table so the point values are decided once, in one place, rather than
-  // invented again whenever a draft-record source finally gets wired in.
   draftRound1or2: 6,
   draftRound3to7: 2,
 } as const;
@@ -83,8 +87,8 @@ export function computeTalentScore(season: SeasonRecord): TalentScore {
     );
   }
 
-  flags.push(
-    `draft-pick components (1st/2nd round +${TALENT_POINTS.draftRound1or2}, 3rd-7th round +${TALENT_POINTS.draftRound3to7}) not scored — no draft-record data source wired into this pipeline yet`,
-  );
+  points += season.draftPicksR1R2 * TALENT_POINTS.draftRound1or2;
+  points += season.draftPicksR3To7 * TALENT_POINTS.draftRound3to7;
+
   return { points, flags };
 }
