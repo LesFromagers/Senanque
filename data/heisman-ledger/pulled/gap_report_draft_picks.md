@@ -2,8 +2,323 @@
 
 **Status:** 429 distinct OU draft picks mapped to a college season (draft_year - 1), across 88 seasons. 12 duplicate draft-table rows (the AFL/NFL dual-draft era, plus a few 1940s re-entries) collapsed to their player's earliest selection, per Matt's explicit call — never double-counted.
 
-## Per-pick bio verification skipped for this run (--verify not passed)
-The draft_year-1 mapping was already verified with zero mismatches across 30 picks spanning 6 draft classes (2007, 2010, 2018, 2019, 2020, 1976), including an early-declare (Adrian Peterson) and a one-season-transfer (Jalen Hurts) case, before this script existed — see this script's module docstring. Skipped here because the rule is logically guaranteed, not just empirically likely (a player can only enter the draft after finishing the season that made them eligible), and re-verifying all ~429 individual bio pages ran too slowly under Wikipedia's rate limiting to be worth it for this run. Pass --verify to re-run the full per-pick check.
+## Verification: 118 of 429 picks confirmed against the player's own bio-page college field
+A confirmed pick's bio explicitly states an Oklahoma year range matching draft_year-1. An unverified pick's default season mapping is still used — just not independently confirmed for this specific player, usually because their bio page has no year-range detail at all.
+
+## Real mismatches — needs a manual look before trusting
+- **1947 draft, R3**: John Rapacz -- bio's own college field says last Oklahoma season 1947, but draft_year-1 gives 1946. NOT auto-corrected -- needs a manual look before trusting either number.
+- **1949 draft, R23**: Jim Owens -- bio's own college field says last Oklahoma season 1949, but draft_year-1 gives 1948. NOT auto-corrected -- needs a manual look before trusting either number.
+- **1963 draft, R15**: Joe Don Looney -- bio's own college field says last Oklahoma season 1963, but draft_year-1 gives 1962. NOT auto-corrected -- needs a manual look before trusting either number.
+
+## Unverified (default draft_year-1 mapping used, not independently confirmed)
+- **1936 draft, R2**: J. W. Wheeler -- bio page not found for 'J. W. Wheeler'
+- **1937 draft, R4**: Bo Hewes -- bio page not found for 'Bo Hewes'
+- **1938 draft, R3**: Pete Smith -- no 'college' infobox field found
+- **1938 draft, R9**: Ed Parks -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1939 draft, R3**: Waddy Young -- couldn't parse an Oklahoma year range from: 'college = [[Oklahoma Sooners football|Oklahoma]]'
+- **1939 draft, R15**: Gil Duggan -- couldn't parse an Oklahoma year range from: 'college = [[Oklahoma Sooners football|Oklahoma]]'
+- **1940 draft, R3**: Dick Favor -- no 'college' infobox field found
+- **1940 draft, R9**: J. R. Manley -- bio page not found for 'J. R. Manley'
+- **1940 draft, R13**: Al Coppage -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1940 draft, R13**: Justin Bowers -- bio page not found for 'Justin Bowers'
+- **1941 draft, R14**: Johnny Martin -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1942 draft, R5**: Orville Matthews -- bio page not found for 'Orville Matthews'
+- **1943 draft, R10**: Homer Simmons -- bio page not found for 'Homer Simmons'
+- **1943 draft, R25**: Huel Hamm -- bio page not found for 'Huel Hamm'
+- **1944 draft, R12**: Jim Tyree -- bio page not found for 'Jim Tyree'
+- **1944 draft, R22**: Ed Davis -- no 'college' infobox field found
+- **1944 draft, R22**: Clare Morford -- bio page not found for 'Clare Morford'
+- **1944 draft, R23**: Max Fischer -- no 'college' infobox field found
+- **1944 draft, R27**: Joe Golding -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]] (1940-1941, 1946)'
+- **1945 draft, R3**: W. G. Wooten -- bio page not found for 'W. G. Wooten'
+- **1945 draft, R18**: Lee Kennon -- bio page not found for 'Lee Kennon'
+- **1945 draft, R25**: Stan Green -- bio page not found for 'Stan Green'
+- **1945 draft, R28**: Don Fauble -- bio page not found for 'Don Fauble'
+- **1946 draft, R6**: Thurman Tigart -- bio page not found for 'Thurman Tigart'
+- **1946 draft, R15**: Tom Tallchief -- bio page not found for 'Tom Tallchief'
+- **1946 draft, R23**: Derald Lebow -- bio page not found for 'Derald Lebow'
+- **1946 draft, R32**: John West -- no 'college' infobox field found
+- **1947 draft, R5**: Buddy Burris -- couldn't parse an Oklahoma year range from: 'college     = [[Tulsa Golden Hurricane football|Tulsa]], [[Oklahoma Sooners football|Oklahoma]]'
+- **1947 draft, R11**: Dave Wallace -- no 'college' infobox field found
+- **1947 draft, R12**: Charley Sarratt -- couldn't parse an Oklahoma year range from: 'college     = [[Clemson Tigers football|Clemson]] <br> [[Oklahoma Sooners football|Oklahoma]]'
+- **1947 draft, R14**: Jack Mitchell -- no 'college' infobox field found
+- **1947 draft, R22**: Wade Walker -- no 'college' infobox field found
+- **1947 draft, R27**: Bill Morris -- no 'college' infobox field found
+- **1948 draft, R17**: Nute Trotter -- bio page not found for 'Nute Trotter'
+- **1948 draft, R18**: Ray Pearcy -- bio page not found for 'Ray Pearcy'
+- **1949 draft, R7**: Myrl Greathouse -- bio page not found for 'Myrl Greathouse'
+- **1950 draft, R1**: George Thomas -- couldn't parse an Oklahoma year range from: 'college     = [[University of Oklahoma|Oklahoma]]'
+- **1950 draft, R14**: Dee Andros -- no 'college' infobox field found
+- **1950 draft, R20**: Darrell Royal -- no 'college' infobox field found
+- **1950 draft, R21**: George Brewer -- no 'college' infobox field found
+- **1951 draft, R1**: Leon Heath -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1951 draft, R8**: Clair Mayes -- bio page not found for 'Clair Mayes'
+- **1951 draft, R9**: Nolan Lang -- bio page not found for 'Nolan Lang'
+- **1951 draft, R11**: Frankie Anderson -- no 'college' infobox field found
+- **1951 draft, R19**: Ed Lisak -- bio page not found for 'Ed Lisak'
+- **1952 draft, R2**: Jim Weatherall -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1952 draft, R16**: Ed Rowland -- bio page not found for 'Ed Rowland'
+- **1953 draft, R2**: Eddie Crowder -- no 'college' infobox field found
+- **1953 draft, R3**: Buck McPhail -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1953 draft, R15**: Dick Bowman -- no 'college' infobox field found
+- **1953 draft, R15**: Tom Carroll -- no 'college' infobox field found
+- **1954 draft, R2**: Larry Grigg -- bio page not found for 'Larry Grigg'
+- **1954 draft, R10**: Marrill Green -- bio page not found for 'Marrill Green'
+- **1954 draft, R14**: Roger Nelson -- couldn't parse an Oklahoma year range from: 'college = [[University of Oklahoma|Oklahoma]]'
+- **1954 draft, R17**: J. D. Roberts -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1954 draft, R30**: Juel Sweatte -- bio page not found for 'Juel Sweatte'
+- **1955 draft, R1**: Kurt Burris -- no 'college' infobox field found
+- **1955 draft, R3**: Buddy Leake -- no 'college' infobox field found
+- **1955 draft, R16**: Bob Herndon -- bio page not found for 'Bob Herndon'
+- **1955 draft, R18**: Steve Champlin -- bio page not found for 'Steve Champlin'
+- **1955 draft, R22**: Carl Allison -- no 'college' infobox field found
+- **1956 draft, R4**: Cecil Morris -- no 'college' infobox field found
+- **1956 draft, R6**: Bob Burris -- bio page not found for 'Bob Burris'
+- **1956 draft, R13**: Bo Bolinger -- couldn't parse an Oklahoma year range from: 'college=[[Oklahoma Sooners football|Oklahoma]]'
+- **1956 draft, R20**: Joe Mobra -- no 'college' infobox field found
+- **1957 draft, R1**: Jerry Tubbs -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1957 draft, R7**: Ed Gray -- no 'college' infobox field found
+- **1957 draft, R12**: Bob Derrick -- bio page not found for 'Bob Derrick'
+- **1957 draft, R28**: Tom Emerson -- no 'college' infobox field found
+- **1958 draft, R3**: Bill Krisher -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1958 draft, R14**: Doyle Jennings -- bio page not found for 'Doyle Jennings'
+- **1959 draft, R1**: Dave Baker -- couldn't parse an Oklahoma year range from: 'college        = [[Oklahoma Sooners football|Oklahoma]]'
+- **1959 draft, R2**: Bob Harrison -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1960 draft, R2**: Prentice Gautt -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1960 draft, R20**: Gilmer Lewis -- bio page not found for 'Gilmer Lewis'
+- **1961 draft, R4**: Ron Hartline -- bio page not found for 'Ron Hartline'
+- **1961 draft, R6**: Mike McClellanMike McClellan was drafted in 1961 by the San Francisco 49ers (80th overall) and in 1962 by the New York Titans (237th overall). -- bio page not found for 'Mike McClellanMike McClellan was drafted in 1961 by the San Francisco 49ers (80th overall) and in 1962 by the New York Titans (237th overall).'
+- **1961 draft, R14**: Phil LomanPhil Loman was drafted in 1961 by the Cleveland Browns (195th overall) and in 1962 by the San Diego Chargers (272nd overall). -- bio page not found for 'Phil LomanPhil Loman was drafted in 1961 by the Cleveland Browns (195th overall) and in 1962 by the San Diego Chargers (272nd overall).'
+- **1961 draft, R30**: Mike McClellan -- no 'college' infobox field found
+- **1961 draft, R34**: Phil Loman -- bio page not found for 'Phil Loman'
+- **1963 draft, R8**: Jim Cook -- no 'college' infobox field found
+- **1963 draft, R9**: Dennis WardDennis Ward was drafted in 1963 by the Philadelphia Eagles of the NFL (116th overall) and the Kansas City Chiefs of the AFL (104th overall). -- bio page not found for 'Dennis WardDennis Ward was drafted in 1963 by the Philadelphia Eagles of the NFL (116th overall) and the Kansas City Chiefs of the AFL (104th overall).'
+- **1963 draft, R13**: Dennis Ward -- no 'college' infobox field found
+- **1963 draft, R14**: Paul Lea -- couldn't parse an Oklahoma year range from: 'college     = [[Tulane Green Wave football|Tulane]]'
+- **1964 draft, R11**: Glen Condren -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1964 draft, R14**: John Garrett -- no 'college' infobox field found
+- **1965 draft, R2**: Lance Rentzel -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1965 draft, R5**: John Flynn -- no 'college' infobox field found
+- **1965 draft, R6**: Jim Grisham -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1965 draft, R8**: Rick McCurdy -- bio page not found for 'Rick McCurdy'
+- **1965 draft, R14**: Larry Brown -- no 'college' infobox field found
+- **1966 draft, R10**: Mike Ringer -- bio page not found for 'Mike Ringer'
+- **1967 draft, R3**: Ben Hart -- no 'college' infobox field found
+- **1967 draft, R4**: James Roy Jackson -- bio page not found for 'James Roy Jackson'
+- **1967 draft, R9**: Eugene Ross -- bio page not found for 'Eugene Ross'
+- **1967 draft, R13**: Tom Stidham -- no 'college' infobox field found
+- **1968 draft, R8**: Bob Kalsu -- couldn't parse an Oklahoma year range from: 'college     = [[1967 Oklahoma Sooners football team|Oklahoma]]'
+- **1968 draft, R10**: Granville Liggins -- couldn't parse an Oklahoma year range from: 'college = [[Oklahoma Sooners football|Oklahoma]]'
+- **1968 draft, R11**: Ron Shotts -- bio page not found for 'Ron Shotts'
+- **1968 draft, R1969**: 25 -- no 'college' infobox field found
+- **1970 draft, R1**: Steve Zabel -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1970 draft, R1**: Jim Files -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1970 draft, R5**: Ken Mendenhall -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1970 draft, R8**: Jack Porter -- no 'college' infobox field found
+- **1970 draft, R17**: Joe Killingsworth -- bio page not found for 'Joe Killingsworth'
+- **1971 draft, R7**: John Watson -- couldn't parse an Oklahoma year range from: 'college=[[Oklahoma Sooners football|Oklahoma]]'
+- **1971 draft, R10**: Steve Casteel -- bio page not found for 'Steve Casteel'
+- **1971 draft, R17**: Monty Johnson -- bio page not found for 'Monty Johnson'
+- **1972 draft, R2**: Jack Mildren -- couldn't parse an Oklahoma year range from: 'college          = [[1971 Oklahoma Sooners football team|Oklahoma]]'
+- **1972 draft, R8**: Al Qualls -- bio page not found for 'Al Qualls'
+- **1972 draft, R17**: John Shelley -- no 'college' infobox field found
+- **1973 draft, R2**: Derland Moore -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1973 draft, R2**: Al Chandler -- couldn't parse an Oklahoma year range from: 'college = [[Oklahoma Sooners football|Oklahoma]]'
+- **1973 draft, R2**: Leon Crosswhite -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1973 draft, R4**: Joe Wylie -- couldn't parse an Oklahoma year range from: "college = [[Miami Hurricanes men's basketball|Miami (Florida)]] (1988–1991)"
+- **1973 draft, R5**: Tom Brahaney -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1973 draft, R7**: Ken Jones -- no 'college' infobox field found
+- **1973 draft, R10**: Dan Ruster -- bio page not found for 'Dan Ruster'
+- **1973 draft, R12**: Dean Unruh -- bio page not found for 'Dean Unruh'
+- **1973 draft, R14**: Ray Hamilton -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1973 draft, R17**: Larry Roach -- bio page not found for 'Larry Roach'
+- **1974 draft, R4**: Durwood Keeton -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1974 draft, R5**: Gary Baccus -- bio page not found for 'Gary Baccus'
+- **1974 draft, R5**: Clyde Powers -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1974 draft, R9**: Ken Pope -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1974 draft, R12**: Eddie Foster -- no 'college' infobox field found
+- **1974 draft, R14**: David Smith -- no 'college' infobox field found
+- **1974 draft, R16**: Lucious Selmon -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1975 draft, R2**: Rod Shoate -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1975 draft, R4**: Tony Peters -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1975 draft, R4**: Randy Hughes -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1975 draft, R5**: Kyle Davis -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1975 draft, R6**: John Carroll -- no 'college' infobox field found
+- **1975 draft, R8**: Wayne Hoffman -- no 'college' infobox field found
+- **1975 draft, R10**: Clyde Russell -- bio page not found for 'Clyde Russell'
+- **1975 draft, R14**: Jerry Arnold -- bio page not found for 'Jerry Arnold'
+- **1975 draft, R15**: John Roush -- couldn't parse an Oklahoma year range from: 'college=[[University of Oklahoma]]'
+- **1975 draft, R15**: Grant Burget -- bio page not found for 'Grant Burget'
+- **1976 draft, R1**: Joe Washington -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1976 draft, R1**: Billy Brooks -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1976 draft, R2**: Dewey Selmon -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1976 draft, R4**: Tinker Owens -- couldn't parse an Oklahoma year range from: 'college=[[Oklahoma Sooners football|Oklahoma]]'
+- **1976 draft, R5**: Jimbo Elrod -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1976 draft, R8**: Tony DiRienzo -- bio page not found for 'Tony DiRienzo'
+- **1977 draft, R2**: Horace Ivory -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1977 draft, R3**: Sidney Brown -- no 'college' infobox field found
+- **1977 draft, R4**: Mike Vaughan -- couldn't parse an Oklahoma year range from: 'college           = [[Oklahoma Sooners football|Oklahoma]]'
+- **1977 draft, R4**: Jerry Anderson -- couldn't parse an Oklahoma year range from: 'college          =[[Oklahoma Sooners football|Oklahoma]]'
+- **1977 draft, R10**: Jim Culbreath -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1978 draft, R1**: Elvis Peacock -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1978 draft, R3**: Dave Hudgens -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1978 draft, R7**: Karl Baldischwiler -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1978 draft, R11**: Richard Murray -- no 'college' infobox field found
+- **1979 draft, R2**: Greg Roberts -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R2**: Sam Claphan -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R3**: Kenny King -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R4**: Phil Tabor -- couldn't parse an Oklahoma year range from: 'college=[[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R6**: Daryl Hunt -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R6**: Thomas Lott -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R7**: Uwe von Schamann -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1979 draft, R12**: Reggie Kinlaw -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R1**: George Cumby -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R2**: Darrol Ray -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R2**: John Goodman -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R4**: Fred Nixon -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R5**: Paul Tabor -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R7**: Bud Hebert -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1980 draft, R9**: Barry Burget -- bio page not found for 'Barry Burget'
+- **1980 draft, R11**: Mike Babb -- bio page not found for 'Mike Babb'
+- **1981 draft, R1**: David Overstreet -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1981 draft, R1**: Keith Gary -- couldn't parse an Oklahoma year range from: 'college=[[Ferrum College|Ferrum]] <br> [[Oklahoma Sooners football|Oklahoma]]'
+- **1981 draft, R4**: Steve Rhodes -- no 'college' infobox field found
+- **1981 draft, R4**: Richard Turner -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1981 draft, R5**: Louis Oubre -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1981 draft, R8**: Ken Sitton -- bio page not found for 'Ken Sitton'
+- **1981 draft, R11**: Forrest Valora -- bio page not found for 'Forrest Valora'
+- **1982 draft, R3**: Bill Bechtold -- bio page not found for 'Bill Bechtold'
+- **1982 draft, R5**: Terry Crouch -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1982 draft, R8**: Mike Reilly -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1982 draft, R9**: Lyndle Byford -- bio page not found for 'Lyndle Byford'
+- **1983 draft, R7**: Weldon Ledbetter -- bio page not found for 'Weldon Ledbetter'
+- **1983 draft, R9**: Stanley Wilson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1983 draft, R1984**: 14 -- no 'college' infobox field found
+- **1984 draft, R1**: Rick Bryan -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1984 draft, R1**: Jackie Shipp -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1984 draft, R2**: Bob Slater -- no 'college' infobox field found
+- **1984 draft, R2**: Scott Case -- couldn't parse an Oklahoma year range from: 'college     = [[University of Oklahoma|Oklahoma]]'
+- **1984 draft, R2**: Darryl Goodlow -- bio page not found for 'Darryl Goodlow'
+- **1984 draft, R2**: Thomas Benson -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1984 draft, R12**: Paul Parker -- no 'college' infobox field found
+- **1985 draft, R1**: Steve Sewell -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1985 draft, R4**: Buster Rhymes -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1985 draft, R7**: Danny Bradley -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1985 draft, R8**: Chuck Thomas -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1985 draft, R12**: Jim Rockford -- couldn't parse an Oklahoma year range from: 'college = [[University of Oklahoma]]'
+- **1986 draft, R1**: Tony Casillas -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1986 draft, R2**: Kevin Murphy -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1986 draft, R5**: Jeff Tupper -- no 'college' infobox field found
+- **1986 draft, R12**: Marcus Dupree -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1986 draft, R1987**: 1 -- no 'college' infobox field found
+- **1987 draft, R5**: Steve Bryan -- no 'college' infobox field found
+- **1987 draft, R5**: Spencer Tillman -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1987 draft, R8**: Paul Migliazzo -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R2**: Dante Jones -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R3**: Mark Hutson -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R4**: Greg Johnson -- no 'college' infobox field found
+- **1988 draft, R4**: Lydell Carr -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R5**: Darrell Reed -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R5**: Troy Johnson -- no 'college' infobox field found
+- **1988 draft, R6**: Jon Phillips -- bio page not found for 'Jon Phillips'
+- **1988 draft, R6**: Derrick White -- couldn't parse an Oklahoma year range from: 'college ='
+- **1988 draft, R7**: Derrick Crudup -- couldn't parse an Oklahoma year range from: 'college     = [[Florida Gators football|Florida]]<br>[[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R7**: Caesar Rentie -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1988 draft, R8**: Patrick Collins -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1989 draft, R6**: Anthony Stafford -- no 'college' infobox field found
+- **1989 draft, R6**: Eric Mitchell -- no 'college' infobox field found
+- **1989 draft, R8**: Tony Woods -- no 'college' infobox field found
+- **1989 draft, R12**: Anthony Phillips -- couldn't parse an Oklahoma year range from: 'college=[[Oklahoma Sooners football|Oklahoma]]'
+- **1990 draft, R6**: Kevin Thompson -- no 'college' infobox field found
+- **1990 draft, R9**: Leon Perry -- couldn't parse an Oklahoma year range from: 'college       = [[Ole Miss Rebels football|Mississippi]] (1976–1979)'
+- **1990 draft, R12**: Ken McMichel -- bio page not found for 'Ken McMichel'
+- **1991 draft, R4**: Adrian Cooper -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1991 draft, R5**: James Goode -- no 'college' infobox field found
+- **1991 draft, R7**: Frank Blevins -- no 'college' infobox field found
+- **1991 draft, R8**: Scott Evans -- no 'college' infobox field found
+- **1991 draft, R10**: Tom Backes -- bio page not found for 'Tom Backes'
+- **1992 draft, R5**: Joe Bowden -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1992 draft, R6**: Brian Brauninger -- bio page not found for 'Brian Brauninger'
+- **1992 draft, R6**: Mike Gaddis -- bio page not found for 'Mike Gaddis'
+- **1992 draft, R6**: Stacey Dillard -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1992 draft, R6**: Terry Ray -- couldn't parse an Oklahoma year range from: 'college = [[University of Oklahoma|Oklahoma]]'
+- **1992 draft, R8**: Jason Belser -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1992 draft, R10**: Corey Mayfield -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1992 draft, R12**: Brandon Houston -- bio page not found for 'Brandon Houston'
+- **1992 draft, R12**: Chris Wilson -- couldn't parse an Oklahoma year range from: 'college             = [[Oklahoma Sooners football|Oklahoma]]'
+- **1993 draft, R7**: Darnell Walker -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1993 draft, R7**: Joey Mickey -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1994 draft, R2**: Aubrey Beavers -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1994 draft, R6**: Rickey Brady -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1996 draft, R1**: Cedric Jones -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1996 draft, R3**: Jerald Moore -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1996 draft, R4**: Darrius Johnson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1996 draft, R5**: Harry Stamps -- bio page not found for 'Harry Stamps'
+- **1996 draft, R6**: Wendell Davis -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **1996 draft, R7**: J. R. Conrad -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **1997 draft, R5**: Barron Tanner -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1998 draft, R2**: Stephen Alexander -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1998 draft, R5**: Martin Chase -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1998 draft, R5**: Travian Smith -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1998 draft, R6**: Sammy Williams -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **1999 draft, R5**: De'Mond Parker -- couldn't parse an Oklahoma year range from: 'college = [[University of Oklahoma|Oklahoma]]'
+- **1999 draft, R6**: Kelly Gregg -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2000 draft, R1**: Stockar McDougle -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2000 draft, R2**: William Bartee -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2001 draft, R3**: Torrance Marshall -- couldn't parse an Oklahoma year range from: 'college       = [[Miami Dade College]]<br>[[Kemper Military School]]<br>[[Oklahoma Sooners football|Oklahoma]]'
+- **2001 draft, R6**: Josh Heupel -- no 'college' infobox field found
+- **2002 draft, R3**: Rocky Calmus -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2003 draft, R1**: Andre Woolfolk -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2003 draft, R4**: Quentin Griffin -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **2003 draft, R6**: Jimmy Wilkerson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2004 draft, R1**: Tommie Harris -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2004 draft, R2**: Teddy Lehman -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2004 draft, R3**: Derrick Strait -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2005 draft, R2**: Dan Cody -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2005 draft, R3**: Brandon Jones -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2005 draft, R4**: Antonio Perkins -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2005 draft, R5**: Donte Nicholson -- couldn't parse an Oklahoma year range from: 'college     = {{ubl|[[Oklahoma Sooners football|Oklahoma]]|[[Mt. San Antonio College|Mt. San Antonio]]}}'
+- **2005 draft, R5**: Mike Hawkins -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2005 draft, R5**: Lance Mitchell -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **2005 draft, R6**: Wes Sims -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2006 draft, R2**: Chris Chester -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2006 draft, R3**: Dusty Dvoracek -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2006 draft, R3**: Travis Wilson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2006 draft, R3**: Clint Ingram -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2006 draft, R6**: J. D. Runnels -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2007 draft, R6**: Rufus Alexander -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2008 draft, R2**: Curtis Lofton -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2008 draft, R3**: Reggie Smith -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2008 draft, R7**: Allen Patrick -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2009 draft, R3**: Juaquin Iglesias -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2009 draft, R5**: Nic Harris -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2009 draft, R5**: Duke Robinson -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]'
+- **2009 draft, R7**: Manuel Johnson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2010 draft, R4**: Keenan Clayton -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2010 draft, R5**: Dominique Franks -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2010 draft, R5**: Brody Eldridge -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2011 draft, R4**: Quinton Carter -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2011 draft, R7**: Jonathan Nelson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2011 draft, R7**: Jeremy Beal -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2012 draft, R4**: Frank Alexander -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2012 draft, R4**: Ronnell Lewis -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2012 draft, R6**: James Hanna -- no 'college' infobox field found
+- **2012 draft, R7**: Travis Lewis -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2013 draft, R6**: Justin Brown -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2013 draft, R6**: Stacy McGee -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2013 draft, R7**: David King -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2014 draft, R4**: Jalen Saunders -- couldn't parse an Oklahoma year range from: 'college       = [[Oklahoma Sooners football|Oklahoma]]<br />[[Fresno State Bulldogs football|Fresno State]]'
+- **2014 draft, R7**: Corey Nelson -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2014 draft, R7**: Trey Millard -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2015 draft, R3**: Geneo Grissom -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2015 draft, R6**: Tyrus Thompson -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2016 draft, R4**: Charles Tapper -- couldn't parse an Oklahoma year range from: 'college     = [[Oklahoma Sooners football|Oklahoma]]'
+- **2016 draft, R5**: Zack Sanchez -- couldn't parse an Oklahoma year range from: 'college      = [[Oklahoma Sooners football|Oklahoma]]'
+- **2016 draft, R6**: Devante Bond -- couldn't parse an Oklahoma year range from: 'college      = [[Sierra College football Rocklin CA ]]'
+- **2019 draft, R1**: Marquise Brown -- couldn't parse an Oklahoma year range from: 'college      ='
+- **2026 draft, R4**: Febechi Nwaiwu -- couldn't parse an Oklahoma year range from: 'college             ='
+- **2026 draft, R4**: Kendal Daniels -- couldn't parse an Oklahoma year range from: 'college             ='
+- **2026 draft, R7**: Deion Burks -- no 'college' infobox field found
 
 ## Duplicate draft-table rows dropped (earliest selection kept instead)
 - **1946 draft, R5**: Joe Golding — later duplicate, not counted
