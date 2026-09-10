@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { StadiumMark } from "@/components/heisman-ledger/StadiumMark";
 import { RankTable, type LedgerRow } from "@/components/heisman-ledger/RankTable";
+import { MethodologyDisclosure } from "@/components/heisman-ledger/MethodologyDisclosure";
 import { getSeasons } from "@/lib/heisman-ledger/data";
 import { computePowerIndex } from "@/lib/heisman-ledger/power-index";
 
@@ -64,6 +65,7 @@ export default async function HeismanParkLedgerPage() {
       </div>
 
       <div className="mt-12">
+        <MethodologyDisclosure />
         <RankTable rows={rows} />
       </div>
 

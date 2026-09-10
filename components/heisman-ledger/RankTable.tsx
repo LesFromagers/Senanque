@@ -116,6 +116,36 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
     }
   }
 
+  // Rank and Year are the frozen pair on mobile (task: keep both visible
+  // while scrolling right for the wider stat columns). Every column below
+  // gets an explicit width AND the table uses table-layout: fixed --
+  // confirmed live this is required, not just tidy: in the default auto
+  // layout, a `width` on a <td> is only ever a hint the browser can
+  // override from a column's widest cell, and the Rank column's actual
+  // rendered width came out to ~83px against the ~56px `w-14` asked for
+  // (very likely the wax seal's absolutely-positioned span still
+  // contributing to intrinsic sizing in this engine, despite being taken
+  // out of flow) -- which silently broke the Year column's sticky `left`
+  // offset (computed against the *intended* 56px, not the real one),
+  // letting the two frozen columns overlap and show scrolled content
+  // through the gap. table-fixed makes the header row's widths
+  // authoritative, full stop, removing the ambiguity outright.
+  const RANK_COL = "w-14"; // 3.5rem / 56px
+  const YEAR_COL = "w-20"; // 5rem / 80px
+  const YEAR_COL_LEFT = "left-14"; // must equal RANK_COL's width exactly
+  const COACH_COL = "w-40";
+  const RECORD_COL = "w-24";
+  const INDEX_COL = "w-24";
+  const PT_DIFF_COL = "w-28";
+  const OFFENSE_COL = "w-24";
+  const DEFENSE_COL = "w-24";
+  const MARKS_COL = "w-36";
+  // border-separate (see the <table> element below) only renders borders
+  // set on <td>/<th> themselves, never on a <tr> -- these three replace
+  // what used to be one className on each row/header <tr>.
+  const ROW_BORDER = "border-b border-stone/20";
+  const HEADER_ROW_BORDER = "border-b border-charcoal/20";
+
   const contextLabel =
     coachFilter === VIEW_OFFENSE
       ? "Top Offense"
@@ -169,57 +199,101 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[900px] border-collapse text-sm">
+        {/* border-separate, not border-collapse: position: sticky on a
+            <td>/<th> is unreliable in a border-collapse table (a real,
+            documented browser limitation, not a style preference) --
+            confirmed live, the frozen Rank/Year columns silently failed
+            to pin and instead let scrolled content paint through/over
+            them until this was fixed. border-spacing-0 keeps the same
+            tight, no-gap look border-collapse gave. */}
+        <table className="w-full min-w-[900px] table-fixed border-separate border-spacing-0 text-sm">
           <thead>
-            <tr className="border-b border-charcoal/20 text-left text-xs tracking-label uppercase text-stone">
+            <tr className="text-left text-xs tracking-label uppercase text-stone">
               {(
                 [
-                  ["rank", "Rank"],
-                  ["year", "Year"],
-                  ["coach", "Head Coach"],
-                  ["record", "Record"],
-                  ["powerIndex", "Index"],
-                  ["pointDiff", "Pt Diff/G"],
-                  ["offense", "Off. Eff."],
-                  ["defense", "Def. Eff."],
-                  ["marks", "Marks"],
+                  ["rank", "Rank", RANK_COL],
+                  ["year", "Year", YEAR_COL],
+                  ["coach", "Head Coach", COACH_COL],
+                  ["record", "Record", RECORD_COL],
+                  ["powerIndex", "Index", INDEX_COL],
+                  ["pointDiff", "Pt Diff/G", PT_DIFF_COL],
+                  ["offense", "Off. Eff.", OFFENSE_COL],
+                  ["defense", "Def. Eff.", DEFENSE_COL],
+                  ["marks", "Marks", MARKS_COL],
                 ] as const
-              ).map(([key, label]) => (
-                <th key={key} className="whitespace-nowrap px-3 py-2">
-                  {key in SORT_LABELS ? (
-                    <button
-                      onClick={() => toggleSort(key as SortKey)}
-                      className="hover:text-plum"
-                    >
-                      {label}
-                      {sortKey === key ? (sortAsc ? " ▲" : " ▼") : ""}
-                    </button>
-                  ) : (
-                    label
-                  )}
-                </th>
-              ))}
+              ).map(([key, label, widthCls]) => {
+                // Rank and Year stay pinned during horizontal scroll (the
+                // narrow columns you always want visible while comparing
+                // the wider stat columns on a phone) -- bg-oat on the
+                // sticky header cells is required, not decorative: without
+                // an opaque background, scrolled-past header text shows
+                // through underneath as the row slides by. Every column
+                // (sticky or not) gets its own width class here because
+                // table-fixed takes its column widths from THIS row alone
+                // — a <td> width further down is decorative once the table
+                // is fixed-layout, so the header is the only place these
+                // constants actually need to be set.
+                const stickyCls =
+                  key === "rank"
+                    ? `sticky left-0 z-20 bg-oat`
+                    : key === "year"
+                      ? `sticky ${YEAR_COL_LEFT} z-10 bg-oat border-r border-stone/30`
+                      : "";
+                return (
+                  <th key={key} className={`whitespace-nowrap px-3 py-2 ${widthCls} ${HEADER_ROW_BORDER} ${stickyCls}`}>
+                    {key in SORT_LABELS ? (
+                      <button
+                        onClick={() => toggleSort(key as SortKey)}
+                        className="hover:text-plum"
+                      >
+                        {label}
+                        {sortKey === key ? (sortAsc ? " ▲" : " ▼") : ""}
+                      </button>
+                    ) : (
+                      label
+                    )}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody className="font-mono">
             {sorted.map(({ result, season }) => {
               const isTop = topInContext?.season.year === season.year;
               return (
-                <tr
-                  key={season.year}
-                  className={`border-b border-stone/20 ${isTop ? "bg-lavender/20" : ""}`}
-                >
-                  <td className="whitespace-nowrap px-3 py-3 align-middle">
-                    <span className="inline-flex items-center gap-2">
-                      {isTop && (
-                        <span className="inline-block h-8 w-8 shrink-0">
-                          <WaxSealIcon contextLabel={contextLabel} />
-                        </span>
-                      )}
-                      {result.rank}
-                    </span>
+                <tr key={season.year} className={isTop ? "bg-lavender/20" : ""}>
+                  <td
+                    className={`sticky left-0 z-20 ${RANK_COL} ${ROW_BORDER} whitespace-nowrap px-3 py-3 align-middle ${isTop ? "bg-lavender/20" : "bg-oat"}`}
+                  >
+                    {result.rank}
+                    {isTop && (
+                      // The wax seal overlays the border between Rank and
+                      // Year rather than sitting inline before the rank
+                      // number -- half its width straddles into the Year
+                      // column (translate-x-1/2 off the Rank cell's own
+                      // right edge). It lives inside the Rank <td>, not as
+                      // a separate element, specifically so it scrolls (or
+                      // stays frozen, on mobile) together with the Rank
+                      // column rather than needing its own sticky/position
+                      // bookkeeping. z-20 on this cell (vs. the Year
+                      // column's z-10) is what lets the overlap paint
+                      // above Year's content instead of being clipped
+                      // under it.
+                      <span
+                        className="pointer-events-none absolute right-0 top-1/2 z-30 h-9 w-9 -translate-y-1/2 translate-x-1/2"
+                        aria-hidden="true"
+                      >
+                        <WaxSealIcon contextLabel={contextLabel} />
+                      </span>
+                    )}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td
+                    className={`sticky ${YEAR_COL_LEFT} z-10 ${ROW_BORDER} whitespace-nowrap border-r border-stone/30 py-3 pr-3 ${isTop ? "bg-lavender/20 pl-7" : "bg-oat pl-3"}`}
+                  >
+                    {/* isTop gets extra left padding (pl-7 vs. the usual
+                        pl-3) so the wax seal's ~18px reach into this
+                        column's left edge lands on padding, not on top of
+                        the year digits themselves. */}
                     <Link
                       href={`/analytics/heisman-park-ledger/${season.year}`}
                       className="font-sans font-medium text-charcoal hover:text-plum hover:underline"
@@ -227,11 +301,11 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
                       {season.year}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 font-sans text-charcoal">
+                  <td className={`whitespace-nowrap px-3 py-3 font-sans text-charcoal ${ROW_BORDER}`}>
                     {season.headCoach ?? "—"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">{season.finalRecord ?? "—"}</td>
-                  <td className="whitespace-nowrap px-3 py-3 font-medium text-charcoal">
+                  <td className={`whitespace-nowrap px-3 py-3 ${ROW_BORDER}`}>{season.finalRecord ?? "—"}</td>
+                  <td className={`whitespace-nowrap px-3 py-3 font-medium text-charcoal ${ROW_BORDER}`}>
                     <span className="inline-flex items-center gap-1.5">
                       {result.powerIndex.toFixed(1)}
                       {season.heismanWinner && (
@@ -241,16 +315,16 @@ export function RankTable({ rows }: { rows: LedgerRow[] }) {
                       )}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className={`whitespace-nowrap px-3 py-3 ${ROW_BORDER}`}>
                     {result.pointDifferentialPerGame !== null ? result.pointDifferentialPerGame.toFixed(1) : "—"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className={`whitespace-nowrap px-3 py-3 ${ROW_BORDER}`}>
                     {season.offensePpa !== null ? season.offensePpa.toFixed(2) : season.pointsFor !== null ? `${season.pointsFor} PF` : "—"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className={`whitespace-nowrap px-3 py-3 ${ROW_BORDER}`}>
                     {season.defensePpa !== null ? season.defensePpa.toFixed(2) : season.pointsAgainst !== null ? `${season.pointsAgainst} PA` : "—"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className={`whitespace-nowrap px-3 py-3 ${ROW_BORDER}`}>
                     <span className="inline-flex items-center gap-2 font-sans">
                       <BeatMarks beatTexas={season.beatTexas} beatOsu={season.beatOsu} />
                       <GapBadge gaps={result.gaps} />
