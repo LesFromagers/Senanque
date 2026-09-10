@@ -17,6 +17,21 @@
  * claim is the one exception still read as free text (nationalTitleClaim)
  * — that field's own wording (does it say "consensus"?) *is* the real
  * signal there, not a proxy for one.
+ *
+ * Bowl result is scored by STAGE, not a flat major/other split — both win
+ * and loss are graded by how big the game was, symmetrically (a Fiesta
+ * Bowl win outscores a Cheez-It Bowl win; a national title game loss
+ * outscores an Independence Bowl loss). The earlier flat version gave
+ * every loss the same 3 points regardless of stakes — OU's own bowl
+ * history has 4 national-title-game appearances (2000 win, 2003/2004/2008
+ * losses) and 4 CFP-semifinal appearances (2015/2017/2018/2019, all
+ * losses), every one of those 7 losses scoring identically to losing the
+ * Independence Bowl. classifyBowlTier() below fixes that. This can stack
+ * additively with the national-title-claim credit above (a title-game win
+ * earns both) rather than needing special-cased to avoid double-counting
+ * — the whole layer is hard-capped at 100 either way (see the return
+ * statement), so a title-winning season just hits that cap, same as
+ * before.
  */
 import type { SeasonRecord } from "./types";
 
@@ -24,16 +39,49 @@ export const ACCOMPLISHMENT_POINTS = {
   nationalTitle: { consensus: 40, splitOrDisputed: 25 },
   conferenceChampion: 20,
   finalApRank: { top5: 15, top10: 10, top25: 5 },
-  bowlResult: { majorWin: 15, majorLoss: 3, otherWin: 8, otherLoss: 3 },
+  bowlResult: {
+    titleGame: { win: 40, loss: 18 },
+    cfpSemifinal: { win: 25, loss: 10 },
+    newYearsSix: { win: 15, loss: 5 },
+    other: { win: 8, loss: 2 },
+  },
 } as const;
 
+type BowlTier = "titleGame" | "cfpSemifinal" | "newYearsSix" | "other";
+
 /**
- * Applied only to the (now narrow, structured) bowlName field — not a
- * whole-season haystack of concatenated prose the way the old bowl-result
- * check was, which risked a false match from unrelated text elsewhere in
- * source_notes.
+ * Classifies bowlName by stage, checked most-specific-first since a name
+ * can match more than one pattern (e.g. "Orange Bowl (BCS NCG)" contains
+ * both "orange bowl" and "ncg" — the title-game signal must win). Applied
+ * only to the narrow, structured bowlName field, not a whole-season
+ * haystack of prose.
+ *
+ *  - titleGame: the literal national championship game. Confirmed against
+ *    live bowlName values across eras: "BCS National Championship Game"
+ *    (2008), "Orange Bowl (BCS NCG)" (2000/2004), "Sugar Bowl (BCS NCG)"
+ *    (2003) — "NCG" as its own token is the real abbreviation Wikipedia
+ *    uses for these, not spelled out every time.
+ *  - cfpSemifinal: any bowl hosting a CFP semifinal that season (the venue
+ *    rotates among the NY6 bowls) — confirmed on "Orange Bowl (CFP
+ *    Semifinal)" (2015/2018), "Rose Bowl (CFP Semifinal)" (2017), "Peach
+ *    Bowl (CFP semifinal)" (2019, lowercase "s" — matched case-
+ *    insensitively so casing drift doesn't silently miss it).
+ *  - newYearsSix: Rose, Sugar, Orange, Cotton, Fiesta, Peach in their
+ *    normal (non-playoff-hosting) role. Fiesta and Peach were missing
+ *    from this project's original major-bowl list entirely — confirmed
+ *    live: 1976's and 2010's real Fiesta Bowl wins were scoring as
+ *    "other" (8 pts) instead of NY6 (15) before this fix.
+ *  - other: everything else, including the new (2024 playoff expansion)
+ *    "CFP First Round" bowlName — a real, lower-stakes playoff game, not
+ *    yet common enough in OU's own history to warrant its own tier.
  */
-const MAJOR_BOWL_RE = /orange bowl|sugar bowl|rose bowl|cotton bowl|cfp|bcs (championship|national championship)/i;
+function classifyBowlTier(bowlName: string): BowlTier {
+  const lowered = bowlName.toLowerCase();
+  if (/national championship|\bncg\b/.test(lowered)) return "titleGame";
+  if (/cfp semifinal/.test(lowered)) return "cfpSemifinal";
+  if (/orange bowl|sugar bowl|rose bowl|cotton bowl|fiesta bowl|peach bowl/.test(lowered)) return "newYearsSix";
+  return "other";
+}
 
 export interface AccomplishmentScore {
   points: number;
@@ -85,17 +133,11 @@ export function computeAccomplishmentScore(season: SeasonRecord): Accomplishment
 
   if (season.bowlResult !== null) {
     // A tie is rare (pre-modern-era bowls only) and scores on the loss
-    // tier — the point table has no separate tie tier, and "not a win" is
-    // the more honest reading of a tie than "not a loss."
+    // side of its tier — the point table has no separate tie tier, and
+    // "not a win" is the more honest reading of a tie than "not a loss."
     const isWin = season.bowlResult === "W";
-    const isMajor = season.bowlName !== null && MAJOR_BOWL_RE.test(season.bowlName);
-    points += isMajor
-      ? isWin
-        ? ACCOMPLISHMENT_POINTS.bowlResult.majorWin
-        : ACCOMPLISHMENT_POINTS.bowlResult.majorLoss
-      : isWin
-        ? ACCOMPLISHMENT_POINTS.bowlResult.otherWin
-        : ACCOMPLISHMENT_POINTS.bowlResult.otherLoss;
+    const tier = season.bowlName !== null ? classifyBowlTier(season.bowlName) : "other";
+    points += isWin ? ACCOMPLISHMENT_POINTS.bowlResult[tier].win : ACCOMPLISHMENT_POINTS.bowlResult[tier].loss;
   }
   // bowlResult === null means no bowl game that season -- a real, common
   // outcome, not a gap, so nothing is flagged.
