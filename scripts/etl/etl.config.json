@@ -7,7 +7,7 @@
     "135": "Serie A",
     "61": "Ligue 1"
   },
-  "seasons": [],
+  "seasons": [2022, 2023, 2024],
   "current_season": null,
   "daily_request_cap": 90,
   "min_seconds_between_requests": 7
