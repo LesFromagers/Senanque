@@ -7,8 +7,8 @@ Costs ONE request per season tested (cache hits are free). Reports:
     checked against a real response (key paths + types, not a data dump)
 Paste the output back before planning any backfill.
 
-  python scripts/etl/probe.py --season 2024
-  python scripts/etl/probe.py --season 2022 --season 2023 --season 2024 --season 2025
+  python3 scripts/etl/probe.py --season 2024
+  python3 scripts/etl/probe.py --season 2022 --season 2023 --season 2024 --season 2025
 """
 from __future__ import annotations
 

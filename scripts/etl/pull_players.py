@@ -3,9 +3,9 @@
 Resumable: pages already in the raw cache cost nothing, and progress is
 tracked per league + season + page. Stops cleanly at the daily cap.
 
-  python scripts/etl/pull_players.py --league 39 --season 2024
-  python scripts/etl/pull_players.py --league 39 --season 2024 --max-pages 2   # small trial
-  python scripts/etl/pull_players.py --all-config-seasons --league 39
+  python3 scripts/etl/pull_players.py --league 39 --season 2024
+  python3 scripts/etl/pull_players.py --league 39 --season 2024 --max-pages 2   # small trial
+  python3 scripts/etl/pull_players.py --all-config-seasons --league 39
 """
 from __future__ import annotations
 

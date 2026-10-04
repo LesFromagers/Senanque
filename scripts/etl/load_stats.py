@@ -3,8 +3,8 @@
 Idempotent: re-running upserts the same rows. Keeps domestic-league rows only
 (league id in etl.config.json); cups and European competitions are dropped.
 
-  python scripts/etl/load_stats.py --league 39 --season 2024 --dry-run   # parse only, no DB
-  python scripts/etl/load_stats.py --league 39 --season 2024
+  python3 scripts/etl/load_stats.py --league 39 --season 2024 --dry-run   # parse only, no DB
+  python3 scripts/etl/load_stats.py --league 39 --season 2024
 """
 from __future__ import annotations
 
