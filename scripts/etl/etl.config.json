@@ -1,0 +1,14 @@
+{
+  "_comment": "Season reachability is configuration, not code. Fill `seasons` from the probe result (probe.py). Set `current_season` only if the current season is reachable on your plan; leave null otherwise.",
+  "leagues": {
+    "39": "Premier League",
+    "140": "La Liga",
+    "78": "Bundesliga",
+    "135": "Serie A",
+    "61": "Ligue 1"
+  },
+  "seasons": [],
+  "current_season": null,
+  "daily_request_cap": 90,
+  "min_seconds_between_requests": 7
+}
