@@ -29,5 +29,5 @@ Apply `supabase/migrations/2026-10-04-scouting-radar.sql` in the Supabase SQL ed
 - Scenario: **seasons limited** — pull each of 2022, 2023, 2024 once per league (set in `etl.config.json`, `current_season` stays null). No refresh job; the page should say "Seasons 2022–2024". Still run `probe.py` once to get the real requests-per-league-season before backfilling (15 league-seasons in total).
 
 ## Open items (resolve from the real probe output)
-- Real requests per league-season (cost table): _unfilled_
+- Real requests per league-season: measured by the owner for Premier League 2024 only — 20 players/page, 57 pages = 57 requests. Other leagues/seasons still unmeasured; `probe.py` reports `paging.total` for each (1 request each). Plan on roughly 600–850 requests for all 15 league-seasons, i.e. ~7–9 days at the 90/day cap, until measured.
 - Meaning of `passes.accuracy` (count vs percent) — decides how pass accuracy is derived in the percentile step.

@@ -28,13 +28,17 @@ Reference for the interaction pattern: datamb.football (player profiles, radar c
 ## Data source and API access
 - **API-Football** via a direct api-sports.io account (not RapidAPI). Base URL `https://v3.football.api-sports.io`, header `x-apisports-key`. Env var: `API_FOOTBALL_KEY`.
 - League IDs (confirm via the `/leagues` endpoint): Premier League 39, La Liga 140, Bundesliga 78, Serie A 135, Ligue 1 61.
-- The free plan allows 100 requests/day and appears to restrict which seasons are reachable (reportedly 2022–2024 only; the current season errors). The owner runs a probe and records the result here:
+- The free plan allows 100 requests/day and restricts which seasons are reachable. Probe result (run by the owner on 2026-10-04):
 
 ```
-API-Football plan: ______        (FREE / PAID)
-Seasons reachable: ______        (e.g. 2022–2024 / includes current season)
-Current season (2026) reachable: ______   (yes / no)
+API-Football plan: FREE
+Seasons reachable: 2022–2024 (API error: "Free plans do not have access to this season, try from 2022 to 2024.")
+Current season (2026) reachable: no
 ```
+
+**Confirmed scenario: seasons limited (free).** API-Football's `season=2024` is the 2024/25 season, so the newest data on the page is 2024/25. Label the page range honestly (2022/23–2024/25) and make clear this is a historical scouting tool, not live form.
+
+**Measured request cost:** the players endpoint returns 20 players per page; Premier League 2024 is 57 pages (57 requests). Other leagues are not yet measured. Rough planning estimate if they are similar: 600–850 requests for 5 leagues × 3 seasons, or about 7–9 days at the 90/day cap. The first test pull must replace this estimate with real numbers.
 
 **One codebase, two scenarios.** Season reachability must be configuration, not hardcoded.
 - *Seasons limited (free):* pull each reachable completed season once. The page is honest about its range ("Seasons 2022–2024"). No refresh job.
