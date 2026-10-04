@@ -145,3 +145,6 @@ vite.config.ts.timestamp-*
 # Python (scripts/heisman_ledger/)
 __pycache__/
 *.pyc
+
+# ASFC Scouting Radar ETL raw API cache (re-processable without spending requests)
+data/raw/
